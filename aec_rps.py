@@ -2,11 +2,12 @@ import functools
 
 import gymnasium
 import numpy as np
-from gymnasium.spaces import Discrete, Dict, Box
+from gymnasium.spaces import Discrete, Dict, Box,Tuple
 
 from pettingzoo import AECEnv
 from pettingzoo.utils import agent_selector, wrappers
-import fantasyBoard
+from ray.rllib.env.multi_agent_env import MultiAgentEnv
+
 
 
 
@@ -97,7 +98,7 @@ class raw_env(AECEnv):
                     # stessa dimensione delle mosse per selezionare mosse non selezionabili
                     # 2 mosse
                     #
-                    #'observation' : Box(low=0,high=1,shape=(3,))
+                    #'observation' : Box(low=0, high=1, shape=(2,2,2), dtype=bool)
                     #"action_mask": [True,True]
                 }
             )
@@ -192,7 +193,7 @@ class raw_env(AECEnv):
         """
         self._agent_selector = agent_selector(self.agents)
         self.agent_selection = self._agent_selector.reset()
-        return 
+        return {'observation': self._observation_spaces}
 
     def step(self, action):
         """
@@ -245,7 +246,7 @@ class raw_env(AECEnv):
         
 ##################################Dovrei inserire le pre / post condizioni delle azioni #######################################
         print('Prima della mossa:',self._observation_spaces)
-        if action == 0:
+        """  if action == 0:
             self._observation_spaces[self.agent_selection]['observation'][action]=True
         elif action == 1:
             self._observation_spaces[self.agent_selection]['observation'][0]=True
@@ -253,7 +254,7 @@ class raw_env(AECEnv):
         elif action == 2:
             self._observation_spaces[self.agent_selection]['observation'][0]=True
             self._observation_spaces[self.agent_selection]['observation'][1]=True
-            self._observation_spaces[self.agent_selection]['observation'][action]=True
+            self._observation_spaces[self.agent_selection]['observation'][action]=True """
         print('Dopo la mossa:',self._observation_spaces)
 
 ############################################# Condizione di arresto #####################################################
@@ -265,9 +266,9 @@ class raw_env(AECEnv):
             agent: self.num_moves >= NUM_ITERS for agent in self.agents
         }
         # se uno degli agenti è in uno stato di tutti True esce 
-        self.terminations = {
+        """ self.terminations = {
             agent: True if all(item == True for item in self._observation_spaces[agent]['observation']) else False for agent in self.agents
-        }
+        } """
         print('Deve terminare?',self.terminations)
 ########################################################################################################################
         # observe the current state
