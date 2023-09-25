@@ -20,8 +20,8 @@ register_env("mio",lambda _:PettingZooEnv(env))
 ray.init()
 """ testEnv = PettingZooEnv(env)
 check_env(testEnv) """
-
-""" config = MADDPGConfig()
+""" 
+config = MADDPGConfig()
 print(config.replay_buffer_config)  
 replay_config = config.replay_buffer_config.update(  
     {
@@ -44,23 +44,24 @@ algo.train() """
 obsSpace = testEnv.observation_space
 print('obsSpace:',obsSpace)
 actSpace = testEnv.action_space
-print('actSpace:',actSpace) """
+print('actSpace:',actSpace) 
 
-""" config = MADDPGConfig()
+config = MADDPGConfig()
 config.training(n_step=200)  
 config.multi_agent(
     policies={
-                "attaccante": (PolicySpec(policy_class=AlwaysSameHeuristic),obsSpace,actSpace,{ "agent_id":0 }),
-                "difensore": (PolicySpec(policy_class=AlwaysSameHeuristic),obsSpace,actSpace,{ "agent_id":1 }),
-            },
-            policy_mapping_fn=(lambda agent_id, *args, **kwargs: agent_id),)
+        "attaccante": (AlwaysSameHeuristic, obsSpace, actSpace, { "agent_id": 0 }),
+        "difensore": (AlwaysSameHeuristic, obsSpace, actSpace, { "agent_id": 1 }),
+    },
+    policy_mapping_fn=lambda agent_id, **kwargs: "attaccante" if agent_id == 0 else "difensore"
+)
 
 config.environment(env="mio")  
 config.environment(disable_env_checking=True)
-#algo = config.build(env='mio')
-#algo.train() """
+algo = config.build()
+algo.train() 
 
-""" tune.Tuner(  
+tune.Tuner(  
     "MADDPG",
     run_config=air.RunConfig(stop={"episode_reward_mean":200}),
     param_space=config.to_dict()

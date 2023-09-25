@@ -6,7 +6,7 @@ from gymnasium.spaces import Discrete, Dict, Box
 
 from pettingzoo import AECEnv
 from pettingzoo.utils import agent_selector, wrappers
-import fantasyBoard
+
 
 
 
