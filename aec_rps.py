@@ -11,7 +11,7 @@ from ray.rllib.env.multi_agent_env import MultiAgentEnv
 
 
 
-# Mosse 
+""" # Mosse 
 MOVES = ['mossa1', 'mossa2','mossa3']
 
 # Questa è la truncation cosi esce per non girare all'infinito
@@ -29,7 +29,7 @@ wt = 0.5
 wc = 0.5
 wi = 0.5
 tMax = 100
-cMax = 100
+cMax = 100 """
 
 
 
@@ -64,42 +64,30 @@ class raw_env(AECEnv):
     metadata = {"render_modes": ["human"], "name": "rps_v2"}
 
     def __init__(self, render_mode=None):
-        """
-        The init method takes in environment arguments and
-         should define the following attributes:
-        - possible_agents
-        - render_mode
-
-        Note: as of v1.18.1, the action_spaces and observation_spaces attributes are deprecated.
-        Spaces should be defined in the action_space() and observation_space() methods.
-        If these methods are not overridden, spaces will be inferred from self.observation_spaces/action_spaces, raising a warning.
-
-        These attributes should not be changed after initialization.
-        """
-################################################## AGENTI ##############################################################
+        super().__init__()
+        # Mosse 
+        self.MOVES = ['mossa1', 'mossa2','mossa3']
+        # Questa è la truncation cosi esce per non girare all'infinito
+        self.NUM_ITERS = 20
+        # Mappa che in base all'azione eseguita mi da costo, impatto, ecc dell'azione
+        self.REWARD_MAP = {
+            'mossa1': (1, 0, 0),
+            'mossa2': (2, 0, 0),
+            'mossa3': (3, 0, 0)
+        }
+        # per la funzione di reward
+        self.wt = 0.5
+        self.wc = 0.5
+        self.wi = 0.5
+        self.tMax = 100
+        self.cMax = 100
         self.possible_agents = ['attaccante','difensore']
-        self._agent_ids = set(self.possible_agents)
-        # per ogni agente mette le azioni ovvero tante quante le mosse
-        # Discrete lo usa per generare uno random con sample()
+        #self._agent_ids = set(self.possible_agents)
         self._action_spaces = {agent: Discrete(3) for agent in self.possible_agents}
-        
-############################################# Spazio -> Stato ##########################################################
-        # per ogni agente mette lo spazio degli stati 4 (3 delle mosse e None)
-        # io dovrei forse definire una classe, 1 stato oggetto, poi le configurazioni internre sono gli stati
         self._observation_spaces = {
-            agent:dict(
+            agent:Dict(
                 {
-                    # observation dovrebbe avere i parametri dello stato,
-                    # è lo spazio e lo stato è dato dalla config dei suoi parametri
-                    # ho preso 2 dove mossa 1 accende spegne il 1 e mossa due uguale
-                    # Box mi genera una lista e mi controlla nel limiti low and high 
-                    'observation': [False,False,False],
-
-                    # stessa dimensione delle mosse per selezionare mosse non selezionabili
-                    # 2 mosse
-                    #
-                    #'observation' : Box(low=0, high=1, shape=(2,2,2), dtype=bool)
-                    #"action_mask": [True,True]
+                    'observation': Box(low=0,high=1,shape=(2,),dtype=np.float32),
                 }
             )
             for agent in self.possible_agents
@@ -109,6 +97,7 @@ class raw_env(AECEnv):
         self.render_mode = render_mode
         print('Action spaces:',self._action_spaces)
         print('Observation:',self._observation_spaces)
+
 
     # Observation space should be defined here.
     # lru_cache allows observation and action spaces to be memoized, reducing clock cycles required to get each agent's space.
@@ -163,37 +152,24 @@ class raw_env(AECEnv):
         pass
 
     def reset(self, seed=None, options=None):
-        """
-        Reset needs to initialize the following attributes
-        - agents
-        - rewards
-        - _cumulative_rewards
-        - terminations
-        - truncations
-        - infos
-        - agent_selection
-        And must set up the environment so that render(), step(), and observe()
-        can be called without issues.
-        Here it sets up the state dictionary which is used by step() and the observations dictionary which is used by step() and observe()
-        """
+        #super().reset(seed,options)
         self.agents = self.possible_agents[:]
         self.rewards = {agent: 0 for agent in self.agents}
-        self._cumulative_rewards = {agent: 0 for agent in self.agents}
-############################################### QUando termina a me ? ###################################################        
+        self._cumulative_rewards = {agent: 0 for agent in self.agents}      
         self.terminations = {agent: False for agent in self.agents}
         self.truncations = {agent: False for agent in self.agents}
         self.infos = {agent: {} for agent in self.agents}
         #self.state = {agent: NONE for agent in self.agents}
         #self.observations = {agent: NONE for agent in self.agents}
-
         # credo serve per arrestare
         self.num_moves = 0
-        """
-        Our agent_selector utility allows easy cyclic stepping through the agents list.
-        """
+        
+        #Our agent_selector utility allows easy cyclic stepping through the agents list.
+        
         self._agent_selector = agent_selector(self.agents)
         self.agent_selection = self._agent_selector.reset()
-        return {'observation': self._observation_spaces}
+        return self._observation_spaces,self.infos
+    
 
     def step(self, action):
         """
@@ -235,8 +211,8 @@ class raw_env(AECEnv):
 
 ############################################### REWARD ##################################################################
 # Nella Reward map c'è valore d'impatto della mossa, che viene ussata per calcolare la reward
-        reward = REWARD_MAP[MOVES[action]]
-        valReward = -wt*(reward[0]/tMax)-wc*(reward[1]/cMax)-wi*(1) 
+        reward = self.REWARD_MAP[self.MOVES[action]]
+        valReward = -self.wt*(reward[0]/self.tMax)-self.wc*(reward[1]/self.cMax)-self.wi*(1) 
         #rewardInv = -valReward
         print('Reward:',valReward)
         if self.agent_selection == 'attaccante':
@@ -263,7 +239,7 @@ class raw_env(AECEnv):
         self.num_moves += 1
         # The truncations dictionary must be updated for all players.
         self.truncations = {
-            agent: self.num_moves >= NUM_ITERS for agent in self.agents
+            agent: self.num_moves >= self.NUM_ITERS for agent in self.agents
         }
         # se uno degli agenti è in uno stato di tutti True esce 
         """ self.terminations = {

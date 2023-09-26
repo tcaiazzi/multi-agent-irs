@@ -12,6 +12,8 @@ from ray.rllib.policy.policy import PolicySpec
 from ray.rllib.examples.policy.rock_paper_scissors_dummies import AlwaysSameHeuristic
 from ray.rllib.utils import check_env
 from ray.rllib.algorithms.qmix import QMixConfig
+from gymnasium.spaces import Discrete, Dict, Box,Tuple
+import numpy as np
 
 import ray
 
@@ -21,17 +23,43 @@ env.reset(seed=42)
 
 #ray.init()
 
-""" config = QMixConfig()  
+def env_creator(args):
+    env = aec_rps.env(render_mode="human")
+    obs_space = {agent: env.observation_space(agent)['observation'] for agent in env.possible_agents}
+    act_space = {agent: env.action_space(agent) for agent in env.possible_agents}
+    print('obs_space:',obs_space)
+    print('act_space:',act_space)
+
+    #n_agents = len(args["agents"])
+    grouping = {'group1':env.possible_agents}
+    #return env.with_agent_groups( grouping,obs_space=obs_space, act_space=act_space)
+    #ret = MultiAgentEnv.with_agent_groups(env,groups=grouping,obs_space=obs_space,act_space=act_space)
+    #check_env(env)
+    return MultiAgentEnv.with_agent_groups(env,groups=grouping,obs_space=obs_space,act_space=act_space)
+
+register_env("grouped_test", env_creator)
+
+
+config = QMixConfig()  
 config = config.training(gamma=0.9, lr=0.01)  
-config = config.resources(num_gpus=0)  
+config = config.resources(num_gpus=1)  
 config = config.rollouts(num_rollout_workers=4)
-congig = config.disable_env_checking = True
+""" config = config.multi_agent(
+            policies={
+                "attaccante": (None,,, {}),
+                "difensore": (None,,, {}),
+            },
+            policy_mapping_fn=(lambda agent_id, *args, **kwargs: agent_id),
+        ) """
+config = config.framework(framework="torch")
+config = config.environment(disable_env_checking=True)
 print(config.to_dict())  
 # Build an Algorithm object from the config and run 1 training iteration.
-algo = config.build(env='mio')  
-algo.train()   """
+algo = config.build(env='grouped_test')  
+algo.train()  
 
-""" register_env("grouped_test", MultiAgentEnv(env,))
+
+""" register_env("grouped_test", env_creator)
 results = tune.run(
     "QMIX",
     stop={"timesteps_total": 5,},
@@ -41,6 +69,7 @@ results = tune.run(
         "env_config": {"agents": ["0", "1", "2"]},
         "num_workers": 0,
         "timesteps_per_iteration": 2,
+        "environment": {"disable_env_checking":True}
     },
 ) """
 
@@ -78,7 +107,7 @@ for agent in env.agent_iter():
 env.close()
 
 
-register_env("grouped_test", aec_rps.env(render_mode="human"))
+""" register_env("grouped_test", aec_rps.env(render_mode="human"))
 results = tune.run(
     "QMIX",
     stop={"timesteps_total": 5,},
@@ -89,4 +118,4 @@ results = tune.run(
         "num_workers": 0,
         "timesteps_per_iteration": 2,
     },
-)
+) """
