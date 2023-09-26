@@ -71,8 +71,22 @@ for agent in env.agent_iter():
         print('Step:')
         env.step(action)
     else:
-        api_test(env, num_cycles=1000, verbose_progress=True)
+        #api_test(env, num_cycles=1000, verbose_progress=True)
         env.close()
         break
 
 env.close()
+
+
+register_env("grouped_test", aec_rps.env(render_mode="human"))
+results = tune.run(
+    "QMIX",
+    stop={"timesteps_total": 5,},
+    config={
+        "mixer": "qmix",
+        "env": "grouped_test",
+        "env_config": {"agents": ["0", "1"]},
+        "num_workers": 0,
+        "timesteps_per_iteration": 2,
+    },
+)
