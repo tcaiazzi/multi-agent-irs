@@ -81,18 +81,18 @@ class raw_env(AECEnv):
         self.wi = 0.5
         self.tMax = 100
         self.cMax = 100
+        
         self.possible_agents = ['attaccante','difensore']
         #self._agent_ids = set(self.possible_agents)
         self._action_spaces = {agent: Discrete(3) for agent in self.possible_agents}
         self._observation_spaces = {
-            agent:Dict(
-                {
-                    'observation': Box(low=0,high=1,shape=(2,),dtype=np.float32),
-                }
-            )
-            for agent in self.possible_agents
+            agent: Box(low=0,high=1,shape=(2,),dtype=np.float32) for agent in self.possible_agents
         }
-        
+        """ Dict(
+        {
+            'observation': Box(low=0,high=1,shape=(2,),dtype=np.float32),
+        }
+        ) """
 
         self.render_mode = render_mode
         print('Action spaces:',self._action_spaces)
@@ -113,26 +113,23 @@ class raw_env(AECEnv):
     def action_space(self, agent):
         return self._action_spaces[agent]
 
+
     def render(self):
-        
         #Renders the environment. In human mode, it can print to terminal, open
         #up a graphical window, or open up some other display that a human can see and understand.
-
         if self.render_mode is None:
             gymnasium.logger.warn(
                 "You are calling render method without specifying any render mode."
             )
             return
-
         """ if len(self.agents) == 2:
             string = "Current state: Agent1: {} , Agent2: {}".format(
                 MOVES[self.state[self.agents[0]]], MOVES[self.state[self.agents[1]]]
             )
         else:  """
         string = "Game over"    
-        
-        
         print('rendering....') 
+
 
     def observe(self, agent):
         """
@@ -141,7 +138,7 @@ class raw_env(AECEnv):
         at any time after reset() is called.
         """
         # observation of one agent is the previous state of the other
-        return np.array(self._observation_spaces[agent])
+        return np.array(self.observations[agent])
 
     def close(self):
         """
@@ -160,7 +157,7 @@ class raw_env(AECEnv):
         self.truncations = {agent: False for agent in self.agents}
         self.infos = {agent: {} for agent in self.agents}
         #self.state = {agent: NONE for agent in self.agents}
-        #self.observations = {agent: NONE for agent in self.agents}
+        self.observations = {agent: 3 for agent in self.agents}
         # credo serve per arrestare
         self.num_moves = 0
         
