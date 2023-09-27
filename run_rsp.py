@@ -3,7 +3,7 @@ from pettingzoo.test import api_test
 # algoritmo con solo tensorflow multi agente senza NN 
 from ray.rllib.algorithms import ppo
 from ray.tune.registry import register_env
-from ray.rllib.algorithms.maddpg.maddpg import MADDPGConfig
+from ray.rllib.algorithms.maddpg import MADDPGConfig
 from ray.rllib.algorithms.pg import PGConfig
 from ray.rllib.env import PettingZooEnv,MultiAgentEnv
 from ray import air
@@ -16,10 +16,6 @@ from ray.rllib.algorithms.qmix import QMixConfig
 from gymnasium.spaces import Discrete, Dict, Box,Tuple
 import numpy as np
 from ray.rllib.algorithms.dqn import DQNConfig
-
-import ray
-
-import os
 
 import ray
 from gymnasium.spaces import Box, Discrete
@@ -52,12 +48,31 @@ def env_creator():
         #env = MyEnv()
         return env
 
-env_name = "leduc_holdem_v4"
+env_name = "rsp"
 register_env(env_name, lambda config: PettingZooEnv(env_creator()))
 
 test_env = PettingZooEnv(env_creator())
 obs_space = test_env.observation_space
 act_space = test_env.action_space
+
+""" config = MADDPGConfig().environment(env_name).framework("torch").multi_agent(
+        policies={
+            "attaccante": (None, obs_space, act_space, {}),
+            "difensore": (None, obs_space, act_space, {}),
+        },
+        policy_mapping_fn=(lambda agent_id, *args, **kwargs: agent_id),
+    )
+results = tune.Tuner(
+        "MADDPG", param_space=config, run_config=air.RunConfig(stop=stop, verbose=1)
+    ).fit()
+print(results) """
+""" config = MADDPGConfig().training(n_step=tune.grid_search([3, 5]),agent_id=0).environment(env_name)
+tune.Tuner(
+     "MADDPG",
+     run_config=air.RunConfig(stop=stop,verbose=1),
+     param_space=config.to_dict()
+).fit()
+ """
 
 config = PGConfig().environment(env_name,disable_env_checking=True).framework("torch").multi_agent(
         policies={
@@ -72,8 +87,9 @@ results = tune.Tuner(
 print(results)
 
 
+
 # Così va ma senza polisi sceglie random, ma va la logica della reward e dello stopping
-""" env = aec_rps.env(render_mode="human")
+""" env = rsp.env(render_mode="human")
 env.reset(seed=42)
 action = 0
 

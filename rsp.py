@@ -57,6 +57,13 @@ class raw_env(AECEnv):
         self.cMax = 100
 
         self.possible_agents = ["attaccante","difensore"]
+        # Per la logica
+        self.spazio = {
+            # quando tutti e 3 True invalicabili
+            agent: [False,False,False]
+            for agent in self.possible_agents
+        }
+        print('Spazii:',self.spazio)
 
         # optional: a mapping between agent name and ID
         """ self.agent_name_mapping = dict(
@@ -122,6 +129,11 @@ class raw_env(AECEnv):
 
     def reset(self, seed=None, options=None):
         
+        # Perla logica
+        self.spazio = {
+            agente:[False,False,False]
+            for agente in self.possible_agents
+        }
         self.agents = self.possible_agents[:]
         self.rewards = {agent: 0 for agent in self.agents}
         self._cumulative_rewards = {agent: 0 for agent in self.agents}
@@ -163,7 +175,21 @@ class raw_env(AECEnv):
             self.rewards[self.agents[0]], self.rewards[self.agents[1]] = (0,valReward)
 
         print('Prima della mossa:',self._observation_spaces)
-
+ ######################## PRE/POST condizioni ############
+        print('Prima della mossa:',self._observation_spaces)
+        # mossa 0
+        if action == 0:
+            self.spazio[self.agent_selection][action]=True
+        # mossa 1
+        elif action == 1:
+            self.spazio[self.agent_selection][0]=True
+            self.spazio[self.agent_selection][action]=True
+        # mossa 2
+        elif action == 2:
+            self.spazio[self.agent_selection][0]=True
+            self.spazio[self.agent_selection][1]=True
+            self.spazio[self.agent_selection][action]=True
+        print('Dopo la mossa:',self.spazio)
         print('Dopo la mossa:',self._observation_spaces)
         
         # Dovrebbe arrestarlo 
