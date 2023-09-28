@@ -39,7 +39,7 @@ class raw_env(AECEnv):
     metadata = {"render_modes": ["human"], "name": "rps_v2"}
 
     def __init__(self, render_mode=None):
-        
+        # mosse
         self.MOVES = ['mossa1', 'mossa2','mossa3']
         # Questa è la truncation cosi esce per non girare all'infinito
         self.NUM_ITERS = 20
@@ -71,7 +71,10 @@ class raw_env(AECEnv):
         ) """
 
         # optional: we can define the observation and action spaces here as attributes to be used in their corresponding methods
+        # SOLITAMENTE ALGORITMI ACCETTANO TUTTI DISCRETE, 1 VAL 1 MOSSA
         self._action_spaces = {agent: Discrete(3) for agent in self.possible_agents}
+
+        # DEVE ESSERE DELLA STESSA STRUTTURA DEL RITORNO DI observe()
         self._observation_spaces = {
             #agent: Discrete(10) for agent in self.possible_agents
             agent: Dict(
@@ -142,6 +145,7 @@ class raw_env(AECEnv):
             agente:[False,False,False]
             for agente in self.possible_agents
         }
+        
         self.agents = self.possible_agents[:]
         self.rewards = {agent: 0 for agent in self.agents}
         self._cumulative_rewards = {agent: 0 for agent in self.agents}

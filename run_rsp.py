@@ -31,8 +31,6 @@ from ray.tune.registry import register_env
 import os
 from ray.rllib.algorithms.a2c import A2CConfig
 
-#from pettingzoo.classic import leduc_holdem_v4
-
 torch, nn = try_import_torch()
 
 stop = {
@@ -59,7 +57,8 @@ test_env = PettingZooEnv(env_creator())
 obs_space = test_env.observation_space
 act_space = test_env.action_space
 
-#check_env(test_env)
+check_env(test_env)
+
 """ 
 config = (
     DQNConfig()
@@ -105,7 +104,7 @@ print(result.results) """
 
 
 
-config = PGConfig().environment(env_name,disable_env_checking=True).resources(num_gpus=1,num_cpus_for_local_worker=8).framework("torch").multi_agent(
+""" config = PGConfig().environment(env_name,disable_env_checking=True).resources(num_gpus=1,num_cpus_for_local_worker=8).framework("torch").multi_agent(
         policies={
             "attaccante": (None, obs_space, act_space, {}),
             "difensore": (None, obs_space, act_space, {}),
@@ -115,13 +114,13 @@ config = PGConfig().environment(env_name,disable_env_checking=True).resources(nu
 results = tune.Tuner(
         "PG", param_space=config, run_config=air.RunConfig(stop=stop, verbose=1)
     ).fit()
-print(results)
+print(results) """
 
 
 
 
 # Così va ma senza polisi sceglie random, ma va la logica della reward e dello stopping
-""" env = rsp.env(render_mode="human")
+env = rsp.env(render_mode="human")
 env.reset(seed=42)
 action = 0
 
@@ -148,8 +147,8 @@ for agent in env.agent_iter():
         print('Step:')
         env.step(action)
     else:
-        #api_test(env, num_cycles=1000, verbose_progress=True)
+        api_test(env, num_cycles=1000, verbose_progress=True)
         env.close()
         break
 
-env.close() """
+env.close()
