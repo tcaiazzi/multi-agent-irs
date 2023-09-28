@@ -2,7 +2,7 @@ import functools
 
 import gymnasium
 import numpy as np
-from gymnasium.spaces import Discrete
+from gymnasium.spaces import Discrete,Box,Dict
 
 from pettingzoo import AECEnv
 from pettingzoo.utils import agent_selector, wrappers
@@ -73,7 +73,14 @@ class raw_env(AECEnv):
         # optional: we can define the observation and action spaces here as attributes to be used in their corresponding methods
         self._action_spaces = {agent: Discrete(3) for agent in self.possible_agents}
         self._observation_spaces = {
-            agent: Discrete(4) for agent in self.possible_agents
+            agent: Discrete(10) for agent in self.possible_agents
+            #agent: Dict(
+                #{
+                    #"observation": Box(low=0, high=1, shape=(4,), dtype=np.int8),
+                    #"action_mask": Box(low=0, high=1, shape=(3,), dtype=np.int8),
+                #}
+            #) 
+            for agent in self.possible_agents
         }
         self.render_mode = render_mode
 
@@ -108,7 +115,7 @@ class raw_env(AECEnv):
             )
         else:
             string = "Game over" """
-        print('rendering...')
+        print('\t')
 
     def observe(self, agent):
         """
@@ -154,29 +161,37 @@ class raw_env(AECEnv):
             self.terminations[self.agent_selection]
             or self.truncations[self.agent_selection]
         ):
+            print('Action dead:',action)
             self._was_dead_step(action)
             return
-
+        
         agent = self.agent_selection
         print('Agente in azione:',agent)
+        print('Mossa da eseguire:',action)
 
         # the agent which stepped last had its _cumulative_rewards accounted for
         # (because it was returned by last()), so the _cumulative_rewards for this
         # agent should start again at 0
-        #self._cumulative_rewards[agent] = 0
-        #################### REWARD ########################
-        reward = self.REWARD_MAP[self.MOVES[action]]
-        valReward = -self.wt*(reward[0]/self.tMax)-self.wc*(reward[1]/self.cMax)-self.wi*(1) 
-        #rewardInv = -valReward
-        print('Reward:',valReward)
-        if self.agent_selection == 'attaccante':
-            self.rewards[self.agents[0]], self.rewards[self.agents[1]] = (valReward,0)
-        else:
-            self.rewards[self.agents[0]], self.rewards[self.agents[1]] = (0,valReward)
 
-        print('Prima della mossa:',self._observation_spaces)
- ######################## PRE/POST condizioni ############
-        print('Prima della mossa:',self._observation_spaces)
+        #################### REWARD ########################
+        if self.spazio[agent][action] == False:
+            reward = self.REWARD_MAP[self.MOVES[action]]
+            valReward = -(-self.wt*(reward[0]/self.tMax)-self.wc*(reward[1]/self.cMax)-self.wi*(1))
+            #rewardInv = -valReward
+            print('Reward:',valReward)
+            if self.agent_selection == 'attaccante':
+                self.rewards[self.agents[0]], self.rewards[self.agents[1]] = (valReward,0)
+            else:
+                self.rewards[self.agents[0]], self.rewards[self.agents[1]] = (0,valReward)
+        else:
+            print('Reward:',0)
+            if self.agent_selection == 'attaccante':
+                self.rewards[self.agents[0]], self.rewards[self.agents[1]] = (0,0)
+            else:
+                self.rewards[self.agents[0]], self.rewards[self.agents[1]] = (0,0)
+
+        ######################## PRE/POST condizioni ############
+        print('Prima della mossa:',self.spazio)
         # mossa 0
         if action == 0:
             self.spazio[self.agent_selection][action]=True
@@ -190,13 +205,29 @@ class raw_env(AECEnv):
             self.spazio[self.agent_selection][1]=True
             self.spazio[self.agent_selection][action]=True
         print('Dopo la mossa:',self.spazio)
-        print('Dopo la mossa:',self._observation_spaces)
         
         # Dovrebbe arrestarlo 
         self.num_moves += 1
         self.truncations = {
             agent: self.num_moves >= self.NUM_ITERS for agent in self.agents
         }
+
+        # NON POSSONO AVERE SEGNI DISCORDI 
+        val = False
+        for a in agent:
+            if all(self.spazio[agent]):
+                val = True
+                break
+        self.terminations = {
+            agent: val for agent in self.agents
+        }
+
+        
+        self._cumulative_rewards[agent] = 0
+        print('Num Mosse:',self.num_moves)
+        print('Truncation:',self.truncations)
+        print('Termination:',self.terminations)
+
 
         # selects the next agent.
         self.agent_selection = self._agent_selector.next()
