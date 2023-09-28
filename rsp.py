@@ -73,13 +73,13 @@ class raw_env(AECEnv):
         # optional: we can define the observation and action spaces here as attributes to be used in their corresponding methods
         self._action_spaces = {agent: Discrete(3) for agent in self.possible_agents}
         self._observation_spaces = {
-            agent: Discrete(10) for agent in self.possible_agents
-            #agent: Dict(
-                #{
-                    #"observation": Box(low=0, high=1, shape=(4,), dtype=np.int8),
-                    #"action_mask": Box(low=0, high=1, shape=(3,), dtype=np.int8),
-                #}
-            #) 
+            #agent: Discrete(10) for agent in self.possible_agents
+            agent: Dict(
+                {
+                    "observation": Box(low=0, high=1, shape=(3,), dtype=np.int8),
+                    "action_mask": Box(low=0, high=1, shape=(3,), dtype=np.int8),
+                }
+            ) 
             for agent in self.possible_agents
         }
         self.render_mode = render_mode
@@ -124,7 +124,8 @@ class raw_env(AECEnv):
         at any time after reset() is called.
         """
         # observation of one agent is the previous state of the other
-        return np.array(self.observations[agent])
+        #return np.array(self.observations[agent])
+        return {"observation":self._observation_spaces[agent]['observation'].sample(),"action_mask":self._observation_spaces[agent]["action_mask"].sample()}
 
     def close(self):
         """
