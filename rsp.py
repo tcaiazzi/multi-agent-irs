@@ -35,20 +35,22 @@ class raw_env(AECEnv):
     At least human mode should be supported.
     The "name" metadata allows the environment to be pretty printed.
     """
-
     metadata = {"render_modes": ["human"], "name": "rps_v2"}
 
     def __init__(self, render_mode=None):
         # mosse
         self.MOVES = ['mossa1', 'mossa2','mossa3']
+
         # Questa è la truncation cosi esce per non girare all'infinito
         self.NUM_ITERS = 20
+
         # Mappa che in base all'azione eseguita mi da costo, impatto, ecc dell'azione
         self.REWARD_MAP = {
             'mossa1': (1, 0, 0),
             'mossa2': (2, 0, 0),
             'mossa3': (3, 0, 0)
         }
+
         # per la funzione di reward
         self.wt = 0.5
         self.wc = 0.5
@@ -57,7 +59,8 @@ class raw_env(AECEnv):
         self.cMax = 100
 
         self.possible_agents = ["attaccante","difensore"]
-        # Per la logica
+
+        # PER LA LOGICA
         self.spazio = {
             # quando tutti e 3 True invalicabili
             agent: [False,False,False]
@@ -76,10 +79,9 @@ class raw_env(AECEnv):
 
         # DEVE ESSERE DELLA STESSA STRUTTURA DEL RITORNO DI observe()
         self._observation_spaces = {
-            #agent: Discrete(10) for agent in self.possible_agents
             agent: Dict(
                 {
-                    "observation": Box(low=0, high=1, shape=(3,), dtype=np.int8),
+                    "observation": Box(low=0, high=1, shape=(3,), dtype=bool),
                     "action_mask": Box(low=0, high=1, shape=(3,), dtype=np.int8),
                 }
             ) 
@@ -106,11 +108,11 @@ class raw_env(AECEnv):
         Renders the environment. In human mode, it can print to terminal, open
         up a graphical window, or open up some other display that a human can see and understand.
         """
-        if self.render_mode is None:
+        """ if self.render_mode is None:
             gymnasium.logger.warn(
                 "You are calling render method without specifying any render mode."
             )
-            return
+            return """
 
         """ if len(self.agents) == 2:
             string = "Current state: Agent1: {} , Agent2: {}".format(
@@ -118,7 +120,7 @@ class raw_env(AECEnv):
             )
         else:
             string = "Game over" """
-        print('\t')
+        print('')
 
     def observe(self, agent):
         """
@@ -128,7 +130,24 @@ class raw_env(AECEnv):
         """
         # observation of one agent is the previous state of the other
         #return np.array(self.observations[agent])
-        return {"observation":self._observation_spaces[agent]['observation'].sample(),"action_mask":self._observation_spaces[agent]["action_mask"].sample()}
+        # return {"observation":self._observation_spaces[agent]["observation"].sample(),"action_mask":self._observation_spaces[agent]["action_mask"].sample()}
+        legal_moves = []
+        for i in range(len(self.spazio[agent])):
+            if self.spazio[agent][i] == False:
+                legal_moves.append(1)
+            else:
+                legal_moves.append(0)
+        print('\t')
+        print('Observe agent:',agent)
+        print('Observe observation:',self.spazio[agent])
+        print('Observe legal_moves:',legal_moves)
+        # in observation sto facendo tornare lo stato attuale ovvero spazio che uso per la mia logica interna,
+        # in action dove l'azione puo ancora agire, lo calcolo qui al volo
+        return {
+                    "observation":np.stack(self.spazio[agent]),
+                    "action_mask":np.ndarray(shape=(len(legal_moves)),buffer=np.array(legal_moves),dtype=np.int8)
+                }
+       
 
     def close(self):
         """
@@ -138,9 +157,10 @@ class raw_env(AECEnv):
         """
         pass
 
+
     def reset(self, seed=None, options=None):
         
-        # Perla logica
+        # PER LA LOGICA
         self.spazio = {
             agente:[False,False,False]
             for agente in self.possible_agents
@@ -160,6 +180,9 @@ class raw_env(AECEnv):
         """
         self._agent_selector = agent_selector(self.agents)
         self.agent_selection = self._agent_selector.next()
+
+
+
 
     def step(self, action):
         if (
@@ -211,13 +234,14 @@ class raw_env(AECEnv):
             self.spazio[self.agent_selection][action]=True
         print('Dopo la mossa:',self.spazio)
         
+        ############################# CHECK ARRESTO (se sono nello stato sicuro) #########################
+        # NON POSSONO AVERE VALORI DISCORDI GLI AGENTI delle terminations e troncation
         # Dovrebbe arrestarlo 
         self.num_moves += 1
         self.truncations = {
             agent: self.num_moves >= self.NUM_ITERS for agent in self.agents
         }
-
-        # NON POSSONO AVERE SEGNI DISCORDI 
+        # termination funziona
         val = False
         for a in agent:
             if all(self.spazio[agent]):
@@ -232,7 +256,6 @@ class raw_env(AECEnv):
         print('Num Mosse:',self.num_moves)
         print('Truncation:',self.truncations)
         print('Termination:',self.terminations)
-
 
         # selects the next agent.
         self.agent_selection = self._agent_selector.next()

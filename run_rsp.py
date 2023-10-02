@@ -59,8 +59,8 @@ act_space = test_env.action_space
 
 check_env(test_env)
 
-""" 
-config = (
+
+""" config = (
     DQNConfig()
     .environment(env=env_name)
     .resources(num_gpus=1)
@@ -104,7 +104,7 @@ print(result.results) """
 
 
 
-""" config = PGConfig().environment(env_name,disable_env_checking=True).resources(num_gpus=1,num_cpus_for_local_worker=8).framework("torch").multi_agent(
+config = PGConfig().environment(env_name,disable_env_checking=True).resources(num_gpus=1,num_cpus_for_local_worker=8).framework("torch").multi_agent(
         policies={
             "attaccante": (None, obs_space, act_space, {}),
             "difensore": (None, obs_space, act_space, {}),
@@ -114,7 +114,7 @@ print(result.results) """
 results = tune.Tuner(
         "PG", param_space=config, run_config=air.RunConfig(stop=stop, verbose=1)
     ).fit()
-print(results) """
+print(results)
 
 
 
