@@ -46,9 +46,9 @@ class raw_env(AECEnv):
 
         # Mappa che in base all'azione eseguita mi da costo, impatto, ecc dell'azione
         self.REWARD_MAP = {
-            'mossa1': (1, 0, 0),
-            'mossa2': (2, 0, 0),
-            'mossa3': (3, 0, 0)
+            'mossa1': (1, 1, 1),
+            'mossa2': (15, 15, 15),
+            'mossa3': (30, 30, 30)
         }
 
         # per la funzione di reward
@@ -142,6 +142,7 @@ class raw_env(AECEnv):
         print('Observe observation:',self.spazio[agent])
         print('Observe legal_moves:',legal_moves)
         # in observation sto facendo tornare lo stato attuale ovvero spazio che uso per la mia logica interna,
+        # dato che mi stabilisce sia reward e mossa
         # in action dove l'azione puo ancora agire, lo calcolo qui al volo
         return {
                     "observation":np.stack(self.spazio[agent]),
