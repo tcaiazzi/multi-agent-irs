@@ -7,6 +7,8 @@ from gymnasium.spaces import Discrete,Box,Dict
 from pettingzoo import AECEnv
 from pettingzoo.utils import agent_selector, wrappers
 
+from prePost import doAction
+
 
 
 def env(render_mode=None):
@@ -39,16 +41,16 @@ class raw_env(AECEnv):
 
     def __init__(self, render_mode=None):
         # mosse
-        self.MOVES = ['mossa1', 'mossa2','mossa3']
+        #self.MOVES = ['mossa1', 'mossa2','mossa3']
 
         # Questa è la truncation cosi esce per non girare all'infinito
         self.NUM_ITERS = 20
 
         # Mappa che in base all'azione eseguita mi da costo, impatto, ecc dell'azione
         self.REWARD_MAP = {
-            'mossa1': (1, 1, 1),
-            'mossa2': (15, 15, 15),
-            'mossa3': (30, 30, 30)
+            0 : (1, 1, 1),
+            1 : (15, 15, 15),
+            2 : (30, 30, 30)
         }
 
         # per la funzione di reward
@@ -204,9 +206,10 @@ class raw_env(AECEnv):
 
         #################### REWARD ########################
         if self.spazio[agent][action] == False:
-            reward = self.REWARD_MAP[self.MOVES[action]]
+            reward = self.REWARD_MAP[action]
             valReward = -(-self.wt*(reward[0]/self.tMax)-self.wc*(reward[1]/self.cMax)-self.wi*(1))
-            #rewardInv = -valReward
+            #rewardInv = -
+            
             print('Reward:',valReward)
             if self.agent_selection == 'attaccante':
                 self.rewards[self.agents[0]], self.rewards[self.agents[1]] = (valReward,0)
@@ -221,18 +224,7 @@ class raw_env(AECEnv):
 
         ######################## PRE/POST condizioni ############
         print('Prima della mossa:',self.spazio)
-        # mossa 0
-        if action == 0:
-            self.spazio[self.agent_selection][action]=True
-        # mossa 1
-        elif action == 1:
-            self.spazio[self.agent_selection][0]=True
-            self.spazio[self.agent_selection][action]=True
-        # mossa 2
-        elif action == 2:
-            self.spazio[self.agent_selection][0]=True
-            self.spazio[self.agent_selection][1]=True
-            self.spazio[self.agent_selection][action]=True
+        self.spazio = doAction(action,self.spazio,self.agent_selection)
         print('Dopo la mossa:',self.spazio)
         
         ############################# CHECK ARRESTO (se sono nello stato sicuro) #########################
@@ -244,10 +236,8 @@ class raw_env(AECEnv):
         }
         # termination funziona
         val = False
-        for a in agent:
-            if all(self.spazio[agent]):
-                val = True
-                break
+        if all(self.spazio[agent]):
+            val = True
         self.terminations = {
             agent: val for agent in self.agents
         }

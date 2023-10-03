@@ -32,16 +32,21 @@ import os
 from ray.rllib.algorithms.impala import ImpalaConfig
 from stable_baselines3 import DQN
 import gymnasium as gym
-from tianshou.policy import RandomPolicy,MultiAgentPolicyManager
-from tianshou.env import DummyVectorEnv
-from tianshou.data import Collector
+from ray.rllib.algorithms.ppo import PPOConfig
+import sys
+
+""" actions = sys.argv[1]
+variables = sys.argv[2] """
 
 torch, nn = try_import_torch()
 
 stop = {
-        "training_iteration": 3,
-        "timesteps_total": 100000,
-        "episode_reward_mean": 1000.0,
+        # epoche/passi dopo le quali il training si arresta
+        #"training_iteration": 20,
+        # passi ambientali dell'agente nell'ambiente
+        #"timesteps_total": 1,
+        # ferma il training quando la ricompensa media dell'agente è pari o maggiore
+        "episode_reward_mean": 2.0,
     }
 
 ray.shutdown()
@@ -66,17 +71,7 @@ check_env(test_env)
 
 
 ################################################## RAY #############################
-""" config = BanditLinUCBConfig().environment(env_name,disable_env_checking=True).resources(num_cpus_for_local_worker=8).framework("torch").multi_agent(
-        policies={
-            "attaccante": (None, obs_space, act_space, {}),
-            "difensore": (None, obs_space, act_space, {}),
-        },
-        policy_mapping_fn=(lambda agent_id, *args, **kwargs: agent_id),
-    )
-results = tune.Tuner(
-        "APEX", param_space=config, run_config=air.RunConfig(stop=stop, verbose=1)
-    ).fit()
-print(results) """
+
 
 """ config = ImpalaConfig().environment(env_name,disable_env_checking=True).resources(num_gpus=1).framework("torch").multi_agent(
         policies={
@@ -139,11 +134,27 @@ config = PGConfig().environment(env_name,disable_env_checking=True).resources(nu
         },
         policy_mapping_fn=(lambda agent_id, *args, **kwargs: agent_id),
     )
+""" print('Training...')
+trained = config.training()
+print(trained.fake_sampler)
+print('Validate...')
+trained.validate() """
 results = tune.Tuner(
         "PG", param_space=config, run_config=air.RunConfig(stop=stop, verbose=1)
     ).fit()
 print(results)
 
+""" config = PPOConfig().environment(env_name,disable_env_checking=True).resources().framework("torch").multi_agent(
+        policies={
+            "attaccante": (None, obs_space, act_space, {}),
+            "difensore": (None, obs_space, act_space, {}),
+        },
+        policy_mapping_fn=(lambda agent_id, *args, **kwargs: agent_id),
+    ).training(lr=0.1)
+results = tune.Tuner(
+        "PPO", param_space=config, run_config=air.RunConfig(stop=stop, verbose=1)
+    ).fit()
+print(results) """
 
 
 
