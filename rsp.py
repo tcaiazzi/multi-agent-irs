@@ -7,18 +7,24 @@ from gymnasium.spaces import Discrete,Box,Dict
 from pettingzoo import AECEnv
 from pettingzoo.utils import agent_selector, wrappers
 
-from prePost import doAction
+from prePost import doAction,reward
 
-# DIFENSORE / ATTACCANTE
+# DIFENSORE 
 # difensore: 7 ATTACCHI (possibili in corso)-> NELL'OBSERVATION [0-1] FLOAT
-# ataccante: 7 ATTACCHI CON PROBABILITÀ DI ESEGUIRLI
-# 14 ATTRIBUTI -> IN LOGICA, ANCHE PERCHE NON TUTTI STESSO TIPO
+# 14 ATTRIBUTI -> IN LOGICA, ANCHE PERCHE NON TUTTI STESSO TIPO ED IN OBSERVATION
 # TERMINATION -> 7 ATTACHI PIÙ BASSI RISPETTO A QUALCOSA... 
 # OGNI AZIONE MI MODIFICA LA LOGICA
 # REWARD RISPETTO ALL'AZIONE
 
-# ATTACCANTE (?) 
-# OBSERVATION SPACES E ACTION SPACES MUST BE  IDENTICAL !!!
+# Difensore:
+#   mossa 0 spazio[0] False->True
+#   mossa 1 spazio[0 e 1] False->True
+#   mossa 2 spazio[0, 1 e 2] False->True
+#ATTACCANTE:
+#   mossa 0 spazio[0] True->False
+#   mossa 1 spazio[0 e 1] True->False
+# non ha mossa 2 per vedere se il difensore selezionando subito 2 vince
+# partenza tutti True
 
 
 def env(render_mode=None):
@@ -57,30 +63,18 @@ class raw_env(AECEnv):
         self.NUM_ITERS = 20
 
         # Mappa che in base all'azione eseguita mi da costo, impatto, ecc dell'azione
-        self.REWARD_MAP = {
-            0 : (1, 1, 1),
-            1 : (15, 15, 15),
-            2 : (30, 30, 30)
-        }
-
-        # per la funzione di reward
-        self.wt = 0.5
-        self.wc = 0.5
-        self.wi = 0.5
-        self.tMax = 100
-        self.cMax = 100
 
         self.possible_agents = ["attaccante","difensore"]
 
         # PER LA LOGICA
         """ self.spazio = {
             # quando tutti e 3 True invalicabili
-            agent: [False,False,False]
+            agent: [True,True,True]
             for agent in self.possible_agents
         } """
         self.spazio = {}
-        self.spazio[self.possible_agents[0]] = [False,False]
-        self.spazio[self.possible_agents[1]] = [False,False,False]
+        self.spazio[self.possible_agents[0]] = [True,True]
+        self.spazio[self.possible_agents[1]] = [True,True,True]
         print('Spazii:',self.spazio)
 
         # optional: a mapping between agent name and ID
@@ -95,7 +89,7 @@ class raw_env(AECEnv):
         self._action_spaces[self.possible_agents[1]] = Discrete(3)
         #self._action_spaces = {agent: Discrete(3) for agent in self.possible_agents}
 
-        # DEVE ESSERE DELLA STESSA STRUTTURA DEL RITORNO DI observe()
+        # DEVE ESSERE DELLA STESSA STRUTTURA DEL RITORNO DI observe() 
         """ self._observation_spaces = {
             agent: Dict(
                 {
@@ -126,22 +120,7 @@ class raw_env(AECEnv):
         return self._action_spaces[agent]
 
     def render(self):
-        """
-        Renders the environment. In human mode, it can print to terminal, open
-        up a graphical window, or open up some other display that a human can see and understand.
-        """
-        """ if self.render_mode is None:
-            gymnasium.logger.warn(
-                "You are calling render method without specifying any render mode."
-            )
-            return """
-
-        """ if len(self.agents) == 2:
-            string = "Current state: Agent1: {} , Agent2: {}".format(
-                MOVES[self.state[self.agents[0]]], MOVES[self.state[self.agents[1]]]
-            )
-        else:
-            string = "Game over" """
+        
         print('')
 
     def observe(self, agent):
@@ -162,7 +141,7 @@ class raw_env(AECEnv):
         print('\t')
         print('Observe agent:',agent)
         print('Observe observation:',self.spazio[agent])
-        print('Observe legal_moves:',legal_moves)
+        #print('Observe legal_moves:',legal_moves)
         # in observation sto facendo tornare lo stato attuale ovvero spazio che uso per la mia logica interna,
         # dato che mi stabilisce sia reward e mossa
         # in action dove l'azione puo ancora agire, lo calcolo qui al volo
@@ -186,12 +165,12 @@ class raw_env(AECEnv):
         
         # PER LA LOGICA
         """ self.spazio = {
-            agente:[False,False,False]
+            agente:[True,True,True]
             for agente in self.possible_agents
         } """
         self.spazio = {}
         self.spazio[self.possible_agents[0]] = [False,False]
-        self.spazio[self.possible_agents[1]] = [False,False,False]
+        self.spazio[self.possible_agents[1]] = [True,True,True]
         
         self.agents = self.possible_agents[:]
         self.rewards = {agent: 0 for agent in self.agents}
@@ -229,24 +208,12 @@ class raw_env(AECEnv):
         # agent should start again at 0
 
         #################### REWARD ########################
-        if self.spazio[agent][action] == False:
-            reward = self.REWARD_MAP[action]
-            valReward = -(-self.wt*(reward[0]/self.tMax)-self.wc*(reward[1]/self.cMax)-self.wi*(1))
-            #rewardInv = -
-            
-            print('Reward:',valReward)
-            if self.agent_selection == 'attaccante':
-                self.rewards[self.agents[0]], self.rewards[self.agents[1]] = (valReward,0)
-            else:
-                self.rewards[self.agents[0]], self.rewards[self.agents[1]] = (0,valReward)
-        else:
-            print('Reward:',0)
-            if self.agent_selection == 'attaccante':
-                self.rewards[self.agents[0]], self.rewards[self.agents[1]] = (0,0)
-            else:
-                self.rewards[self.agents[0]], self.rewards[self.agents[1]] = (0,0)
+
+        self.rewards[agent] = reward(agent,self.spazio,action)
+
 
         ######################## PRE/POST condizioni ############
+
         print('Prima della mossa:',self.spazio)
         self.spazio = doAction(action,self.spazio,self.agent_selection)
         print('Dopo la mossa:',self.spazio)
@@ -271,6 +238,7 @@ class raw_env(AECEnv):
         print('Num Mosse:',self.num_moves)
         print('Truncation:',self.truncations)
         print('Termination:',self.terminations)
+        print('Accumulative reward:',self._cumulative_rewards)
 
         # selects the next agent.
         self.agent_selection = self._agent_selector.next()
