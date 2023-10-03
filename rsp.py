@@ -7,7 +7,7 @@ from gymnasium.spaces import Discrete,Box,Dict
 from pettingzoo import AECEnv
 from pettingzoo.utils import agent_selector, wrappers
 
-from prePost import doAction,reward
+from prePost import doAction,reward,terminationPartita
 
 # DIFENSORE 
 # difensore: 7 ATTACCHI (possibili in corso)-> NELL'OBSERVATION [0-1] FLOAT
@@ -16,15 +16,17 @@ from prePost import doAction,reward
 # OGNI AZIONE MI MODIFICA LA LOGICA
 # REWARD RISPETTO ALL'AZIONE
 
-# Difensore:
-#   mossa 0 spazio[0] False->True
-#   mossa 1 spazio[0 e 1] False->True
-#   mossa 2 spazio[0, 1 e 2] False->True
 #ATTACCANTE:
-#   mossa 0 spazio[0] True->False
-#   mossa 1 spazio[0 e 1] True->False
-# non ha mossa 2 per vedere se il difensore selezionando subito 2 vince
-# partenza tutti True
+#   mossa 0 spazio[difensore][0] True->False
+#   mossa 1 spazio[difensore][1] True->False
+#   mossa 2 spazio[difensore][0,1,2 e 3] True->False
+# Difensore:
+#   mossa 0 spazio[difensore][0] False->True
+#   mossa 1 spazio[difensore][1] False->True
+#   mossa 2 spazio[difensore][2] False->True
+#   mossa 3 spazio[difensore][0,1, 2 e 3] False->True 
+# termna o difensore tutti true o tutti false
+# partenza difensore mista
 
 
 def env(render_mode=None):
@@ -56,8 +58,6 @@ class raw_env(AECEnv):
     metadata = {"render_modes": ["human"], "name": "rps_v2"}
 
     def __init__(self, render_mode=None):
-        # mosse
-        #self.MOVES = ['mossa1', 'mossa2','mossa3']
 
         # Questa è la truncation cosi esce per non girare all'infinito
         self.NUM_ITERS = 20
@@ -73,8 +73,8 @@ class raw_env(AECEnv):
             for agent in self.possible_agents
         } """
         self.spazio = {}
-        self.spazio[self.possible_agents[0]] = [True,True]
-        self.spazio[self.possible_agents[1]] = [True,True,True]
+        self.spazio[self.possible_agents[0]] = [False,False,False]
+        self.spazio[self.possible_agents[1]] = [True,False,True,False]
         print('Spazii:',self.spazio)
 
         # optional: a mapping between agent name and ID
@@ -85,8 +85,8 @@ class raw_env(AECEnv):
         # optional: we can define the observation and action spaces here as attributes to be used in their corresponding methods
         # SOLITAMENTE ALGORITMI ACCETTANO TUTTI DISCRETE, 1 VAL 1 MOSSA
         self._action_spaces = {}
-        self._action_spaces[self.possible_agents[0]] = Discrete(2)
-        self._action_spaces[self.possible_agents[1]] = Discrete(3)
+        self._action_spaces[self.possible_agents[0]] = Discrete(3)
+        self._action_spaces[self.possible_agents[1]] = Discrete(4)
         #self._action_spaces = {agent: Discrete(3) for agent in self.possible_agents}
 
         # DEVE ESSERE DELLA STESSA STRUTTURA DEL RITORNO DI observe() 
@@ -100,8 +100,8 @@ class raw_env(AECEnv):
             for agent in self.possible_agents
         } """
         self._observation_spaces = {}
-        self._observation_spaces[self.possible_agents[0]] = Box(low=0, high=1, shape=(2,), dtype=bool)
-        self._observation_spaces[self.possible_agents[1]] = Box(low=0, high=1, shape=(3,), dtype=bool)
+        self._observation_spaces[self.possible_agents[0]] = Box(low=0, high=1, shape=(3,), dtype=bool)
+        self._observation_spaces[self.possible_agents[1]] = Box(low=0, high=1, shape=(4,), dtype=bool)
                     
         self.render_mode = render_mode
 
@@ -111,16 +111,17 @@ class raw_env(AECEnv):
     @functools.lru_cache(maxsize=None)
     def observation_space(self, agent):
         # gymnasium spaces are defined and documented here: https://gymnasium.farama.org/api/spaces/
+        print('QUI')
         return self._observation_spaces[agent]
 
     # Action space should be defined here.
     # If your spaces change over time, remove this line (disable caching).
     @functools.lru_cache(maxsize=None)
     def action_space(self, agent):
+        print('QUO')
         return self._action_spaces[agent]
 
     def render(self):
-        
         print('')
 
     def observe(self, agent):
@@ -169,8 +170,8 @@ class raw_env(AECEnv):
             for agente in self.possible_agents
         } """
         self.spazio = {}
-        self.spazio[self.possible_agents[0]] = [False,False]
-        self.spazio[self.possible_agents[1]] = [True,True,True]
+        self.spazio[self.possible_agents[0]] = [False,False,False]
+        self.spazio[self.possible_agents[1]] = [True,False,True,False]
         
         self.agents = self.possible_agents[:]
         self.rewards = {agent: 0 for agent in self.agents}
@@ -226,9 +227,7 @@ class raw_env(AECEnv):
             agent: self.num_moves >= self.NUM_ITERS for agent in self.agents
         }
         # termination funziona
-        val = False
-        if all(self.spazio[agent]):
-            val = True
+        val = terminationPartita(False,self.spazio)
         self.terminations = {
             agent: val for agent in self.agents
         }
