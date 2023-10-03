@@ -9,6 +9,16 @@ from pettingzoo.utils import agent_selector, wrappers
 
 from prePost import doAction
 
+# DIFENSORE
+# 7 ATTACCHI (possibili in corso)-> NELL'OBSERVATION [0-1] FLOAT
+# 14 ATTRIBUTI -> IN LOGICA, ANCHE PERCHE NON TUTTI STESSO TIPO
+# TERMINATION -> 7 ATTACHI PIÙ BASSI RISPETTO A QUALCOSA... 
+# OGNI AZIONE MI MODIFICA LA LOGICA
+# REWARD RISPETTO ALL'AZIONE
+
+# ATTACCANTE (?) 
+# non so se posso codificarlo in maniera diversa rispetto al difensore
+# forse basta che i ritorni siano uguali
 
 
 def env(render_mode=None):

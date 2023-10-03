@@ -42,11 +42,14 @@ torch, nn = try_import_torch()
 
 stop = {
         # epoche/passi dopo le quali il training si arresta
-        #"training_iteration": 20,
+        "training_iteration": 1,
+
         # passi ambientali dell'agente nell'ambiente
-        #"timesteps_total": 1,
-        # ferma il training quando la ricompensa media dell'agente è pari o maggiore
-        "episode_reward_mean": 2.0,
+        # ci sarebbe un minimo di 200
+        #"timesteps_total": 3000,
+
+        # ferma il training quando la ricompensa media dell'agente nell'episodio è pari o maggiore
+        #"episode_reward_mean": 0.4,
     }
 
 ray.shutdown()
@@ -69,10 +72,11 @@ act_space = test_env.action_space
 
 check_env(test_env)
 
-
-################################################## RAY #############################
-
-
+################################################## RAY ###########################################
+################################################ IMPALA ###########################################
+# RMSProp otimizer
+# CNN + LSTM + vaniglia
+# lr nel training; default 0.0005
 """ config = ImpalaConfig().environment(env_name,disable_env_checking=True).resources(num_gpus=1).framework("torch").multi_agent(
         policies={
             "attaccante": (None, obs_space, act_space, {}),
@@ -85,6 +89,8 @@ results = tune.Tuner(
     ).fit() """
 #print(results)
 
+################################################## DQN ######################################
+#
 """ config = (
     DQNConfig()
     .environment(env=env_name)
@@ -127,24 +133,29 @@ results = tune.run(
 )
 print(results.results) """
 
-config = PGConfig().environment(env_name,disable_env_checking=True).resources(num_gpus=1,num_cpus_for_local_worker=8).framework("torch").multi_agent(
+############################################### PG #########################################
+#defaul lr = 0.0004
+""" config = PGConfig().environment(env_name,disable_env_checking=True).resources(num_gpus=1,num_cpus_for_local_worker=8).framework("torch").multi_agent(
         policies={
             "attaccante": (None, obs_space, act_space, {}),
             "difensore": (None, obs_space, act_space, {}),
         },
         policy_mapping_fn=(lambda agent_id, *args, **kwargs: agent_id),
     )
-""" print('Training...')
+print('Training...')
 trained = config.training()
 print(trained.fake_sampler)
 print('Validate...')
-trained.validate() """
+trained.validate()
 results = tune.Tuner(
         "PG", param_space=config, run_config=air.RunConfig(stop=stop, verbose=1)
     ).fit()
-print(results)
+print(results) """
 
-""" config = PPOConfig().environment(env_name,disable_env_checking=True).resources().framework("torch").multi_agent(
+
+################################################# PPO ############################################à
+# default lr = 5e-5
+config = PPOConfig().environment(env_name,disable_env_checking=True).resources().framework("torch").multi_agent(
         policies={
             "attaccante": (None, obs_space, act_space, {}),
             "difensore": (None, obs_space, act_space, {}),
@@ -154,8 +165,11 @@ print(results)
 results = tune.Tuner(
         "PPO", param_space=config, run_config=air.RunConfig(stop=stop, verbose=1)
     ).fit()
-print(results) """
+print(results)
 
+
+
+############################################ RANDOM #####################################
 
 
 # Così va ma senza polisi sceglie random, ma va la logica della reward e dello stopping
