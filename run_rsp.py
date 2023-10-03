@@ -66,9 +66,9 @@ def env_creator():
         return env
 
 env_name = "rsp"
-register_env(env_name, lambda config: PettingZooEnv(pad_action_space_v0(env_creator())))
+register_env(env_name, lambda config: PettingZooEnv(pad_observations_v0(pad_action_space_v0(env_creator()))))
 
-test_env = PettingZooEnv(pad_action_space_v0(env_creator()))
+test_env = PettingZooEnv(pad_observations_v0(pad_action_space_v0(env_creator())))
 obs_space = test_env.observation_space
 act_space = test_env.action_space
 
@@ -79,7 +79,7 @@ check_env(test_env)
 # RMSProp otimizer
 # CNN + LSTM + vaniglia
 # lr nel training; default 0.0005
-""" config = ImpalaConfig().environment(env_name,disable_env_checking=True).resources(num_gpus=1).framework("torch").multi_agent(
+""" config = ImpalaConfig().environment(env_name,disable_env_checking=True).resources().framework("torch").multi_agent(
         policies={
             "attaccante": (None, obs_space, act_space, {}),
             "difensore": (None, obs_space, act_space, {}),
@@ -88,15 +88,15 @@ check_env(test_env)
     )
 results = tune.Tuner(
         "IMPALA", param_space=config, run_config=air.RunConfig(stop=stop, verbose=1)
-    ).fit() """
-#print(results)
+    ).fit() 
+print(results)  """
 
 ################################################## DQN ######################################
-#
-""" config = (
+
+config = (
     DQNConfig()
     .environment(env=env_name)
-    .resources(num_gpus=1)
+    .resources()
     .rollouts(num_rollout_workers=1, rollout_fragment_length=30)
     .training(
         train_batch_size=200,
@@ -133,11 +133,11 @@ results = tune.run(
     checkpoint_freq=10,
     config=config.to_dict(),
 )
-print(results.results) """
+print(results.results)
 
 ############################################### PG #########################################
 #defaul lr = 0.0004
-""" config = PGConfig().environment(env_name,disable_env_checking=True).resources(num_gpus=1,num_cpus_for_local_worker=8).framework("torch").multi_agent(
+""" config = PGConfig().environment(env_name,disable_env_checking=True).resources().framework("torch").multi_agent(
         policies={
             "attaccante": (None, obs_space, act_space, {}),
             "difensore": (None, obs_space, act_space, {}),
@@ -157,7 +157,7 @@ print(results) """
 
 ################################################# PPO ############################################à
 # default lr = 5e-5
-config = PPOConfig().environment(env_name,disable_env_checking=True).resources().framework("torch").multi_agent(
+""" config = PPOConfig().environment(env_name,disable_env_checking=True).resources().framework("torch").multi_agent(
         policies={
             "attaccante": (None, obs_space, act_space, {}),
             "difensore": (None, obs_space, act_space, {}),
@@ -168,7 +168,7 @@ results = tune.Tuner(
         "PPO", param_space=config, run_config=air.RunConfig(stop=stop, verbose=1)
     ).fit()
 print(results)
-
+ """
 
 
 ############################################ RANDOM #####################################

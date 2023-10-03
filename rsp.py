@@ -73,14 +73,14 @@ class raw_env(AECEnv):
         self.possible_agents = ["attaccante","difensore"]
 
         # PER LA LOGICA
-        self.spazio = {
+        """ self.spazio = {
             # quando tutti e 3 True invalicabili
             agent: [False,False,False]
             for agent in self.possible_agents
-        }
-        """ self.spazio = {}
-        self.spazio[self.possible_agents[0]] = [False,False,False]
-        self.spazio[self.possible_agents[1]] = [False,False,False,False] """
+        } """
+        self.spazio = {}
+        self.spazio[self.possible_agents[0]] = [False,False]
+        self.spazio[self.possible_agents[1]] = [False,False,False]
         print('Spazii:',self.spazio)
 
         # optional: a mapping between agent name and ID
@@ -96,7 +96,7 @@ class raw_env(AECEnv):
         #self._action_spaces = {agent: Discrete(3) for agent in self.possible_agents}
 
         # DEVE ESSERE DELLA STESSA STRUTTURA DEL RITORNO DI observe()
-        self._observation_spaces = {
+        """ self._observation_spaces = {
             agent: Dict(
                 {
                     "observation": Box(low=0, high=1, shape=(3,), dtype=bool),
@@ -104,20 +104,11 @@ class raw_env(AECEnv):
                 }
             ) 
             for agent in self.possible_agents
-        }
-        """ self._observation_spaces = {}
-        self._observation_spaces[self.possible_agents[0]] = Dict(
-                {
-                    "observation": Box(low=0, high=1, shape=(3,), dtype=bool),
-                    "action_mask": Box(low=0, high=1, shape=(3,), dtype=np.int8),
-                }
-            )
-        self._observation_spaces[self.possible_agents[1]] = Dict(
-                {
-                    "observation": Box(low=0, high=1, shape=(4,), dtype=bool),
-                    "action_mask": Box(low=0, high=1, shape=(4,), dtype=np.int8),
-                }
-            ) """
+        } """
+        self._observation_spaces = {}
+        self._observation_spaces[self.possible_agents[0]] = Box(low=0, high=1, shape=(2,), dtype=bool)
+        self._observation_spaces[self.possible_agents[1]] = Box(low=0, high=1, shape=(3,), dtype=bool)
+                    
         self.render_mode = render_mode
 
     # Observation space should be defined here.
@@ -175,10 +166,11 @@ class raw_env(AECEnv):
         # in observation sto facendo tornare lo stato attuale ovvero spazio che uso per la mia logica interna,
         # dato che mi stabilisce sia reward e mossa
         # in action dove l'azione puo ancora agire, lo calcolo qui al volo
-        return {
+        """ return {
                     "observation":np.stack(self.spazio[agent]),
                     "action_mask":np.ndarray(shape=(len(legal_moves)),buffer=np.array(legal_moves),dtype=np.int8)
-                }
+                } """
+        return np.stack(self.spazio[agent])
        
 
     def close(self):
@@ -193,13 +185,13 @@ class raw_env(AECEnv):
     def reset(self, seed=None, options=None):
         
         # PER LA LOGICA
-        self.spazio = {
+        """ self.spazio = {
             agente:[False,False,False]
             for agente in self.possible_agents
-        }
-        """ self.spazio = {}
-        self.spazio[self.possible_agents[0]] = [False,False,False]
-        self.spazio[self.possible_agents[1]] = [False,False,False,False] """
+        } """
+        self.spazio = {}
+        self.spazio[self.possible_agents[0]] = [False,False]
+        self.spazio[self.possible_agents[1]] = [False,False,False]
         
         self.agents = self.possible_agents[:]
         self.rewards = {agent: 0 for agent in self.agents}
