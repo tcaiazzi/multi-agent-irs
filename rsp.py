@@ -9,16 +9,16 @@ from pettingzoo.utils import agent_selector, wrappers
 
 from prePost import doAction
 
-# DIFENSORE
-# 7 ATTACCHI (possibili in corso)-> NELL'OBSERVATION [0-1] FLOAT
+# DIFENSORE / ATTACCANTE
+# difensore: 7 ATTACCHI (possibili in corso)-> NELL'OBSERVATION [0-1] FLOAT
+# ataccante: 7 ATTACCHI CON PROBABILITÀ DI ESEGUIRLI
 # 14 ATTRIBUTI -> IN LOGICA, ANCHE PERCHE NON TUTTI STESSO TIPO
 # TERMINATION -> 7 ATTACHI PIÙ BASSI RISPETTO A QUALCOSA... 
 # OGNI AZIONE MI MODIFICA LA LOGICA
 # REWARD RISPETTO ALL'AZIONE
 
 # ATTACCANTE (?) 
-# non so se posso codificarlo in maniera diversa rispetto al difensore
-# forse basta che i ritorni siano uguali
+# OBSERVATION SPACES E ACTION SPACES MUST BE  IDENTICAL !!!
 
 
 def env(render_mode=None):
@@ -78,6 +78,9 @@ class raw_env(AECEnv):
             agent: [False,False,False]
             for agent in self.possible_agents
         }
+        """ self.spazio = {}
+        self.spazio[self.possible_agents[0]] = [False,False,False]
+        self.spazio[self.possible_agents[1]] = [False,False,False,False] """
         print('Spazii:',self.spazio)
 
         # optional: a mapping between agent name and ID
@@ -87,7 +90,10 @@ class raw_env(AECEnv):
 
         # optional: we can define the observation and action spaces here as attributes to be used in their corresponding methods
         # SOLITAMENTE ALGORITMI ACCETTANO TUTTI DISCRETE, 1 VAL 1 MOSSA
-        self._action_spaces = {agent: Discrete(3) for agent in self.possible_agents}
+        self._action_spaces = {}
+        self._action_spaces[self.possible_agents[0]] = Discrete(2)
+        self._action_spaces[self.possible_agents[1]] = Discrete(3)
+        #self._action_spaces = {agent: Discrete(3) for agent in self.possible_agents}
 
         # DEVE ESSERE DELLA STESSA STRUTTURA DEL RITORNO DI observe()
         self._observation_spaces = {
@@ -99,6 +105,19 @@ class raw_env(AECEnv):
             ) 
             for agent in self.possible_agents
         }
+        """ self._observation_spaces = {}
+        self._observation_spaces[self.possible_agents[0]] = Dict(
+                {
+                    "observation": Box(low=0, high=1, shape=(3,), dtype=bool),
+                    "action_mask": Box(low=0, high=1, shape=(3,), dtype=np.int8),
+                }
+            )
+        self._observation_spaces[self.possible_agents[1]] = Dict(
+                {
+                    "observation": Box(low=0, high=1, shape=(4,), dtype=bool),
+                    "action_mask": Box(low=0, high=1, shape=(4,), dtype=np.int8),
+                }
+            ) """
         self.render_mode = render_mode
 
     # Observation space should be defined here.
@@ -178,6 +197,9 @@ class raw_env(AECEnv):
             agente:[False,False,False]
             for agente in self.possible_agents
         }
+        """ self.spazio = {}
+        self.spazio[self.possible_agents[0]] = [False,False,False]
+        self.spazio[self.possible_agents[1]] = [False,False,False,False] """
         
         self.agents = self.possible_agents[:]
         self.rewards = {agent: 0 for agent in self.agents}
