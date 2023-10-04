@@ -41,11 +41,16 @@ from supersuit.multiagent_wrappers import pad_action_space_v0,pad_observations_v
 """ actions = sys.argv[1]
 variables = sys.argv[2] """
 
+# NEI RESULT TROVIAMO:
+# episode_length NUMERO DEI TURNI PRIMA DELLA TERMINAZIONE (1 OLO ATTACCANTE 2 ATTACCANTE+DIFENSORE ...)
+# policy_*_reward METTE SOLO LE REWARD OTTENUTE DALL'AGENTE QUANDO VINCE
+# episode_reward È LA SOMMA DELLE REWARD ATTACCANTE E DIFENSORE (AD OGNI TURNO NE VINCE UNO SOLO)
+
 torch, nn = try_import_torch()
 
 stop = {
         # epoche/passi dopo le quali il training si arresta
-        "training_iteration": 10,
+        "training_iteration": 5,
 
         # passi ambientali dell'agente nell'ambiente
         # ci sarebbe un minimo di 200
@@ -81,6 +86,7 @@ check_env(test_env)
 # RMSProp otimizer
 # CNN + LSTM + vaniglia
 # lr nel training; default 0.0005
+
 """ config = ImpalaConfig().environment(env_name,disable_env_checking=True).resources(num_gpus=1).framework("torch").multi_agent(
         policies={
             "attaccante": (None, obs_space, act_space, {}),
@@ -95,10 +101,10 @@ print(results)  """
 
 ############################################## APEX-DQN #####################################
 
-""" config = (
+config = (
     ApexDQNConfig()
     .environment(env=env_name)
-    .resources()
+    .resources(num_gpus=1)
     .rollouts(num_rollout_workers=1, rollout_fragment_length=30)
     .training(
         train_batch_size=200,
@@ -134,11 +140,11 @@ results = tune.run(
     checkpoint_freq=10,
     config=config.to_dict(),
 )
-print(results.results) """
+print(results.results)
 
 ################################################## DQN ######################################
 
-config = (
+""" config = (
     DQNConfig()
     .environment(env=env_name)
     .resources()
@@ -178,10 +184,11 @@ results = tune.run(
     checkpoint_freq=10,
     config=config.to_dict(),
 )
-print(results.results)
+print(results.results) """
 
 ############################################### PG #########################################
 #defaul lr = 0.0004
+
 """ config = PGConfig().environment(env_name,disable_env_checking=True).resources().framework("torch").multi_agent(
         policies={
             "attaccante": (None, obs_space, act_space, {}),
@@ -196,10 +203,9 @@ results = tune.Tuner(
     ).fit()
 print(results) """
 
-
-
 ################################################# PPO ############################################à
 # default lr = 5e-5
+
 """ config = PPOConfig().environment(env_name,disable_env_checking=True).resources().framework("torch").multi_agent(
         policies={
             "attaccante": (None, obs_space, act_space, {}),
@@ -211,8 +217,6 @@ results = tune.Tuner(
         "PPO", param_space=config, run_config=air.RunConfig(stop=stop, verbose=1)
     ).fit()
 print(results) """
-
-
 
 ############################################ RANDOM #####################################
 
