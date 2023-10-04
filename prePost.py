@@ -2,31 +2,23 @@
 def doAction(action,spazio,agent):
     # mossa 0
     if agent == 'difensore':
-        if action == 0:
+        if 0 <= action <= 13:
             spazio['difensore'][action]=True
-        # mossa 1
-        elif action == 1:
-            spazio['difensore'][action]=True
-        # mossa 2
-        elif action == 2:
-            spazio['difensore'][action]=True
-        elif action == 3:
-            spazio['difensore'][0]=True
-            spazio['difensore'][1]=True
-            spazio['difensore'][2]=True
-            spazio['difensore'][action]=True
+        """ elif action == 13:
+            for i in range(14):
+                spazio['difensore'][i]=True """
+    
     elif agent == 'attaccante':
-        if action == 0:
+        if 1 <= action <=5:
             spazio['difensore'][action]=False
         # mossa 1
-        elif action == 1:
-            spazio['difensore'][action]=False
-        # mossa 2
-        elif action == 2:
-            spazio['difensore'][0]=False
-            spazio['difensore'][1]=False
-            spazio['difensore'][action]=False
-            spazio['difensore'][3]=False
+        elif action == 6 :
+            for i in range(6,14):
+                spazio['difensore'][i]=False
+        elif action == 0 :
+            for i in range(0,6):
+                spazio['difensore'][i]=False
+
     return spazio
 
 
@@ -35,15 +27,29 @@ def calcola(action,agent):
     # per la funzione di reward
     REWARD_MAP = {
         'attaccante':{
-            0 : (1, 1, 1),
-            1 : (1, 1, 1),
-            2 : (20, 20, 20),
+            0 : (100,100,100),
+            1 : (1,1,1),
+            2 : (1,1,1),
+            3 : (1,1,1),
+            4 : (1,1,1),
+            5 : (1,1,1),
+            6 : (100, 100, 100),
             },
         'difensore':{
-            0 : (1, 1, 1),
-            1 : (1, 1, 1),
-            2 : (1, 1, 1),
-            3 : (20, 20, 20)
+            0 : (1,1,1),
+            1 : (1,1,1),
+            2 : (1,1,1),
+            3 : (1,1,1),
+            4 : (1,1,1),
+            5 : (1,1,1),
+            6 : (1,1,1),
+            7 : (1,1,1),
+            8 : (1,1,1),
+            9 : (1,1,1),
+            10 : (1,1,1),
+            11 : (1,1,1),
+            12 : (1,1,1),
+            13 : (1,1,1),
             }
         }
     wt = 0.5
@@ -65,16 +71,20 @@ def reward(agent,spazio,action):
     if agent == 'difensore':
         if spazio[agent][action] == False:
             reward = calcola(action,agent)
+
     elif agent == 'attaccante':
-        if spazio['difensore'][action] == True:
+        if action == 6:
+            reward = calcola(action,agent)
+        elif spazio['difensore'][action] == True:
             reward = calcola(action,agent)
     # LA  REWARD LA OTTIENE QUANDO VINCE
     """ if action == 2 and agent == 'attaccante':
-        reward = calcola(action)
+        reward = calcola(action,agent)
     elif action ==3 and agent == 'difensore':
-        reward = calcola(action) """
+        reward = calcola(action,agent) """
     print('Reward:',reward)
     return reward
+
 
 # CONTROLLA LO STATE PER TERMINAR EO MENO
 def terminationPartita(val,spazio):

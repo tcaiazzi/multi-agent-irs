@@ -50,7 +50,7 @@ torch, nn = try_import_torch()
 
 stop = {
         # epoche/passi dopo le quali il training si arresta
-        "training_iteration": 5,
+        "training_iteration": 10,
 
         # passi ambientali dell'agente nell'ambiente
         # ci sarebbe un minimo di 200
@@ -73,9 +73,9 @@ def env_creator():
 
 env_name = "rsp"
 #register_env(env_name, lambda config: PettingZooEnv(pad_observations_v0(pad_action_space_v0(env_creator()))))
-register_env(env_name, lambda config: PettingZooEnv(pad_action_space_v0(env_creator())))
+register_env(env_name, lambda config: PettingZooEnv(pad_observations_v0(pad_action_space_v0(env_creator()))))
 
-test_env = PettingZooEnv(pad_action_space_v0(env_creator()))
+test_env = PettingZooEnv(pad_observations_v0(pad_action_space_v0(env_creator())))
 obs_space = test_env.observation_space
 act_space = test_env.action_space
 
@@ -101,7 +101,7 @@ print(results)  """
 
 ############################################## APEX-DQN #####################################
 
-config = (
+""" config = (
     ApexDQNConfig()
     .environment(env=env_name)
     .resources(num_gpus=1)
@@ -140,7 +140,7 @@ results = tune.run(
     checkpoint_freq=10,
     config=config.to_dict(),
 )
-print(results.results)
+print(results.results) """
 
 ################################################## DQN ######################################
 
@@ -189,30 +189,30 @@ print(results.results) """
 ############################################### PG #########################################
 #defaul lr = 0.0004
 
-""" config = PGConfig().environment(env_name,disable_env_checking=True).resources().framework("torch").multi_agent(
+config = PGConfig().environment(env_name,disable_env_checking=True).resources().framework("torch").multi_agent(
         policies={
             "attaccante": (None, obs_space, act_space, {}),
             "difensore": (None, obs_space, act_space, {}),
         },
         policy_mapping_fn=(lambda agent_id, *args, **kwargs: agent_id),
-    ).training(lr=0.04)
+    ).training(lr=0.0004)
 results = tune.Tuner(
         "PG",
         param_space=config, 
         run_config=air.RunConfig(stop=stop, verbose=1)
     ).fit()
-print(results) """
+print(results)
 
 ################################################# PPO ############################################à
 # default lr = 5e-5
 
-""" config = PPOConfig().environment(env_name,disable_env_checking=True).resources().framework("torch").multi_agent(
+""" config = PPOConfig().environment(env_name,disable_env_checking=True).resources(num_gpus=1).framework("torch").multi_agent(
         policies={
             "attaccante": (None, obs_space, act_space, {}),
             "difensore": (None, obs_space, act_space, {}),
         },
         policy_mapping_fn=(lambda agent_id, *args, **kwargs: agent_id),
-    ).training(lr=0.1)
+    ).training()
 results = tune.Tuner(
         "PPO", param_space=config, run_config=air.RunConfig(stop=stop, verbose=1)
     ).fit()
