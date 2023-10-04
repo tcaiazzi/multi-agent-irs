@@ -33,6 +33,7 @@ from ray.rllib.algorithms.impala import ImpalaConfig
 from stable_baselines3 import DQN
 import gymnasium as gym
 from ray.rllib.algorithms.ppo import PPOConfig
+from ray.rllib.algorithms.apex_dqn.apex_dqn import ApexDQNConfig
 import sys
 # SERVE PER AVERE LO SPAZIO DELLE AZIONI DI DIMENSIONI DIVERSE
 from supersuit.multiagent_wrappers import pad_action_space_v0,pad_observations_v0
@@ -44,7 +45,7 @@ torch, nn = try_import_torch()
 
 stop = {
         # epoche/passi dopo le quali il training si arresta
-        "training_iteration": 1,
+        "training_iteration": 10,
 
         # passi ambientali dell'agente nell'ambiente
         # ci sarebbe un minimo di 200
@@ -66,9 +67,10 @@ def env_creator():
         return env
 
 env_name = "rsp"
-register_env(env_name, lambda config: PettingZooEnv(pad_observations_v0(pad_action_space_v0(env_creator()))))
+#register_env(env_name, lambda config: PettingZooEnv(pad_observations_v0(pad_action_space_v0(env_creator()))))
+register_env(env_name, lambda config: PettingZooEnv(pad_action_space_v0(env_creator())))
 
-test_env = PettingZooEnv(pad_observations_v0(pad_action_space_v0(env_creator())))
+test_env = PettingZooEnv(pad_action_space_v0(env_creator()))
 obs_space = test_env.observation_space
 act_space = test_env.action_space
 
@@ -79,7 +81,7 @@ check_env(test_env)
 # RMSProp otimizer
 # CNN + LSTM + vaniglia
 # lr nel training; default 0.0005
-""" config = ImpalaConfig().environment(env_name,disable_env_checking=True).resources().framework("torch").multi_agent(
+""" config = ImpalaConfig().environment(env_name,disable_env_checking=True).resources(num_gpus=1).framework("torch").multi_agent(
         policies={
             "attaccante": (None, obs_space, act_space, {}),
             "difensore": (None, obs_space, act_space, {}),
@@ -90,6 +92,49 @@ results = tune.Tuner(
         "IMPALA", param_space=config, run_config=air.RunConfig(stop=stop, verbose=1)
     ).fit() 
 print(results)  """
+
+############################################## APEX-DQN #####################################
+
+""" config = (
+    ApexDQNConfig()
+    .environment(env=env_name)
+    .resources()
+    .rollouts(num_rollout_workers=1, rollout_fragment_length=30)
+    .training(
+        train_batch_size=200,
+        hiddens=[],
+        dueling=False,
+        #model={"custom_model": "pa_model"},
+    )
+    .multi_agent(
+        policies={
+            "attaccante": (None, obs_space, act_space, {}),
+            "difensore": (None, obs_space, act_space, {}),
+        },
+        policy_mapping_fn=(lambda agent_id, *args, **kwargs: agent_id),
+    )
+    .debugging(
+        log_level="DEBUG"
+    )  # TODO: change to ERROR to match pistonball example
+    .framework(framework="torch")
+    .exploration(
+        exploration_config={
+            # The Exploration class to use.
+            "type": "EpsilonGreedy",
+            # Config for the Exploration class' constructor:
+            "initial_epsilon": 0.1,
+            "final_epsilon": 0.0,
+            "epsilon_timesteps": 100000,  # Timesteps over which to anneal epsilon.
+        }
+    )
+)
+results = tune.run(
+    "APEX",
+    stop=stop,
+    checkpoint_freq=10,
+    config=config.to_dict(),
+)
+print(results.results) """
 
 ################################################## DQN ######################################
 
@@ -143,16 +188,14 @@ print(results.results)
             "difensore": (None, obs_space, act_space, {}),
         },
         policy_mapping_fn=(lambda agent_id, *args, **kwargs: agent_id),
-    )
-print('Training...')
-trained = config.training()
-print(trained.fake_sampler)
-print('Validate...')
-trained.validate()
+    ).training(lr=0.04)
 results = tune.Tuner(
-        "PG", param_space=config, run_config=air.RunConfig(stop=stop, verbose=1)
+        "PG",
+        param_space=config, 
+        run_config=air.RunConfig(stop=stop, verbose=1)
     ).fit()
 print(results) """
+
 
 
 ################################################# PPO ############################################à
@@ -167,8 +210,8 @@ print(results) """
 results = tune.Tuner(
         "PPO", param_space=config, run_config=air.RunConfig(stop=stop, verbose=1)
     ).fit()
-print(results)
- """
+print(results) """
+
 
 
 ############################################ RANDOM #####################################

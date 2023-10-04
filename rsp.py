@@ -73,7 +73,7 @@ class raw_env(AECEnv):
             for agent in self.possible_agents
         } """
         self.spazio = {}
-        self.spazio[self.possible_agents[0]] = [False,False,False]
+        self.spazio[self.possible_agents[0]] = [False,False,False,False]
         self.spazio[self.possible_agents[1]] = [True,False,True,False]
         print('Spazii:',self.spazio)
 
@@ -100,7 +100,7 @@ class raw_env(AECEnv):
             for agent in self.possible_agents
         } """
         self._observation_spaces = {}
-        self._observation_spaces[self.possible_agents[0]] = Box(low=0, high=1, shape=(3,), dtype=bool)
+        self._observation_spaces[self.possible_agents[0]] = Box(low=0, high=1, shape=(4,), dtype=bool)
         self._observation_spaces[self.possible_agents[1]] = Box(low=0, high=1, shape=(4,), dtype=bool)
                     
         self.render_mode = render_mode
@@ -150,7 +150,9 @@ class raw_env(AECEnv):
                     "observation":np.stack(self.spazio[agent]),
                     "action_mask":np.ndarray(shape=(len(legal_moves)),buffer=np.array(legal_moves),dtype=np.int8)
                 } """
-        return np.stack(self.spazio[agent])
+        # SIA ALL'ATTACCANTE CHE AL DIFENSORE STO FACENDO TORNARE LO STESSO SPAZIO COSÌ CHE
+        # NE SIA PRESENTE UNO UNICO CONDIVISO E NON DUE REPLICATI
+        return np.stack(self.spazio['difensore'])
        
 
     def close(self):
@@ -197,6 +199,7 @@ class raw_env(AECEnv):
             or self.truncations[self.agent_selection]
         ):
             print('Action dead:',action)
+            print('Rewards dead:',self.rewards)
             self._was_dead_step(action)
             return
         
@@ -210,8 +213,22 @@ class raw_env(AECEnv):
 
         #################### REWARD ########################
 
-        self.rewards[agent] = reward(agent,self.spazio,action)
-
+        # SI INFLUENZANO LE REWARD A VICENDA
+        rw = reward(agent,self.spazio,action)
+        self.rewards[agent] = rw
+        # PER NON MANDARE LA REWARD TOTALE NEGATIVA
+        if agent == 'attaccante':
+            self.rewards[agent] = rw
+            if self.rewards['difensore'] >= rw:
+                self.rewards['difensore'] = (-rw)
+            else:
+                self.rewards['difensore'] = (-self.rewards['difensore'])
+        elif agent == 'difensore':
+            self.rewards[agent] = rw
+            if self.rewards['attaccante'] >= rw:
+                self.rewards['attaccante'] = (-rw)
+            else:
+                self.rewards['attaccante'] = (-self.rewards['attaccante'])         
 
         ######################## PRE/POST condizioni ############
 
@@ -232,8 +249,8 @@ class raw_env(AECEnv):
             agent: val for agent in self.agents
         }
 
-        
-        self._cumulative_rewards[agent] = 0
+        # PERCHÈ L'AVEVANO MESSA?? SE LA METTO AD OGNI ROUND MI SI AZZERA
+        #self._cumulative_rewards[agent] = 0
         print('Num Mosse:',self.num_moves)
         print('Truncation:',self.truncations)
         print('Termination:',self.terminations)
