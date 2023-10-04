@@ -35,11 +35,23 @@ import gymnasium as gym
 from ray.rllib.algorithms.ppo import PPOConfig
 from ray.rllib.algorithms.apex_dqn.apex_dqn import ApexDQNConfig
 import sys
+
 # SERVE PER AVERE LO SPAZIO DELLE AZIONI DI DIMENSIONI DIVERSE
 from supersuit.multiagent_wrappers import pad_action_space_v0,pad_observations_v0
 
-""" actions = sys.argv[1]
-variables = sys.argv[2] """
+
+# prendo parametri in input
+# AZIONI NON AUMENTABILI AUTOMATICAMENTE PERCHE COME CODIFICO IL SUO COMPORTAMENTO? ERRORE QUANDO SELEZIONA QUELLA MOSSA
+# SPAZIO DELLE OSSERVAZIONI ANCHE, POTREBBE NON GIUNGERE PIU ALL'ARRESTO PERCHÈ LE AZIONI NON LO MODIFICANO
+# GLI AGENTI POTREI (da pensare)
+if len(sys.argv) == 4:
+    lr = sys.argv[1]
+    n_mosse = sys.argv[2] 
+    n_iterazioni = sys.argv[3]
+    print('lr:',lr)
+    print('n_mosse:',n_mosse)
+    print('n_iterazioni:',n_iterazioni)
+
 
 # NEI RESULT TROVIAMO:
 # episode_length NUMERO DEI TURNI PRIMA DELLA TERMINAZIONE (1 OLO ATTACCANTE 2 ATTACCANTE+DIFENSORE ...)
@@ -189,7 +201,7 @@ print(results.results) """
 ############################################### PG #########################################
 #defaul lr = 0.0004
 
-config = PGConfig().environment(env_name,disable_env_checking=True).resources().framework("torch").multi_agent(
+""" config = PGConfig().environment(env_name,disable_env_checking=True).resources().framework("torch").multi_agent(
         policies={
             "attaccante": (None, obs_space, act_space, {}),
             "difensore": (None, obs_space, act_space, {}),
@@ -201,7 +213,7 @@ results = tune.Tuner(
         param_space=config, 
         run_config=air.RunConfig(stop=stop, verbose=1)
     ).fit()
-print(results)
+print(results) """
 
 ################################################# PPO ############################################à
 # default lr = 5e-5
