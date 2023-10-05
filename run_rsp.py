@@ -62,7 +62,7 @@ torch, nn = try_import_torch()
 
 stop = {
         # epoche/passi dopo le quali il training si arresta
-        "training_iteration": 100,
+        "training_iteration": 5,
 
         # passi ambientali dell'agente nell'ambiente
         # ci sarebbe un minimo di 200
@@ -156,7 +156,7 @@ print(results.results) """
 
 ################################################## DQN ######################################
 
-""" config = (
+config = (
     DQNConfig()
     .environment(env=env_name)
     .resources()
@@ -196,12 +196,12 @@ results = tune.run(
     checkpoint_freq=10,
     config=config.to_dict(),
 )
-print(results.results) """
+print(results.results)
 
 ############################################### PG #########################################
 #defaul lr = 0.0004
 
-config = PGConfig().environment(env_name,disable_env_checking=True).resources().framework("torch").multi_agent(
+""" config = PGConfig().environment(env_name,disable_env_checking=True).resources().framework("torch").multi_agent(
         policies={
             "attaccante": (None, obs_space, act_space, {}),
             "difensore": (None, obs_space, act_space, {}),
@@ -213,7 +213,7 @@ results = tune.Tuner(
         param_space=config, 
         run_config=air.RunConfig(stop=stop, verbose=1)
     ).fit()
-print(results)
+print(results) """
 
 ################################################# PPO ############################################à
 # default lr = 5e-5

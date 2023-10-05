@@ -1,6 +1,13 @@
+# qui per ogni partita mette numero di mosse fatte e le cumulative reward finali di quella partita
 reward_mosse = {
     'attaccante':[],
     'difensore':[]
+}
+
+# qui mette tutte le reward di ogni partita, le cumulative reward, ovvero i contatori
+curva_partita = {
+    'attaccante': [],
+    'difensore':[],
 }
 
 # APPLICA L'AZIONE ALLA SPOZIO 'LOGICA'
@@ -115,6 +122,3 @@ def terminationPartita(val,spazio):
             val = True
     return val
 
-
-def printRewardMosse():
-    print(reward_mosse)

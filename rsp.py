@@ -7,7 +7,7 @@ from gymnasium.spaces import Discrete,Box,Dict
 from pettingzoo import AECEnv
 from pettingzoo.utils import agent_selector, wrappers
 
-from prePost import doAction,reward,terminationPartita,reward_mosse,printRewardMosse
+from prePost import doAction,reward,terminationPartita,reward_mosse,curva_partita
 
 # 7 attacchi (pscan,pvsftpd,psmbd,pphpcgi,pircd,pdistccd,prmi) hanno una probabilità con tui il difensore lo valuta
 # 0 < T1 < T2 < 1 e p < T1 rumore, T1 < p < T2 possibile attacco (prevenzione), p > T2 attacco by IDS (contromisure),
@@ -32,6 +32,7 @@ from prePost import doAction,reward,terminationPartita,reward_mosse,printRewardM
 # PERCHE TUTTI FALSE UN SOLO TRUE, L'ATTACCANTE SCEGLIE SEMPRE LA MOSSA DOVE HA GIA FALSE, E AD OGNI SUO TURNO
 # SCEGLIE UNA MOSSA BUONA CHE GLI CAMBIA UNA VARIABILE, 
 # CREDO CHE PERDA SEMPRE PER QUESTO MOTIVO, OTTIENE PIU REWARD SE RESISTE PIUTTOSTO CHE VINCERE)
+
 
 
 def env(render_mode=None):
@@ -217,11 +218,17 @@ class raw_env(AECEnv):
             self.terminations[self.agent_selection]
             #or self.truncations[self.agent_selection]
         ):
+            # DI OGNI PARTITA SALVO LE REWARD OTTENUTE TOTALI E IL NUMERO DI MOSSE ASSOCIATE
             reward_mosse[self.agent_selection].append((self.num_moves,self._cumulative_rewards[self.agent_selection]))
-            #print(reward_mosse)
+            
+            # SALVOLE INFO NEI FILE
             file_uno = open("/home/matteo/Documenti/GitHub/tesiMagistrale/reward_mosse.txt", "w")
+            file_due = open("/home/matteo/Documenti/GitHub/tesiMagistrale/curva_partita.txt", "w")
             file_uno.write(str(reward_mosse))
+            file_due.write(str(curva_partita))
             file_uno.close()
+            file_due.close()
+            
             print('Action dead:',action)
             print('Rewards dead:',self._cumulative_rewards)
             self._was_dead_step(action)
@@ -299,6 +306,12 @@ class raw_env(AECEnv):
         else:
             self.rewards['attaccante'] = -self._cumulative_rewards['attaccante']
             self.rewards['difensore'] = -self._cumulative_rewards['difensore'] """
+        
+        # SALVE TUTTE LE REWARD CUMULATIVE DI TUTTE LE PARTITE
+        curva_partita['attaccante'].append((self.num_moves,self._cumulative_rewards['attaccante']))
+        curva_partita['difensore'].append((self.num_moves,self._cumulative_rewards['difensore']))
+
+
         self._accumulate_rewards()
 
         # PERCHÈ L'AVEVANO MESSA?? SE LA METTO AD OGNI ROUND MI SI AZZERA
