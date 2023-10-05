@@ -1,3 +1,8 @@
+reward_mosse = {
+    'attaccante':[],
+    'difensore':[]
+}
+
 # APPLICA L'AZIONE ALLA SPOZIO 'LOGICA'
 def doAction(action,spazio,agent):
     # mossa 0
@@ -27,13 +32,13 @@ def calcola(action,agent):
     # per la funzione di reward
     REWARD_MAP = {
         'attaccante':{
-            0 : (100,100,100),
+            0 : (10,10,10),
             1 : (1,1,1),
             2 : (1,1,1),
             3 : (1,1,1),
             4 : (1,1,1),
             5 : (1,1,1),
-            6 : (100, 100, 100),
+            6 : (10, 10, 10),
             },
         'difensore':{
             0 : (1,1,1),
@@ -69,19 +74,31 @@ def reward(agent,spazio,action):
     # CHE ABBIA BISOGNO SOLO DI PIÙ ADDESTRAMENTO PERCHÈ CON PG VA BENE
     reward = 0
     if agent == 'difensore':
+        # IL DIFENSORE OTTIENE LA REWARD SOLO QUANDO È FALSE, OVVERO PUÒ ACCENDERE, QUINDI LA MOSSA HA EFFETTO
         if spazio[agent][action] == False:
             reward = calcola(action,agent)
 
     elif agent == 'attaccante':
+        # L'AZIONE 6 MI SWITCHA GLI ELEMENTI DA 6 A 14 DA TRUE A FALSE
         if action == 6:
-            reward = calcola(action,agent)
+            app = []
+            # VEDO CHE NON SIANO TUTTI FALSE ALTRIMENTI NIENTE RICOMPENSA
+            for i in range(6,14):
+                app.append(not(spazio['difensore'][i]))
+            if not(all(app)):
+                reward = calcola(action,agent)
+        # L'AZIONE 0 MI SWITCHA GLI ELEMENTI DA 0 A 6 DA TRUE A FALSE
+        if action == 0:
+            app = []
+            # VEDO CHE NON SIANO TUTTI FALSE ALTRIMENTI NIENTE RICOMPENSA
+            for i in range(0,6):
+                app.append(not(spazio['difensore'][i]))
+            if not(all(app)):
+                reward = calcola(action,agent)
+        # PER QUALUNQUE ALTRA MOSSA DELL'ATTACCANTE MI CAMBIA SOLO 1 POSIZIONE
         elif spazio['difensore'][action] == True:
             reward = calcola(action,agent)
-    # LA  REWARD LA OTTIENE QUANDO VINCE
-    """ if action == 2 and agent == 'attaccante':
-        reward = calcola(action,agent)
-    elif action ==3 and agent == 'difensore':
-        reward = calcola(action,agent) """
+    
     print('Reward:',reward)
     return reward
 
@@ -97,3 +114,7 @@ def terminationPartita(val,spazio):
         if all(check):
             val = True
     return val
+
+
+def printRewardMosse():
+    print(reward_mosse)

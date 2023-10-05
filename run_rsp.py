@@ -62,7 +62,7 @@ torch, nn = try_import_torch()
 
 stop = {
         # epoche/passi dopo le quali il training si arresta
-        "training_iteration": 10,
+        "training_iteration": 100,
 
         # passi ambientali dell'agente nell'ambiente
         # ci sarebbe un minimo di 200
@@ -201,19 +201,19 @@ print(results.results) """
 ############################################### PG #########################################
 #defaul lr = 0.0004
 
-""" config = PGConfig().environment(env_name,disable_env_checking=True).resources().framework("torch").multi_agent(
+config = PGConfig().environment(env_name,disable_env_checking=True).resources().framework("torch").multi_agent(
         policies={
             "attaccante": (None, obs_space, act_space, {}),
             "difensore": (None, obs_space, act_space, {}),
         },
         policy_mapping_fn=(lambda agent_id, *args, **kwargs: agent_id),
-    ).training(lr=0.0004)
+    ).training()
 results = tune.Tuner(
         "PG",
         param_space=config, 
         run_config=air.RunConfig(stop=stop, verbose=1)
     ).fit()
-print(results) """
+print(results)
 
 ################################################# PPO ############################################à
 # default lr = 5e-5

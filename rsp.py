@@ -7,7 +7,7 @@ from gymnasium.spaces import Discrete,Box,Dict
 from pettingzoo import AECEnv
 from pettingzoo.utils import agent_selector, wrappers
 
-from prePost import doAction,reward,terminationPartita
+from prePost import doAction,reward,terminationPartita,reward_mosse,printRewardMosse
 
 # 7 attacchi (pscan,pvsftpd,psmbd,pphpcgi,pircd,pdistccd,prmi) hanno una probabilità con tui il difensore lo valuta
 # 0 < T1 < T2 < 1 e p < T1 rumore, T1 < p < T2 possibile attacco (prevenzione), p > T2 attacco by IDS (contromisure),
@@ -19,25 +19,19 @@ from prePost import doAction,reward,terminationPartita
 # ATTACCANTE 
 # azioni : 7 (come gli attacchi)
 # lo spazio monitora quello del difensore
-# VINCE: per semplicità metto per ora che 1 mossa VINCE tutto
+# VINCE: per semplicità metto per ora che 2 mossE PER FARE BINGO
 
 # DIFENSORE
 # azioni : 14 (sono dippiù perche 1 azioni può modificare più variabili ma per ora facciamo 1 azione 1 variabile)
 # 14 attributi -> observation (nel paper non tutti true/false per ora 14 bool)
-# VINCE: quando spazio tutti TRUE
+# VINCE: quando spazio TUTTI TRE, MA PUNTA A NON MORIRE
 
-# OLD
-#ATTACCANTE:
-#   mossa 0 spazio[difensore][0] True->False
-#   mossa 1 spazio[difensore][1] True->False
-#   mossa 2 spazio[difensore][0,1,2 e 3] True->False
-# Difensore:
-#   mossa 0 spazio[difensore][0] False->True
-#   mossa 1 spazio[difensore][1] False->True
-#   mossa 2 spazio[difensore][2] False->True
-#   mossa 3 spazio[difensore][0,1, 2 e 3] False->True 
-# termna o difensore tutti true o tutti false
-# partenza difensore mista
+# L'OTTIMO PER IL DIFENSORE E FAR SALIRE SEMPRE LA REWARD PERCHE NON MUORE E RIESCE SEMPRE A DIFENDERSI
+# L'ATTACCANTE DEVE TROVARE SUBITO LA COMBO VINCENTE (2 MOSSE REWARD 45, SENNO SUBISCE LE PENALITÀ DEL DIFENSORE
+# E LE SUE REWARD DIMINUISCONO COL TEMPO, PERCHÈ SE IL DIFENSORE NEL CASO OTTIMO IN AL PIÙ 13 MOSSE VINCEREBBE
+# PERCHE TUTTI FALSE UN SOLO TRUE, L'ATTACCANTE SCEGLIE SEMPRE LA MOSSA DOVE HA GIA FALSE, E AD OGNI SUO TURNO
+# SCEGLIE UNA MOSSA BUONA CHE GLI CAMBIA UNA VARIABILE, 
+# CREDO CHE PERDA SEMPRE PER QUESTO MOTIVO, OTTIENE PIU REWARD SE RESISTE PIUTTOSTO CHE VINCERE)
 
 
 def env(render_mode=None):
@@ -221,12 +215,18 @@ class raw_env(AECEnv):
     def step(self, action):
         if (
             self.terminations[self.agent_selection]
-            or self.truncations[self.agent_selection]
+            #or self.truncations[self.agent_selection]
         ):
+            reward_mosse[self.agent_selection].append((self.num_moves,self._cumulative_rewards[self.agent_selection]))
+            #print(reward_mosse)
+            file_uno = open("/home/matteo/Documenti/GitHub/tesiMagistrale/reward_mosse.txt", "w")
+            file_uno.write(str(reward_mosse))
+            file_uno.close()
             print('Action dead:',action)
-            print('Rewards dead:',self.rewards)
+            print('Rewards dead:',self._cumulative_rewards)
             self._was_dead_step(action)
             return
+        
         
         agent = self.agent_selection
         print('Agente in azione:',agent)
@@ -242,8 +242,13 @@ class raw_env(AECEnv):
         rw = reward(agent,self.spazio,action)
         
         # VOLEVO FORZARE A FARLI SCEGLIERE SUBITO LE MOSSE MIGLIORI, PERCHÈ CON L'AUMENTARE DI MOSSE MENO REWARD
-        if self.num_moves > 0:
-            rw = int(rw/ (self.num_moves*2))
+        # PERÒ SOLO PER L'ATTCCANTE, PERCHÈ DEVE SBRIGARSI PRIMA CHE IL DIFENSORE LE BLOCCHI TUTTE
+        # PER IL DIFENSORE DATO CHE NON HA UNA SUPER MOSSA BASTA CHE NEL TEMPO NON PRENDA MOSSE INEFFICIENTI
+        if agent == 'attaccante':
+            if self.num_moves > 0:
+                rw = rw/ (self.num_moves)
+        else:
+            rw = rw
                  
         self.rewards[agent] = rw
         print('rw:',rw)
@@ -274,26 +279,34 @@ class raw_env(AECEnv):
         # NON POSSONO AVERE VALORI DISCORDI GLI AGENTI delle terminations e troncation
         # Dovrebbe arrestarlo 
         self.num_moves += 1
-        self.truncations = {
+        """ self.truncations = {
             agent: self.num_moves >= self.NUM_ITERS for agent in self.agents
-        }
+        } """
         val = terminationPartita(False,self.spazio)
         self.terminations = {
             agent: val for agent in self.agents
         }
 
         ##################################################################################################
+       
+        # selects the next agent.
+        self.agent_selection = self._agent_selector.next()
+        # Adds .rewards to ._cumulative_rewards
+        # PER FORZA QUI PERCHÈ LE REWARDS SI AZZERA OGNI VOLTA CHE SCAMBIA IL GIOCATORE
+        # ANNULLARE LE REWARD NEL CASO FINISCANO PARI
+        """ if self.num_moves < 100:
+            self._accumulate_rewards()
+        else:
+            self.rewards['attaccante'] = -self._cumulative_rewards['attaccante']
+            self.rewards['difensore'] = -self._cumulative_rewards['difensore'] """
+        self._accumulate_rewards()
+
         # PERCHÈ L'AVEVANO MESSA?? SE LA METTO AD OGNI ROUND MI SI AZZERA
         #self._cumulative_rewards[agent] = 0
         print('Num Mosse:',self.num_moves)
         print('Truncation:',self.truncations)
         print('Termination:',self.terminations)
-        print('Accumulative reward:',self._cumulative_rewards)
-
-        # selects the next agent.
-        self.agent_selection = self._agent_selector.next()
-        # Adds .rewards to ._cumulative_rewards
-        self._accumulate_rewards()
-
+        print('reward cumulative:',self._cumulative_rewards)
+        
         if self.render_mode == "human":
             self.render()
