@@ -34,6 +34,8 @@ from stable_baselines3 import DQN
 import gymnasium as gym
 from ray.rllib.algorithms.ppo import PPOConfig
 from ray.rllib.algorithms.apex_dqn.apex_dqn import ApexDQNConfig
+from ray.rllib.algorithms.algorithm import Algorithm
+
 import sys
 
 # SERVE PER AVERE LO SPAZIO DELLE AZIONI DI DIMENSIONI DIVERSE
@@ -62,11 +64,11 @@ torch, nn = try_import_torch()
 
 stop = {
         # epoche/passi dopo le quali il training si arresta
-        "training_iteration": 5,
+        "training_iteration": 1,
 
         # passi ambientali dell'agente nell'ambiente
         # ci sarebbe un minimo di 200
-        #"timesteps_total": 3000,
+        "timesteps_total": 3000,
 
         # ferma il training quando la ricompensa media dell'agente nell'episodio è pari o maggiore
         #"episode_reward_mean": 0.4,
@@ -99,43 +101,42 @@ check_env(test_env)
 # CNN + LSTM + vaniglia
 # lr nel training; default 0.0005
 
-""" config = ImpalaConfig().environment(env_name,disable_env_checking=True).resources(num_gpus=1).framework("torch").multi_agent(
+config = ImpalaConfig().environment(env_name,disable_env_checking=True).resources(num_gpus=1).framework("torch").multi_agent(
         policies={
             "attaccante": (None, obs_space, act_space, {}),
             "difensore": (None, obs_space, act_space, {}),
         },
         policy_mapping_fn=(lambda agent_id, *args, **kwargs: agent_id),
     )
-results = tune.Tuner(
+config['evaluation_interval'] = 1
+config['create_env_on_driver'] = True
+algo = config.build()
+print('TRAINING...')
+algo.train()
+print('EVALUATE...')
+results = algo.evaluate()
+print(results) 
+
+""" results = tune.Tuner(
         "IMPALA", param_space=config, run_config=air.RunConfig(stop=stop, verbose=1)
     ).fit() 
-print(results)  """
-
+ """
 ############################################## APEX-DQN #####################################
 
-""" config = (
-    ApexDQNConfig()
-    .environment(env=env_name)
-    .resources(num_gpus=1)
-    .rollouts(num_rollout_workers=1, rollout_fragment_length=30)
-    .training(
-        train_batch_size=200,
-        hiddens=[],
-        dueling=False,
+""" config = ApexDQNConfig().environment(env=env_name).resources(num_gpus=1).rollouts(
+     num_rollout_workers=1, rollout_fragment_length=30
+     ).training(
+        train_batch_size=200
         #model={"custom_model": "pa_model"},
-    )
-    .multi_agent(
+    ).multi_agent(
         policies={
             "attaccante": (None, obs_space, act_space, {}),
             "difensore": (None, obs_space, act_space, {}),
         },
         policy_mapping_fn=(lambda agent_id, *args, **kwargs: agent_id),
-    )
-    .debugging(
+    ).debugging(
         log_level="DEBUG"
-    )  # TODO: change to ERROR to match pistonball example
-    .framework(framework="torch")
-    .exploration(
+    ).framework(framework="torch").exploration(
         exploration_config={
             # The Exploration class to use.
             "type": "EpsilonGreedy",
@@ -145,40 +146,38 @@ print(results)  """
             "epsilon_timesteps": 100000,  # Timesteps over which to anneal epsilon.
         }
     )
-)
+config['evaluation_interval'] = 1
+config['create_env_on_driver'] = True
+algo = config.build()
+algo.train()
+results = algo.evaluate()
+
+print(results.results) """
+
+""" 
 results = tune.run(
     "APEX",
     stop=stop,
     checkpoint_freq=10,
     config=config.to_dict(),
 )
-print(results.results) """
+ """
 
 ################################################## DQN ######################################
 
-config = (
-    DQNConfig()
-    .environment(env=env_name)
-    .resources()
-    .rollouts(num_rollout_workers=1, rollout_fragment_length=30)
-    .training(
-        train_batch_size=200,
-        hiddens=[],
-        dueling=False,
-        #model={"custom_model": "pa_model"},
-    )
-    .multi_agent(
+""" config = DQNConfig().environment(
+      env=env_name
+      ).resources().rollouts(
+            num_rollout_workers=1, rollout_fragment_length=30
+            ).multi_agent(
         policies={
             "attaccante": (None, obs_space, act_space, {}),
             "difensore": (None, obs_space, act_space, {}),
         },
         policy_mapping_fn=(lambda agent_id, *args, **kwargs: agent_id),
-    )
-    .debugging(
+    ).debugging(
         log_level="DEBUG"
-    )  # TODO: change to ERROR to match pistonball example
-    .framework(framework="torch")
-    .exploration(
+    ).framework(framework="torch").exploration(
         exploration_config={
             # The Exploration class to use.
             "type": "EpsilonGreedy",
@@ -187,16 +186,24 @@ config = (
             "final_epsilon": 0.0,
             "epsilon_timesteps": 100000,  # Timesteps over which to anneal epsilon.
         }
-    )
-)
-results = tune.run(
+    ).training(train_batch_size=200)
+config['evaluation_interval'] = 1
+config['create_env_on_driver'] = True
+algo = config.build()
+print('TRAINING...')
+algo.train()
+print('EVALUATE...')
+results = algo.evaluate()
+print(results.results) """
+
+""" results = tune.run(
     "DQN",
     name="DQN",
     stop=stop,
     checkpoint_freq=10,
     config=config.to_dict(),
 )
-print(results.results)
+ """
 
 ############################################### PG #########################################
 #defaul lr = 0.0004
@@ -208,12 +215,21 @@ print(results.results)
         },
         policy_mapping_fn=(lambda agent_id, *args, **kwargs: agent_id),
     ).training()
-results = tune.Tuner(
+config['evaluation_interval'] = 1
+config['create_env_on_driver'] = True
+algo = config.build()
+print('TRAINING...')
+algo.train()
+print('EVALUATE...')
+results = algo.evaluate(2)
+print(results) """
+
+""" results = tune.Tuner(
         "PG",
         param_space=config, 
         run_config=air.RunConfig(stop=stop, verbose=1)
     ).fit()
-print(results) """
+config.evaluation() """
 
 ################################################# PPO ############################################à
 # default lr = 5e-5
@@ -225,10 +241,20 @@ print(results) """
         },
         policy_mapping_fn=(lambda agent_id, *args, **kwargs: agent_id),
     ).training()
-results = tune.Tuner(
-        "PPO", param_space=config, run_config=air.RunConfig(stop=stop, verbose=1)
-    ).fit()
+config['evaluation_interval'] = 1
+config['create_env_on_driver'] = True
+algo = config.build()
+print('TRAINING...')
+algo.train()
+print('EVALUATE...')
+algo.evaluate()
+results = algo.evaluate(2)
+print('RESULTS')
 print(results) """
+
+""" results = tune.Tuner(
+        "PPO", param_space=config, run_config=air.RunConfig(stop=stop, verbose=1,checkpoint_config=air.CheckpointConfig(checkpoint_at_end=True))
+    ).fit()  """
 
 ############################################ RANDOM #####################################
 
