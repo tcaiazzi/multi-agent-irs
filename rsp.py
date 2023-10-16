@@ -19,12 +19,12 @@ from prePost import doAction,reward,terminationPartita,reward_mosse,curva_partit
 # ATTACCANTE 
 # azioni : 7 (come gli attacchi)
 # lo spazio monitora quello del difensore
-# VINCE: per semplicità metto per ora che 2 mossE PER FARE BINGO
+# VINCE: per semplicità metto per ora che 2 mossE PER FARE BINGO (0 e 6: 0 da 0 a 6 e 6 da 6 a 14)
 
 # DIFENSORE
 # azioni : 14 (sono dippiù perche 1 azioni può modificare più variabili ma per ora facciamo 1 azione 1 variabile)
 # 14 attributi -> observation (nel paper non tutti true/false per ora 14 bool)
-# VINCE: quando spazio TUTTI TRE, MA PUNTA A NON MORIRE
+# VINCE: quando spazio TUTTI TRUE, ma credo che punti a non morire mai
 
 # L'OTTIMO PER IL DIFENSORE E FAR SALIRE SEMPRE LA REWARD PERCHE NON MUORE E RIESCE SEMPRE A DIFENDERSI
 # L'ATTACCANTE DEVE TROVARE SUBITO LA COMBO VINCENTE (2 MOSSE REWARD 45, SENNO SUBISCE LE PENALITÀ DEL DIFENSORE
@@ -79,7 +79,9 @@ class raw_env(AECEnv):
             for agent in self.possible_agents
         } """
         self.spazio = {}
+        # per ora non lo sto usando lo spazio dell'attaccante
         self.spazio[self.possible_agents[0]] = [False]
+        # spazio del difensore monitorato anche dall'attaccante per l'observation dopo un'action
         self.spazio[self.possible_agents[1]] = [True,False,True,False,
                                                 True,False,True,False,
                                                 True,False,True,False,
