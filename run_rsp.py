@@ -212,6 +212,7 @@ print(results.results) """
 ###############################################  IMPALA  ##########################################
 ###################################################################################################
 # Basato sullo Stocasthic gradient discent (SGD)
+# gradiente stimato e non calcolato
 
 """ config = ImpalaConfig().environment(env_name,disable_env_checking=True).resources(num_gpus=1).framework("torch").multi_agent(
         policies={
@@ -282,7 +283,7 @@ config.evaluation() """
 ##################################################################################################
 # Proximal Policy Optimization e fa uso del PG con l'aggiunta di clipped objective function 
 # (penalizzando grandicambiamenti nella policy)
-# PG avanzato
+# PG avanzato piu veloce
 # multiple SGD 
 
 config = PPOConfig().environment(env_name,disable_env_checking=True).resources(num_gpus=1).framework("torch").multi_agent(
@@ -305,7 +306,7 @@ print('TRAINING...')
 algo.train()
 print('EVALUATE...')
 algo.evaluate()
-results = algo.evaluate(2)
+results = algo.evaluate()
 print('RESULTS')
 print(results)
 

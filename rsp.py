@@ -7,7 +7,7 @@ from gymnasium.spaces import Discrete,Box,Dict
 from pettingzoo import AECEnv
 from pettingzoo.utils import agent_selector, wrappers
 
-from prePost import doAction,reward,terminationPartita,reward_mosse,curva_partita
+from prePost import doAction,reward,terminationPartita,reward_mosse,curva_partita,visualizza
 
 # 7 attacchi (pscan,pvsftpd,psmbd,pphpcgi,pircd,pdistccd,prmi) hanno una probabilità con tui il difensore lo valuta
 # 0 < T1 < T2 < 1 e p < T1 rumore, T1 < p < T2 possibile attacco (prevenzione), p > T2 attacco by IDS (contromisure),
@@ -111,11 +111,16 @@ class raw_env(AECEnv):
             for agent in self.possible_agents
         } """
         self._observation_spaces = {}
+        # lo spazio dell'attaccante per ora non viene utilizzato
         self._observation_spaces[self.possible_agents[0]] = Box(low=0, high=1, shape=(1,), dtype=bool)
+        # per entrambi usiamo solo quello del difensore
         self._observation_spaces[self.possible_agents[1]] = Box(low=0, high=1, shape=(14,), dtype=bool)
                     
         self.render_mode = render_mode
 
+
+# SE NON ERRO OBS_SPACE E ACT_SPACE VENGONO UTILIZZATI ALL'INIZIO PER FAR SI CHE LA DEFINIZIONE DI TUTTO QUADRI
+# PERCHÈ REALMENTE NEL CODICE NON VENGONO UTILIZZATI, OBBLIGATORI MA NON UTILIZZATI
     # Observation space should be defined here.
     # lru_cache allows observation and action spaces to be memoized, reducing clock cycles required to get each agent's space.
     # If your spaces change over time, remove this line (disable caching).
@@ -135,6 +140,8 @@ class raw_env(AECEnv):
     def render(self):
         print('')
 
+# INVECE MOLTO IMPORTANTE OBSERVE CHE FA TORNRE L'OSSERVAZIONE IN BASE ALLA MOSSA
+# IN FATTI STO USANDO LA VARIABILE SPAZIO CHE ERA SATATA PROGETTATA PER LA MIA LOGICA INTERNA, IL COMPORTAMENTO
     def observe(self, agent):
         """
         Observe should return the observation of the specified agent. This function
@@ -224,12 +231,13 @@ class raw_env(AECEnv):
             reward_mosse[self.agent_selection].append((self.num_moves,self._cumulative_rewards[self.agent_selection]))
             
             # SALVOLE INFO NEI FILE
-            file_uno = open("/home/matteo/Documenti/GitHub/tesiMagistrale/reward_mosse.txt", "w")
-            file_due = open("/home/matteo/Documenti/GitHub/tesiMagistrale/curva_partita.txt", "w")
-            file_uno.write(str(reward_mosse))
-            file_due.write(str(curva_partita))
-            file_uno.close()
-            file_due.close()
+            visualizza()
+            #file_uno = open("/home/matteo/Documenti/GitHub/tesiMagistrale/reward_mosse.txt", "w")
+            #file_due = open("/home/matteo/Documenti/GitHub/tesiMagistrale/curva_partita.txt", "w")
+            #file_uno.write(str(reward_mosse))
+            #file_due.write(str(curva_partita))
+            #file_uno.close()
+            #file_due.close()
             
             print('Action dead:',action)
             print('Rewards dead:',self._cumulative_rewards)

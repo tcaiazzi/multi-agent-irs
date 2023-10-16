@@ -1,3 +1,6 @@
+from matplotlib import pyplot as plt
+import numpy as np
+
 # qui per ogni partita mette numero di mosse fatte e le cumulative reward finali di quella partita
 reward_mosse = {
     'attaccante':[],
@@ -10,7 +13,82 @@ curva_partita = {
     'difensore':[],
 }
 
-# APPLICA L'AZIONE ALLA SPOZIO 'LOGICA'
+
+def visualizza():
+    # Grafico 1
+    # il numero di mosse fatte nel tempo, per partita
+    a = reward_mosse['attaccante']
+    x = []
+    y = []
+    for i in a :
+        x.append(i[0])
+    plt.figure()
+    plt.ylabel('n mosse')
+    plt.xlabel('t')
+    plt.plot(np.arange(len(x)),x)
+    # plt.show()
+
+    # Grafico 2
+    # reward rispetto al numero di mosse fatte dall'attaccante
+    x = []
+    y = []
+    a.sort()
+    for i in a :
+        x.append(i[0])
+        y.append(i[1])
+    print(len(x))
+    print(len(y))
+    plt.figure()
+    plt.title('PG campioni:'+str(len(x)))
+    plt.ylabel('reward attaccante')
+    plt.xlabel('numero mosse per partita')
+    plt.plot(x,y)
+    # plt.show()
+
+    # Grafico 3
+    # reward rispetto al numero di mosse fatte dal difensore
+    x = []
+    y = []
+    b = reward_mosse['difensore']
+    b.sort()
+    for i in b :
+        x.append(i[0])
+        y.append(i[1])
+    print(len(x))
+    print(len(y))
+    plt.figure()
+    plt.title('PG campioni:'+str(len(x)))
+    plt.ylabel('reward difensore')
+    plt.xlabel('numero mosse per partita')
+    plt.plot(x,y)
+    # plt.show()
+
+    # Grafico 4
+    # insieme di 2 e 3
+    xA = []
+    yA = []
+    xB = []
+    yB = []
+    a.sort()
+    b.sort()
+    for i in range(len(a)) :
+        xA.append(a[i][1])
+        yA.append(a[i][0])
+        xB.append(b[i][1])
+        yB.append(b[i][0])
+    print(len(xA))
+    print(len(xB))
+    plt.figure()
+    plt.title('PG campioni:'+str(len(xA)))
+    plt.ylabel('reward')
+    plt.xlabel('numero mosse per partita')
+    plt.plot(yA,xA)
+    plt.plot(yB,xB)
+    plt.legend(['attaccante','difensore'])
+    #plt.show()
+
+
+# APPLICA L'AZIONE ALLA SPAZIO 'LOGICA'
 def doAction(action,spazio,agent):
     # mossa 0
     if agent == 'difensore':
