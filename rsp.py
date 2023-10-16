@@ -1,5 +1,5 @@
 import functools
-
+import json
 import gymnasium
 import numpy as np
 from gymnasium.spaces import Discrete,Box,Dict
@@ -7,7 +7,7 @@ from gymnasium.spaces import Discrete,Box,Dict
 from pettingzoo import AECEnv
 from pettingzoo.utils import agent_selector, wrappers
 
-from prePost import doAction,reward,terminationPartita,reward_mosse,curva_partita,visualizza
+from prePost import doAction,reward,terminationPartita,reward_mosse,curva_partita
 
 # 7 attacchi (pscan,pvsftpd,psmbd,pphpcgi,pircd,pdistccd,prmi) hanno una probabilità con tui il difensore lo valuta
 # 0 < T1 < T2 < 1 e p < T1 rumore, T1 < p < T2 possibile attacco (prevenzione), p > T2 attacco by IDS (contromisure),
@@ -231,13 +231,13 @@ class raw_env(AECEnv):
             reward_mosse[self.agent_selection].append((self.num_moves,self._cumulative_rewards[self.agent_selection]))
             
             # SALVOLE INFO NEI FILE
-            visualizza()
-            #file_uno = open("/home/matteo/Documenti/GitHub/tesiMagistrale/reward_mosse.txt", "w")
-            #file_due = open("/home/matteo/Documenti/GitHub/tesiMagistrale/curva_partita.txt", "w")
-            #file_uno.write(str(reward_mosse))
-            #file_due.write(str(curva_partita))
-            #file_uno.close()
-            #file_due.close()
+            #visualizza()
+            file_uno = open("/home/matteo/Documenti/GitHub/tesiMagistrale/reward_mosse.txt", "w")
+            file_due = open("/home/matteo/Documenti/GitHub/tesiMagistrale/curva_partita.txt", "w")
+            file_uno.write(json.dumps(reward_mosse))
+            file_due.write(json.dumps(curva_partita))
+            file_uno.close()
+            file_due.close()
             
             print('Action dead:',action)
             print('Rewards dead:',self._cumulative_rewards)
