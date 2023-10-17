@@ -79,7 +79,7 @@ def visualizza_reward_mosse():
     plt.plot(yB,xB)
     plt.legend(['attaccante','difensore'])
 
-    #plt.show()
+    plt.show()
 
 def visualizza_curva_partita():
     dati = ''
@@ -127,7 +127,7 @@ def programma1():
         #               alla fine lancia visualizza_reward_mosse
 
         visualizza_reward_mosse()
-        visualizza_curva_partita()
+        #visualizza_curva_partita()
 
     except Exception as e :
         print(e)

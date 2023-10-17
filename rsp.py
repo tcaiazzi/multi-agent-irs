@@ -263,7 +263,8 @@ class raw_env(AECEnv):
         # PER IL DIFENSORE DATO CHE NON HA UNA SUPER MOSSA BASTA CHE NEL TEMPO NON PRENDA MOSSE INEFFICIENTI
         if agent == 'attaccante':
             if self.num_moves > 0:
-                rw = rw/ (self.num_moves)
+                #rw = rw/ (self.num_moves)
+                rw = rw
         else:
             rw = rw
                  
