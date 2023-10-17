@@ -5,6 +5,7 @@ from gymnasium.spaces import Discrete,Box,Dict
 import numpy as np
 from pettingzoo import AECEnv
 from pettingzoo.utils import agent_selector, wrappers
+import tensorflow as tf
 
 from prePost import doAction,reward,terminationPartita,reward_mosse,curva_partita
 
@@ -115,14 +116,14 @@ class raw_env(AECEnv):
         self._observation_spaces[self.possible_agents[0]] = Dict(
                 {
                     "observation": Box(low=0, high=1, shape=(14,), dtype=bool),
-                    "action_mask": Box(low=0, high=1, shape=(14,), dtype=np.int64),
+                    "action_mask": Box(low=0, high=1, shape=(14,), dtype=np.int8),
                 }
             )
         # per entrambi usiamo solo quello del difensore
         self._observation_spaces[self.possible_agents[1]] = Dict(
                 {
                     "observation": Box(low=0, high=1, shape=(14,), dtype=bool),
-                    "action_mask": Box(low=0, high=1, shape=(14,), dtype=np.int64),
+                    "action_mask": Box(low=0, high=1, shape=(14,), dtype=np.int8),
                 }
             )
                     
@@ -160,23 +161,23 @@ class raw_env(AECEnv):
         """
         # observation of one agent is the previous state of the other
         # SERVE A FAR SI CHE IN UNO STATO ALCUNE AZIONI NON SIANO SELEZIONABILI
-        legal_moves = []
-        for i in range(len(self.spazio[agent])):
-            if self.spazio[agent][i] == False:
+        legal_moves = np.zeros(14,'int8')
+        for i in range(len(self.spazio['difensore'])):
+            if self.spazio['difensore'][i] == False:
                 if agent == 'difensore':
-                    legal_moves.append(1)
+                    legal_moves[i]=1
                 else :
-                    legal_moves.append(0)
+                    legal_moves[i]=0
             else:
                 if agent == 'difensore':
-                    legal_moves.append(0)
+                    legal_moves[i]=0
                 else:
-                    legal_moves.append(1)
+                    legal_moves[i]=1
 
 
         print('\t')
         print('Observe agent:',agent)
-        print('Observe observation:',self.spazio[agent])
+        print('Observe observation:',self.spazio['difensore'])
         print('Observe action mask/legal moves:',legal_moves)
 
         # in observation sto facendo tornare lo stato attuale ovvero spazio che uso per la mia logica interna,

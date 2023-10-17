@@ -36,7 +36,7 @@ from ray.rllib.algorithms.ppo import PPOConfig
 from ray.rllib.algorithms.apex_dqn.apex_dqn import ApexDQNConfig
 from ray.rllib.algorithms.algorithm import Algorithm
 import sys
-
+from ray.rllib.examples.env.action_mask_env import ActionMaskEnv
 # SERVE PER AVERE LO SPAZIO DELLE AZIONI DI DIMENSIONI DIVERSE
 # e VOLENDO ANCHE LE OBSERVATIONs
 from supersuit.multiagent_wrappers import pad_action_space_v0,pad_observations_v0
@@ -79,6 +79,7 @@ stop = {
 # Ray
 ray.shutdown()
 ray.init()
+
 
 def env_creator():
         #env = RLCardBase("leduc-holdem", 2, (36,))
@@ -215,7 +216,7 @@ print(results.results) """
 # Basato sullo Stocasthic gradient discent (SGD)
 # gradiente stimato e non calcolato
 
-config = ImpalaConfig().environment(env_name,disable_env_checking=True).resources(num_gpus=1).framework("torch").multi_agent(
+""" config = ImpalaConfig().environment(env_name,disable_env_checking=True).resources(num_gpus=1).framework("torch").multi_agent(
         policies={
             "attaccante": (None, obs_space, act_space, {}),
             "difensore": (None, obs_space, act_space, {}),
@@ -236,7 +237,6 @@ config['create_env_on_driver'] = True
 algo = config.build()
 print('TRAINING...')
 algo.train()
-""" 
 print('EVALUATE...')
 results = algo.evaluate()
 print(results)  """
@@ -251,24 +251,39 @@ print(results)  """
 # Policy gradient
 # vanilla policy gradients using experience collected from the latest interaction with the agent implementation 
 # (using experience collected from the latest interaction with the agent)
+from ray.rllib.examples.models.action_mask_model import ActionMaskModel
+ModelCatalog.register_custom_model("pa_model", ActionMaskModel)
 
-""" config = PGConfig().environment(env_name,disable_env_checking=True).resources(num_gpus=1).framework("torch").multi_agent(
+config = PGConfig().environment(env_name,disable_env_checking=True).resources(num_gpus=1).framework("torch").multi_agent(
         policies={
-            "attaccante": (None, obs_space, act_space, {}),
-            "difensore": (None, obs_space, act_space, {}),
+            "attaccante": (None, obs_space, act_space, {
+                #  "model": {
+                #    "custom_model": ActionMaskModel,
+                #},
+                #"use_action_mask": True,
+            }),
+            "difensore": (None, obs_space, act_space, {
+                #  'model': {
+                #    'custom_model': ActionMaskModel,
+                #},
+                #'use_action_mask': True,
+            }),
         },
         policy_mapping_fn=(lambda agent_id, *args, **kwargs: agent_id),
     ).training(
           model={
-                'use_lstm': True,
+                'use_lstm': False,
+                'use_attention':False,
           }
     )
+
 config['evaluation_interval'] = 1
 config['create_env_on_driver'] = True
 
 algo = config.build()
 print('TRAINING...')
 algo.train()
+""" 
 print('EVALUATE...')
 results = algo.evaluate(2)
 print(results) """
@@ -322,7 +337,7 @@ print(results) """
 
 
 
-############################################ RANDOM #####################################
+############################################ PER VEDERLO GIOCARE #####################################
 # Così va ma senza polisi sceglie random, ma va la logica della reward e dello stopping
 """ env = rsp.env(render_mode="human")
 env.reset(seed=42)
@@ -338,10 +353,9 @@ for agent in env.agent_iter():
         if termination or truncation:
             action = None
         else:
-            # this is where you would insert your policy
-            # qui dovrei inserire l'algoritmo che mi identifica la policy(?)
-            #mask = observation["action_mask"]
-            action = env.action_space(agent).sample()
+            # this is where you would insert your polic
+            mask = observation["action_mask"]
+            action = env.action_space(agent).sample(mask)
 
         print('Osservazione:',observation)
         print('Azione selezionata da eseguire:',action)

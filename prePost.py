@@ -53,6 +53,7 @@ def calcola(action,agent):
             4 : (1,1,1),
             5 : (1,1,1),
             6 : (10, 10, 10),
+            
             },
         'difensore':{
             0 : (1,1,1),
