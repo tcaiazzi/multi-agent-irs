@@ -1,13 +1,16 @@
 import functools
 import json
-import gymnasium
 import numpy as np
 from gymnasium.spaces import Discrete,Box,Dict
-
+import numpy as np
 from pettingzoo import AECEnv
 from pettingzoo.utils import agent_selector, wrappers
 
 from prePost import doAction,reward,terminationPartita,reward_mosse,curva_partita
+
+# HO IMPLEMENTATO L'ACTION MASK PER LE MOSSE LEGALI
+# MA IN REALTA PUÒ SELEZIONARE ANCHE UNA MOSSA ILLEGALE MA DEVO DECIDERNE IL COMPORTAMENTO
+# STRANO
 
 # 7 attacchi (pscan,pvsftpd,psmbd,pphpcgi,pircd,pdistccd,prmi) hanno una probabilità con tui il difensore lo valuta
 # 0 < T1 < T2 < 1 e p < T1 rumore, T1 < p < T2 possibile attacco (prevenzione), p > T2 attacco by IDS (contromisure),
@@ -106,28 +109,20 @@ class raw_env(AECEnv):
         #self._action_spaces = {agent: Discrete(3) for agent in self.possible_agents}
 
         # DEVE ESSERE DELLA STESSA STRUTTURA DEL RITORNO DI observe() 
-        """ self._observation_spaces = {
-            agent: Dict(
-                {
-                    "observation": Box(low=0, high=1, shape=(3,), dtype=bool),
-                    "action_mask": Box(low=0, high=1, shape=(3,), dtype=np.int8),
-                }
-            ) 
-            for agent in self.possible_agents
-        } """
         self._observation_spaces = {}
         # lo spazio dell'attaccante per ora non viene utilizzato
+        # Me ne basta uno solo
         self._observation_spaces[self.possible_agents[0]] = Dict(
                 {
                     "observation": Box(low=0, high=1, shape=(14,), dtype=bool),
-                    "action_mask": Box(low=0, high=1, shape=(14,), dtype=np.int8),
+                    "action_mask": Box(low=0, high=1, shape=(14,), dtype=np.int64),
                 }
             )
         # per entrambi usiamo solo quello del difensore
         self._observation_spaces[self.possible_agents[1]] = Dict(
                 {
                     "observation": Box(low=0, high=1, shape=(14,), dtype=bool),
-                    "action_mask": Box(low=0, high=1, shape=(14,), dtype=np.int8),
+                    "action_mask": Box(low=0, high=1, shape=(14,), dtype=np.int64),
                 }
             )
                     
@@ -164,31 +159,35 @@ class raw_env(AECEnv):
         at any time after reset() is called.
         """
         # observation of one agent is the previous state of the other
-        #return np.array(self.observations[agent])
-        # return {"observation":self._observation_spaces[agent]["observation"].sample(),"action_mask":self._observation_spaces[agent]["action_mask"].sample()}
+        # SERVE A FAR SI CHE IN UNO STATO ALCUNE AZIONI NON SIANO SELEZIONABILI
         legal_moves = []
         for i in range(len(self.spazio[agent])):
             if self.spazio[agent][i] == False:
-                legal_moves.append(1)
+                if agent == 'difensore':
+                    legal_moves.append(1)
+                else :
+                    legal_moves.append(0)
             else:
-                legal_moves.append(0)
+                if agent == 'difensore':
+                    legal_moves.append(0)
+                else:
+                    legal_moves.append(1)
+
+
         print('\t')
         print('Observe agent:',agent)
         print('Observe observation:',self.spazio[agent])
-        #print('Observe legal_moves:',legal_moves)
+        print('Observe action mask/legal moves:',legal_moves)
+
         # in observation sto facendo tornare lo stato attuale ovvero spazio che uso per la mia logica interna,
         # dato che mi stabilisce sia reward e mossa
-        # in action dove l'azione puo ancora agire, lo calcolo qui al volo
-        """ return {
-                    "observation":np.stack(self.spazio[agent]),
-                    "action_mask":np.ndarray(shape=(len(legal_moves)),buffer=np.array(legal_moves),dtype=np.int8)
-                } """
         # SIA ALL'ATTACCANTE CHE AL DIFENSORE STO FACENDO TORNARE LO STESSO SPAZIO COSÌ CHE
         # NE SIA PRESENTE UNO UNICO CONDIVISO E NON DUE REPLICATI
         #return np.stack(self.spazio['difensore'])
+        # HO AGGIUNTO L'ACTION MASK PER IMPEDIRE LA SCELTA DI ALCUNE MOSSE PRECONDIZIONI
         return {
                 'observation':np.stack(self.spazio['difensore']),
-                'action_mask':np.stack(self._observation_spaces['difensore']['action_mask'].sample())
+                'action_mask':np.stack(legal_moves)
                 }
        
 
@@ -285,6 +284,7 @@ class raw_env(AECEnv):
         # PER IL DIFENSORE DATO CHE NON HA UNA SUPER MOSSA BASTA CHE NEL TEMPO NON PRENDA MOSSE INEFFICIENTI
         if agent == 'attaccante':
             if self.num_moves > 0:
+                # Reward attaccante dipendente dal tempo
                 #rw = rw/ (self.num_moves)
                 rw = rw
         else:
@@ -310,7 +310,7 @@ class raw_env(AECEnv):
             else:
                 self.rewards['attaccante'] = (-self.rewards['attaccante'])         
             """
-        ######################## PRE/POST condizioni #####################################################
+        ######################## PRE(con action mask solo post)/POST condizioni #####################################################
 
         print('Prima della mossa:',self.spazio)
         self.spazio = doAction(action,self.spazio,self.agent_selection)

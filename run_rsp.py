@@ -215,7 +215,7 @@ print(results.results) """
 # Basato sullo Stocasthic gradient discent (SGD)
 # gradiente stimato e non calcolato
 
-""" config = ImpalaConfig().environment(env_name,disable_env_checking=True).resources(num_gpus=1).framework("torch").multi_agent(
+config = ImpalaConfig().environment(env_name,disable_env_checking=True).resources(num_gpus=1).framework("torch").multi_agent(
         policies={
             "attaccante": (None, obs_space, act_space, {}),
             "difensore": (None, obs_space, act_space, {}),
@@ -236,6 +236,7 @@ config['create_env_on_driver'] = True
 algo = config.build()
 print('TRAINING...')
 algo.train()
+""" 
 print('EVALUATE...')
 results = algo.evaluate()
 print(results)  """
@@ -287,7 +288,7 @@ config.evaluation() """
 # PG avanzato piu veloce
 # multiple SGD 
 
-config = PPOConfig().environment(env_name,disable_env_checking=True).resources(num_gpus=1).framework("torch").multi_agent(
+""" config = PPOConfig().environment(env_name,disable_env_checking=True).resources(num_gpus=1).framework("torch").multi_agent(
         policies={
             "attaccante": (None, obs_space, act_space, {}),
             "difensore": (None, obs_space, act_space, {}),
@@ -309,7 +310,7 @@ print('EVALUATE...')
 algo.evaluate()
 results = algo.evaluate()
 print('RESULTS')
-print(results)
+print(results) """
 
 """ results = tune.Tuner(
         "PPO", param_space=config, run_config=air.RunConfig(stop=stop, verbose=1,checkpoint_config=air.CheckpointConfig(checkpoint_at_end=True))
