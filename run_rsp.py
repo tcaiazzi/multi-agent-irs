@@ -89,11 +89,12 @@ def env_creator():
         return env
 
 env_name = "rsp"
+register_env(env_name, lambda config: PettingZooEnv(pad_action_space_v0(env_creator())))
 #register_env(env_name, lambda config: PettingZooEnv(pad_observations_v0(pad_action_space_v0(env_creator()))))
-register_env(env_name, lambda config: PettingZooEnv(pad_observations_v0(pad_action_space_v0(env_creator()))))
 
 # Mi servono per il check e l'inizializzazione degli algoritmi
-test_env = PettingZooEnv(pad_observations_v0(pad_action_space_v0(env_creator())))
+test_env = PettingZooEnv(pad_action_space_v0(env_creator()))
+#test_env = PettingZooEnv(pad_observations_v0(pad_action_space_v0(env_creator())))
 obs_space = test_env.observation_space
 act_space = test_env.action_space
 

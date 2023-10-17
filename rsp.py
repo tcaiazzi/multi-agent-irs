@@ -80,7 +80,12 @@ class raw_env(AECEnv):
         } """
         self.spazio = {}
         # per ora non lo sto usando lo spazio dell'attaccante
-        self.spazio[self.possible_agents[0]] = [False]
+        #self.spazio[self.possible_agents[0]] = [False]
+        # Mi serve solo per rimuovere un wrap per usare il dizionario per l'action mask MA NON LO STO USANDO
+        self.spazio[self.possible_agents[1]] = [True,False,True,False,
+                                                True,False,True,False,
+                                                True,False,True,False,
+                                                True,False]
         # spazio del difensore monitorato anche dall'attaccante per l'observation dopo un'action
         self.spazio[self.possible_agents[1]] = [True,False,True,False,
                                                 True,False,True,False,
@@ -112,7 +117,7 @@ class raw_env(AECEnv):
         } """
         self._observation_spaces = {}
         # lo spazio dell'attaccante per ora non viene utilizzato
-        self._observation_spaces[self.possible_agents[0]] = Box(low=0, high=1, shape=(1,), dtype=bool)
+        self._observation_spaces[self.possible_agents[0]] = Box(low=0, high=1, shape=(14,), dtype=bool)
         # per entrambi usiamo solo quello del difensore
         self._observation_spaces[self.possible_agents[1]] = Box(low=0, high=1, shape=(14,), dtype=bool)
                     
@@ -186,7 +191,10 @@ class raw_env(AECEnv):
         
         # PER LA LOGICA
         self.spazio = {}
-        self.spazio[self.possible_agents[0]] = [False]
+        self.spazio[self.possible_agents[0]] = [True,False,True,False,
+                                                True,False,True,False,
+                                                True,False,True,False,
+                                                True,False]
         self.spazio[self.possible_agents[1]] = [True,False,True,False,
                                                 True,False,True,False,
                                                 True,False,True,False,
