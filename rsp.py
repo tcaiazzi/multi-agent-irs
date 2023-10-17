@@ -273,18 +273,20 @@ class raw_env(AECEnv):
         # PER NON MANDARE LA REWARD TOTALE NEGATIVA
         if agent == 'attaccante':
             self.rewards[agent] = rw
-            if self._cumulative_rewards['difensore'] >= rw:
+            # Mi influenza la reward dell'avversario
+            """ if self._cumulative_rewards['difensore'] >= rw:
                 self.rewards['difensore'] = (-rw)
             else:
                 self.rewards['difensore'] = (-self.rewards['difensore'])
-
+            """
         elif agent == 'difensore':
             self.rewards[agent] = rw
-            if self._cumulative_rewards['attaccante'] >= rw:
+            # Mi influenza la reward dell'avversario
+            """ if self._cumulative_rewards['attaccante'] >= rw:
                 self.rewards['attaccante'] = (-rw)
             else:
                 self.rewards['attaccante'] = (-self.rewards['attaccante'])         
-
+            """
         ######################## PRE/POST condizioni #####################################################
 
         print('Prima della mossa:',self.spazio)
