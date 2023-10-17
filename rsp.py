@@ -117,9 +117,19 @@ class raw_env(AECEnv):
         } """
         self._observation_spaces = {}
         # lo spazio dell'attaccante per ora non viene utilizzato
-        self._observation_spaces[self.possible_agents[0]] = Box(low=0, high=1, shape=(14,), dtype=bool)
+        self._observation_spaces[self.possible_agents[0]] = Dict(
+                {
+                    "observation": Box(low=0, high=1, shape=(14,), dtype=bool),
+                    "action_mask": Box(low=0, high=1, shape=(14,), dtype=np.int8),
+                }
+            )
         # per entrambi usiamo solo quello del difensore
-        self._observation_spaces[self.possible_agents[1]] = Box(low=0, high=1, shape=(14,), dtype=bool)
+        self._observation_spaces[self.possible_agents[1]] = Dict(
+                {
+                    "observation": Box(low=0, high=1, shape=(14,), dtype=bool),
+                    "action_mask": Box(low=0, high=1, shape=(14,), dtype=np.int8),
+                }
+            )
                     
         self.render_mode = render_mode
 
@@ -175,7 +185,11 @@ class raw_env(AECEnv):
                 } """
         # SIA ALL'ATTACCANTE CHE AL DIFENSORE STO FACENDO TORNARE LO STESSO SPAZIO COSÌ CHE
         # NE SIA PRESENTE UNO UNICO CONDIVISO E NON DUE REPLICATI
-        return np.stack(self.spazio['difensore'])
+        #return np.stack(self.spazio['difensore'])
+        return {
+                'observation':np.stack(self.spazio['difensore']),
+                'action_mask':np.stack(self._observation_spaces['difensore']['action_mask'].sample())
+                }
        
 
     def close(self):
