@@ -274,54 +274,58 @@ class raw_env(AECEnv):
         
         
         agent = self.agent_selection
-        print('Agente in azione:',agent)
+        #print('Agente in azione:',agent)
         print('Mossa da eseguire:',action)
 
         # the agent which stepped last had its _cumulative_rewards accounted for
         # (because it was returned by last()), so the _cumulative_rewards for this
         # agent should start again at 0
 
+        ######################## PRE(con action mask solo post)/POST condizioni #####################################################
+
+        #print('Prima della mossa:',self.spazio)
+        mossaValida = doAction(action,self.spazio,self.agent_selection)
+        #print('Dopo la mossa:',self.spazio)
+
         ############################################## REWARD ###########################################
 
         # SI INFLUENZANO LE REWARD A VICENDA
-        rw = reward(agent,self.spazio,action)
+        print('Mossa valida:',mossaValida)
+        if mossaValida:
+            rw = reward(agent,self.spazio,action)
+            self.rewards[agent] = rw
         
         # VOLEVO FORZARE A FARLI SCEGLIERE SUBITO LE MOSSE MIGLIORI, PERCHÈ CON L'AUMENTARE DI MOSSE MENO REWARD
         # PERÒ SOLO PER L'ATTCCANTE, PERCHÈ DEVE SBRIGARSI PRIMA CHE IL DIFENSORE LE BLOCCHI TUTTE
         # PER IL DIFENSORE DATO CHE NON HA UNA SUPER MOSSA BASTA CHE NEL TEMPO NON PRENDA MOSSE INEFFICIENTI
-        if agent == 'attaccante':
+        """ if agent == 'attaccante':
             if self.num_moves > 0:
                 # Reward attaccante dipendente dal tempo
                 #rw = rw/ (self.num_moves)
                 rw = rw
         else:
-            rw = rw
+            rw = rw """
                  
-        self.rewards[agent] = rw
-        print('rw:',rw)
+        
+        #print('rw:',rw)
         
         # PER NON MANDARE LA REWARD TOTALE NEGATIVA
-        if agent == 'attaccante':
+        """ if agent == 'attaccante':
             self.rewards[agent] = rw
             # Mi influenza la reward dell'avversario
-            """ if self._cumulative_rewards['difensore'] >= rw:
+            if self._cumulative_rewards['difensore'] >= rw:
                 self.rewards['difensore'] = (-rw)
             else:
                 self.rewards['difensore'] = (-self.rewards['difensore'])
-            """
+           
         elif agent == 'difensore':
             self.rewards[agent] = rw
             # Mi influenza la reward dell'avversario
-            """ if self._cumulative_rewards['attaccante'] >= rw:
+            if self._cumulative_rewards['attaccante'] >= rw:
                 self.rewards['attaccante'] = (-rw)
             else:
                 self.rewards['attaccante'] = (-self.rewards['attaccante'])         
-            """
-        ######################## PRE(con action mask solo post)/POST condizioni #####################################################
-
-        print('Prima della mossa:',self.spazio)
-        self.spazio = doAction(action,self.spazio,self.agent_selection)
-        print('Dopo la mossa:',self.spazio)
+        """ 
         
         ############################# CHECK ARRESTO (se sono nello stato sicuro) #########################
         

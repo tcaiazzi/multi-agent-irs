@@ -20,16 +20,21 @@ curva_partita = {
 # APPLICA L'AZIONE ALLA SPAZIO 'LOGICA'
 def doAction(action,spazio,agent):
     # mossa 0
+    mossaValida = False
     if agent == 'difensore':
         if 0 <= action <= 13:
-            spazio['difensore'][action]=True
+            if spazio['difensore'][action] == False:
+                spazio['difensore'][action]=True
+                mossaValida = True
         """ elif action == 13:
             for i in range(14):
                 spazio['difensore'][i]=True """
     
     elif agent == 'attaccante':
         if 0 <= action <=13:
-            spazio['difensore'][action]=False
+            if spazio['difensore'][action] == True:
+                spazio['difensore'][action]=False
+                mossaValida = True
         # mossa 1
         """ elif action == 6 :
             for i in range(6,14):
@@ -38,11 +43,13 @@ def doAction(action,spazio,agent):
             for i in range(0,6):
                 spazio['difensore'][i]=False
         """
-    return spazio
+    return mossaValida
 
 
-# APPLICA LA FUNZIONE DI REWARD IN BASE ALLA MOSSA PASSATA
-def calcola(action,agent):
+
+
+# VERIFICA QUANDO CALCOLARE LA REWARD, NEGLI ALTRI CASI 0
+def reward(agent,spazio,action):
     # per la funzione di reward
     REWARD_MAP = {
         'attaccante':{
@@ -85,43 +92,8 @@ def calcola(action,agent):
     cMax = 100
     #calcolo = -(-wt*(REWARD_MAP[agent][action][0]/tMax)-wc*(REWARD_MAP[agent][action][1]/cMax)-wi*(1))
     calcolo = REWARD_MAP[agent][action][0]+REWARD_MAP[agent][action][1]+REWARD_MAP[agent][action][2]
+    print('Reward:',calcolo)
     return calcolo
-
-
-# VERIFICA QUANDO CALCOLARE LA REWARD, NEGLI ALTRI CASI 0
-def reward(agent,spazio,action):
-    # LA REWARD LA OTTIENE AD OGNI MOSSA CHE PROVOCA EFFETTO DI VARIAZIONE DI STATO
-    # HO MESSO LA REWARD QUANDO VINCE PERCHÈ CON DQN SCEGLIEVANO SEMPRE LE STESSE MOSSE MA IN REALTA CREDO 
-    # CHE ABBIA BISOGNO SOLO DI PIÙ ADDESTRAMENTO PERCHÈ CON PG VA BENE
-    reward = 0
-    if agent == 'difensore':
-        # IL DIFENSORE OTTIENE LA REWARD SOLO QUANDO È FALSE, OVVERO PUÒ ACCENDERE, QUINDI LA MOSSA HA EFFETTO
-        if spazio[agent][action] == False:
-            reward = calcola(action,agent)
-
-    elif agent == 'attaccante':
-        """ # L'AZIONE 6 MI SWITCHA GLI ELEMENTI DA 6 A 14 DA TRUE A FALSE
-        if action == 6:
-            app = []
-            # VEDO CHE NON SIANO TUTTI FALSE ALTRIMENTI NIENTE RICOMPENSA
-            for i in range(6,14):
-                app.append(not(spazio['difensore'][i]))
-            if not(all(app)):
-                reward = calcola(action,agent)
-        # L'AZIONE 0 MI SWITCHA GLI ELEMENTI DA 0 A 6 DA TRUE A FALSE
-        if action == 0:
-            app = []
-            # VEDO CHE NON SIANO TUTTI FALSE ALTRIMENTI NIENTE RICOMPENSA
-            for i in range(0,6):
-                app.append(not(spazio['difensore'][i]))
-            if not(all(app)):
-                reward = calcola(action,agent) """
-        # PER QUALUNQUE ALTRA MOSSA DELL'ATTACCANTE MI CAMBIA SOLO 1 POSIZIONE
-        if spazio['difensore'][action] == True:
-            reward = calcola(action,agent)
-    
-    print('Reward:',reward)
-    return reward
 
 
 # CONTROLLA LO STATE PER TERMINAR EO MENO
