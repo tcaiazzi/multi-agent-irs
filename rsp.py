@@ -9,9 +9,6 @@ import tensorflow as tf
 
 from prePost import doAction,reward,terminationPartita,reward_mosse,curva_partita
 
-# HO IMPLEMENTATO L'ACTION MASK PER LE MOSSE LEGALI
-# MA IN REALTA PUÒ SELEZIONARE ANCHE UNA MOSSA ILLEGALE MA DEVO DECIDERNE IL COMPORTAMENTO
-# STRANO
 
 # 7 attacchi (pscan,pvsftpd,psmbd,pphpcgi,pircd,pdistccd,prmi) hanno una probabilità con tui il difensore lo valuta
 # 0 < T1 < T2 < 1 e p < T1 rumore, T1 < p < T2 possibile attacco (prevenzione), p > T2 attacco by IDS (contromisure),
@@ -21,9 +18,9 @@ from prePost import doAction,reward,terminationPartita,reward_mosse,curva_partit
 # tralascerei p e T
 
 # ATTACCANTE 
-# azioni : 7 (come gli attacchi)
+# azioni : 3 (come gli attacchi).. IMPEGANTIVO OGNI VOLTA STARE A CODIFICARE UNO SCENARIO
 # lo spazio monitora quello del difensore
-# VINCE: per semplicità metto per ora che 2 mossE PER FARE BINGO (0 e 6: 0 da 0 a 6 e 6 da 6 a 14)
+# VINCE: per semplicità metto per ora che 2 mossE PER FARE BINGO (0 e 2: 0 da 0 a 6 e 6 da 6 a 14)
 
 # DIFENSORE
 # azioni : 14 (sono dippiù perche 1 azioni può modificare più variabili ma per ora facciamo 1 azione 1 variabile)
@@ -31,7 +28,8 @@ from prePost import doAction,reward,terminationPartita,reward_mosse,curva_partit
 # VINCE: quando spazio TUTTI TRUE, ma credo che punti a non morire mai
 
 # L'OTTIMO PER IL DIFENSORE E FAR SALIRE SEMPRE LA REWARD PERCHE NON MUORE E RIESCE SEMPRE A DIFENDERSI
-# L'ATTACCANTE DEVE TROVARE SUBITO LA COMBO VINCENTE (2 MOSSE REWARD 45, SENNO SUBISCE LE PENALITÀ DEL DIFENSORE
+# L'ATTACCANTE DEVE TROVARE SUBITO LA COMBO VINCENTE (2 MOSSE)
+
 # E LE SUE REWARD DIMINUISCONO COL TEMPO, PERCHÈ SE IL DIFENSORE NEL CASO OTTIMO IN AL PIÙ 13 MOSSE VINCEREBBE
 # PERCHE TUTTI FALSE UN SOLO TRUE, L'ATTACCANTE SCEGLIE SEMPRE LA MOSSA DOVE HA GIA FALSE, E AD OGNI SUO TURNO
 # SCEGLIE UNA MOSSA BUONA CHE GLI CAMBIA UNA VARIABILE, 
