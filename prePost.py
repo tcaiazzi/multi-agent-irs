@@ -33,14 +33,14 @@ def doAction(action,spazio,agent):
         # mossa 0
         if action == 0:
             # verifico che ci sia almeno un True da spegnere
-            for i in range(len(spazio['difensore'][:7])):
+            for i in spazio['difensore'][:7]:
                 if i:
                     # c'è una variabile da spegnere
                     mossaValida = True 
             # posso cambiare lo stato
             if mossaValida:
                 # scorro e cambio lo stato che non mi son salvato le pos
-                for i in spazio['difensore'][:7]:
+                for i in range(len(spazio['difensore'][:7])):
                     spazio['difensore'][i] = False
         # mossa 1
         if action == 2:
@@ -52,7 +52,7 @@ def doAction(action,spazio,agent):
             # cambio lo stato
             if mossaValida:
                 # scorro e cambio
-                for i in range(len(spazio['difensore'][7:])):  
+                for i in range(7,len(spazio['difensore'])):  
                     spazio['difensore'][i] = False
         # mossa 3
         if action == 1:

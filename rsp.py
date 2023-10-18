@@ -289,7 +289,7 @@ class raw_env(AECEnv):
 
         #print('Prima della mossa:',self.spazio)
         mossaValida = doAction(action,self.spazio,self.agent_selection)
-        #print('Dopo la mossa:',self.spazio)
+        print('Dopo la mossa:',self.spazio['difensore'])
 
         ############################################## REWARD ###########################################
 
