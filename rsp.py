@@ -105,7 +105,7 @@ class raw_env(AECEnv):
         # optional: we can define the observation and action spaces here as attributes to be used in their corresponding methods
         # SOLITAMENTE ALGORITMI ACCETTANO TUTTI DISCRETE, 1 VAL 1 MOSSA
         self._action_spaces = {}
-        self._action_spaces[self.possible_agents[0]] = Discrete(14)
+        self._action_spaces[self.possible_agents[0]] = Discrete(3)
         self._action_spaces[self.possible_agents[1]] = Discrete(14)
         #self._action_spaces = {agent: Discrete(3) for agent in self.possible_agents}
 
@@ -162,23 +162,27 @@ class raw_env(AECEnv):
         # observation of one agent is the previous state of the other
         # SERVE A FAR SI CHE IN UNO STATO ALCUNE AZIONI NON SIANO SELEZIONABILI
         legal_moves = np.zeros(14,'int8')
-        for i in range(len(self.spazio['difensore'])):
-            if self.spazio['difensore'][i] == False:
-                if agent == 'difensore':
-                    legal_moves[i]=1
-                else :
-                    legal_moves[i]=0
-            else:
-                if agent == 'difensore':
-                    legal_moves[i]=0
+
+        if agent == 'difensore':
+            for i in range(len(self.spazio['difensore'])):
+                if self.spazio['difensore'][i] == False:
+                        legal_moves[i]=1
                 else:
-                    """ if i<6:
-                        # se trovo un true tra 0 e 5 debo abilitare anche la mossa 0
-                        legal_moves[0]=1
-                    elif i>6:
-                        # se trovo un true tra 6 e 14 devo abilitare anche la mossa 6
-                        legal_moves[6]=1 """
-                    legal_moves[i]=1
+                        legal_moves[i]=0
+        else:
+            # mossa 0 nel caso anche solo uno dei primi 6 TRUE
+            for i in self.spazio['difensore'][:7]:
+                if i:
+                    legal_moves[0] = 1
+            # mossa 2 nel caso anche solo uno dei secondi 6 TRUE
+            for i in self.spazio['difensore'][7:]:
+                if i :
+                    legal_moves[2] = 1
+            # qualcosa fa
+            if self.spazio['difensore'][7]:
+                legal_moves[1] = 1
+
+
 
 
         print('\t')

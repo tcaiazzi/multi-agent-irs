@@ -67,7 +67,7 @@ torch, nn = try_import_torch()
 # COndizioni di stopping degli algoritmi 
 stop = {
         # epoche/passi dopo le quali il training si arresta
-        "training_iteration": 1,
+        "training_iteration": 5,
 
         # passi ambientali dell'agente nell'ambiente
         # ci sarebbe un minimo di 200
@@ -252,38 +252,7 @@ print(results)  """
 # Policy gradient
 # vanilla policy gradients using experience collected from the latest interaction with the agent implementation 
 # (using experience collected from the latest interaction with the agent)
-""" from ray.rllib.models.torch.torch_modelv2 import TorchModelV2
-class TorchMaskedActions(TorchModelV2, torch.nn.Module):
 
-    def __init__(self,
-                 obs_space,
-                 action_space,
-                 num_outputs,
-                 model_config,
-                 name,
-                 **kw):
-        torch.nn.Module.__init__(self)
-        TorchModelV2.__init__(self, obs_space, action_space, num_outputs,
-                               model_config, name, **kw)
-
-        self.action_embed_model = TorchFC(obs_space['observations'], action_space, 14,
-            model_config,"_action_embed")
-
-    def forward(self, input_dict, state, seq_lens):
-        # Extract the available actions tensor from the observation.
-        action_mask = input_dict["obs"]["action_mask"]
-
-        # Compute the predicted action embedding
-        action_logits, _ = self.action_embed_model({
-            "obs": input_dict["obs"]['observations']
-        })
-        # turns probit action mask into logit action mask
-        inf_mask = torch.clamp(torch.log(action_mask), -1e10, FLOAT_MAX)
-
-        return action_logits + inf_mask, state
-
-    def value_function(self):
-        return self.action_embed_model.value_function() """
 ModelCatalog.register_custom_model("am_model", TorchActionMaskModel)
 
 config = (

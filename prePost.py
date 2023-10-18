@@ -22,27 +22,44 @@ def doAction(action,spazio,agent):
     # mossa 0
     mossaValida = False
     if agent == 'difensore':
+        # una mossa una variabile
         if 0 <= action <= 13:
             if spazio['difensore'][action] == False:
                 spazio['difensore'][action]=True
                 mossaValida = True
-        """ elif action == 13:
-            for i in range(14):
-                spazio['difensore'][i]=True """
     
     elif agent == 'attaccante':
-        if 0 <= action <=13:
-            if spazio['difensore'][action] == True:
-                spazio['difensore'][action]=False
-                mossaValida = True
+        # QUESTI DUE CHECK NON SERVIREBBE SE ACTION MASK FUNZIONASSE BENE
+        # mossa 0
+        if action == 0:
+            # verifico che ci sia almeno un True da spegnere
+            for i in range(len(spazio['difensore'][:7])):
+                if i:
+                    # c'è una variabile da spegnere
+                    mossaValida = True 
+            # posso cambiare lo stato
+            if mossaValida:
+                # scorro e cambio lo stato che non mi son salvato le pos
+                for i in spazio['difensore'][:7]:
+                    spazio['difensore'][i] = False
         # mossa 1
-        """ elif action == 6 :
-            for i in range(6,14):
-                spazio['difensore'][i]=False
-        elif action == 0 :
-            for i in range(0,6):
-                spazio['difensore'][i]=False
-        """
+        if action == 2:
+            # verifico che ci sia almeno un True da spegnere
+            for i in spazio['difensore'][7:]:
+                if i:
+                    # trovato
+                    mossaValida = True
+            # cambio lo stato
+            if mossaValida:
+                # scorro e cambio
+                for i in range(len(spazio['difensore'][7:])):  
+                    spazio['difensore'][i] = False
+        # mossa 3
+        if action == 1:
+            if spazio['difensore'][7]:
+                mossaValida = True
+                spazio['difensore'][7] = False
+       
     return mossaValida
 
 
