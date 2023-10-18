@@ -115,14 +115,14 @@ class raw_env(AECEnv):
         # Me ne basta uno solo
         self._observation_spaces[self.possible_agents[0]] = Dict(
                 {
-                    "observation": Box(low=0, high=1, shape=(14,), dtype=bool),
+                    "observations": Box(low=0, high=1, shape=(14,), dtype=bool),
                     "action_mask": Box(low=0, high=1, shape=(14,), dtype=np.int8),
                 }
             )
         # per entrambi usiamo solo quello del difensore
         self._observation_spaces[self.possible_agents[1]] = Dict(
                 {
-                    "observation": Box(low=0, high=1, shape=(14,), dtype=bool),
+                    "observations": Box(low=0, high=1, shape=(14,), dtype=bool),
                     "action_mask": Box(low=0, high=1, shape=(14,), dtype=np.int8),
                 }
             )
@@ -187,8 +187,8 @@ class raw_env(AECEnv):
         #return np.stack(self.spazio['difensore'])
         # HO AGGIUNTO L'ACTION MASK PER IMPEDIRE LA SCELTA DI ALCUNE MOSSE PRECONDIZIONI
         return {
-                'observation':np.stack(self.spazio['difensore']),
-                'action_mask':np.stack(legal_moves)
+                'observations':np.stack(self.spazio['difensore']),
+                'action_mask':np.stack(legal_moves),
                 }
        
 

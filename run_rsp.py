@@ -36,7 +36,7 @@ from ray.rllib.algorithms.ppo import PPOConfig
 from ray.rllib.algorithms.apex_dqn.apex_dqn import ApexDQNConfig
 from ray.rllib.algorithms.algorithm import Algorithm
 import sys
-from ray.rllib.examples.env.action_mask_env import ActionMaskEnv
+from ray.rllib.examples.models.action_mask_model import TorchActionMaskModel
 # SERVE PER AVERE LO SPAZIO DELLE AZIONI DI DIMENSIONI DIVERSE
 # e VOLENDO ANCHE LE OBSERVATIONs
 from supersuit.multiagent_wrappers import pad_action_space_v0,pad_observations_v0
@@ -251,32 +251,25 @@ print(results)  """
 # Policy gradient
 # vanilla policy gradients using experience collected from the latest interaction with the agent implementation 
 # (using experience collected from the latest interaction with the agent)
-from ray.rllib.examples.models.action_mask_model import ActionMaskModel
-ModelCatalog.register_custom_model("pa_model", ActionMaskModel)
+ModelCatalog.register_custom_model("am_model", TorchActionMaskModel)
 
-config = PGConfig().environment(env_name,disable_env_checking=True).resources(num_gpus=1).framework("torch").multi_agent(
+config = (
+      PGConfig()
+      .environment(env_name,disable_env_checking=True)
+      .resources(num_gpus=1)
+      .framework("torch")
+      .multi_agent(
         policies={
-            "attaccante": (None, obs_space, act_space, {
-                #  "model": {
-                #    "custom_model": ActionMaskModel,
-                #},
-                #"use_action_mask": True,
-            }),
-            "difensore": (None, obs_space, act_space, {
-                #  'model': {
-                #    'custom_model': ActionMaskModel,
-                #},
-                #'use_action_mask': True,
-            }),
+            "attaccante": (None, obs_space, act_space, {}),
+            "difensore": (None, obs_space, act_space, {}),
         },
         policy_mapping_fn=(lambda agent_id, *args, **kwargs: agent_id),
     ).training(
           model={
-                'use_lstm': False,
-                'use_attention':False,
-          }
+                "custom_model": "am_model"},
     )
-
+)
+config["env_config"] = {"use_action_masking": True}
 config['evaluation_interval'] = 1
 config['create_env_on_driver'] = True
 
