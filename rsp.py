@@ -105,7 +105,7 @@ class raw_env(AECEnv):
         # optional: we can define the observation and action spaces here as attributes to be used in their corresponding methods
         # SOLITAMENTE ALGORITMI ACCETTANO TUTTI DISCRETE, 1 VAL 1 MOSSA
         self._action_spaces = {}
-        self._action_spaces[self.possible_agents[0]] = Discrete(7)
+        self._action_spaces[self.possible_agents[0]] = Discrete(14)
         self._action_spaces[self.possible_agents[1]] = Discrete(14)
         #self._action_spaces = {agent: Discrete(3) for agent in self.possible_agents}
 
@@ -172,6 +172,12 @@ class raw_env(AECEnv):
                 if agent == 'difensore':
                     legal_moves[i]=0
                 else:
+                    """ if i<6:
+                        # se trovo un true tra 0 e 5 debo abilitare anche la mossa 0
+                        legal_moves[0]=1
+                    elif i>6:
+                        # se trovo un true tra 6 e 14 devo abilitare anche la mossa 6
+                        legal_moves[6]=1 """
                     legal_moves[i]=1
 
 

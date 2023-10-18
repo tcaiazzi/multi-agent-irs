@@ -28,16 +28,16 @@ def doAction(action,spazio,agent):
                 spazio['difensore'][i]=True """
     
     elif agent == 'attaccante':
-        if 1 <= action <=5:
+        if 0 <= action <=13:
             spazio['difensore'][action]=False
         # mossa 1
-        elif action == 6 :
+        """ elif action == 6 :
             for i in range(6,14):
                 spazio['difensore'][i]=False
         elif action == 0 :
             for i in range(0,6):
                 spazio['difensore'][i]=False
-
+        """
     return spazio
 
 
@@ -46,14 +46,20 @@ def calcola(action,agent):
     # per la funzione di reward
     REWARD_MAP = {
         'attaccante':{
-            0 : (10,10,10),
+            0 : (1,1,1),
             1 : (1,1,1),
             2 : (1,1,1),
             3 : (1,1,1),
             4 : (1,1,1),
             5 : (1,1,1),
-            6 : (10, 10, 10),
-            
+            6 : (1,1,1),
+            7 : (1,1,1),
+            8 : (1,1,1),
+            9 : (1,1,1),
+            10 : (1,1,1),
+            11 : (1,1,1),
+            12 : (1,1,1),
+            13 : (1,1,1),
             },
         'difensore':{
             0 : (1,1,1),
@@ -94,7 +100,7 @@ def reward(agent,spazio,action):
             reward = calcola(action,agent)
 
     elif agent == 'attaccante':
-        # L'AZIONE 6 MI SWITCHA GLI ELEMENTI DA 6 A 14 DA TRUE A FALSE
+        """ # L'AZIONE 6 MI SWITCHA GLI ELEMENTI DA 6 A 14 DA TRUE A FALSE
         if action == 6:
             app = []
             # VEDO CHE NON SIANO TUTTI FALSE ALTRIMENTI NIENTE RICOMPENSA
@@ -109,9 +115,9 @@ def reward(agent,spazio,action):
             for i in range(0,6):
                 app.append(not(spazio['difensore'][i]))
             if not(all(app)):
-                reward = calcola(action,agent)
+                reward = calcola(action,agent) """
         # PER QUALUNQUE ALTRA MOSSA DELL'ATTACCANTE MI CAMBIA SOLO 1 POSIZIONE
-        elif spazio['difensore'][action] == True:
+        if spazio['difensore'][action] == True:
             reward = calcola(action,agent)
     
     print('Reward:',reward)
