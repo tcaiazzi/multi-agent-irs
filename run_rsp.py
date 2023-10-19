@@ -67,7 +67,7 @@ torch, nn = try_import_torch()
 # COndizioni di stopping degli algoritmi 
 stop = {
         # epoche/passi dopo le quali il training si arresta
-        "training_iteration": 5,
+        "training_iteration": 1,
 
         # passi ambientali dell'agente nell'ambiente
         # ci sarebbe un minimo di 200
@@ -94,6 +94,10 @@ env_name = "rsp"
 register_env(env_name, lambda config: PettingZooEnv(pad_action_space_v0(env_creator())))
 #register_env(env_name, lambda config: PettingZooEnv(pad_observations_v0(pad_action_space_v0(env_creator()))))
 
+# Mi serve per usare l'action mask in odo da avere ad ogni step solo specifiche mosse
+# senza dover gestire io mosse non selezionabili
+ModelCatalog.register_custom_model("am_model", TorchActionMaskModel)
+
 # Mi servono per il check e l'inizializzazione degli algoritmi
 test_env = PettingZooEnv(pad_action_space_v0(env_creator()))
 #test_env = PettingZooEnv(pad_observations_v0(pad_action_space_v0(env_creator())))
@@ -108,11 +112,14 @@ check_env(test_env)
 #############################################################################################
 # è un DQN evoluto, ovvero DQN su architettura APE-x (una gpu che apprende e più worker cpu che collezionano esperienza)
 
-""" config = ApexDQNConfig().environment(env=env_name).resources(num_gpus=1).rollouts(
+config = (
+      ApexDQNConfig()
+      .environment(env=env_name)
+      .resources(num_gpus=1).rollouts(
      num_rollout_workers=1, rollout_fragment_length=30
      ).training(
-        train_batch_size=200
-        #model={"custom_model": "pa_model"},
+        train_batch_size=200,
+        #model = { "custom_model" : "am_model",},
     ).multi_agent(
         policies={
             "attaccante": (None, obs_space, act_space, {}),
@@ -131,13 +138,16 @@ check_env(test_env)
             "epsilon_timesteps": 100000,  # Timesteps over which to anneal epsilon.
         }
     )
+)
+config['custom_model'] = { "custom_model": "am_model", }
+config["env_config"] = {"use_action_masking": True}
 config['evaluation_interval'] = 1
 config['create_env_on_driver'] = True
 algo = config.build()
 algo.train()
 results = algo.evaluate()
 
-print(results.results) """
+print(results.results)
 
 """ 
 results = tune.run(
@@ -150,9 +160,12 @@ results = tune.run(
 #############################################################################################
 ###############################################  DQN  #######################################
 #############################################################################################
-""" config = DQNConfig().environment(
+config = (
+      DQNConfig()
+      .environment(
       env=env_name
-      ).resources().rollouts(
+      ).resources()
+      .rollouts(
             num_rollout_workers=1, rollout_fragment_length=30
             ).multi_agent(
         policies={
@@ -162,7 +175,8 @@ results = tune.run(
         policy_mapping_fn=(lambda agent_id, *args, **kwargs: agent_id),
     ).debugging(
         log_level="DEBUG"
-    ).framework(framework="torch").exploration(
+    ).framework(framework="torch")
+    .exploration(
         exploration_config={
             # The Exploration class to use.
             "type": "EpsilonGreedy",
@@ -171,10 +185,16 @@ results = tune.run(
             "final_epsilon": 0.0,
             "epsilon_timesteps": 100000,  # Timesteps over which to anneal epsilon.
         }
-    ).training(train_batch_size=200)
+    ).training(
+          model={
+                "custom_model": "am_model",
+                },)
+)
+
 config['evaluation_interval'] = 1
 config['create_env_on_driver'] = True
-algo = config.build()
+
+""" algo = config.build()
 print('TRAINING...')
 algo.train()
 print('EVALUATE...')
@@ -187,8 +207,8 @@ print(results.results) """
     stop=stop,
     checkpoint_freq=10,
     config=config.to_dict(),
-)
- """
+) """
+
 
 ###################################################################################################
 #########################################  IMPALA-PG-PPO  #########################################
@@ -217,7 +237,12 @@ print(results.results) """
 # Basato sullo Stocasthic gradient discent (SGD)
 # gradiente stimato e non calcolato
 
-""" config = ImpalaConfig().environment(env_name,disable_env_checking=True).resources(num_gpus=1).framework("torch").multi_agent(
+config = (
+      ImpalaConfig()
+      .environment(env_name,disable_env_checking=True)
+      .resources(num_gpus=1)
+      .framework("torch")
+      .multi_agent(
         policies={
             "attaccante": (None, obs_space, act_space, {}),
             "difensore": (None, obs_space, act_space, {}),
@@ -225,16 +250,15 @@ print(results.results) """
         policy_mapping_fn=(lambda agent_id, *args, **kwargs: agent_id),
     ).training(
           model={
-                # only one may be TRUe di use_*
-                'use_lstm': False,
-                'lstm_cell_size': 64,
-                'use_attention': False
-          }
+                "custom_model": "am_model"
+                },
     )
+)
+
 config['evaluation_interval'] = 1
 config['create_env_on_driver'] = True
 
-
+""" 
 algo = config.build()
 print('TRAINING...')
 algo.train()
@@ -243,17 +267,16 @@ results = algo.evaluate()
 print(results)  """
 
 """ results = tune.Tuner(
-        "IMPALA", param_space=config, run_config=air.RunConfig(stop=stop, verbose=1)
+        "IMPALA", param_space=config.to_dict(), run_config=air.RunConfig(stop=stop, verbose=1)
     ).fit() 
  """
+
 ############################################################################################
 ##############################################  PG  ########################################
 ############################################################################################
 # Policy gradient
 # vanilla policy gradients using experience collected from the latest interaction with the agent implementation 
 # (using experience collected from the latest interaction with the agent)
-
-ModelCatalog.register_custom_model("am_model", TorchActionMaskModel)
 
 config = (
       PGConfig()
@@ -272,21 +295,22 @@ config = (
                 },
     )
 )
-#config["env_config"] = {"use_action_masking": True}
+
 config['evaluation_interval'] = 1
 config['create_env_on_driver'] = True
 
+""" 
 algo = config.build()
 print('TRAINING...')
 algo.train()
-""" 
+
 print('EVALUATE...')
 results = algo.evaluate(2)
 print(results) """
 
 """ results = tune.Tuner(
         "PG",
-        param_space=config, 
+        param_space=config.to_dict(), 
         run_config=air.RunConfig(stop=stop, verbose=1)
     ).fit()
 config.evaluation() """
@@ -299,7 +323,12 @@ config.evaluation() """
 # PG avanzato piu veloce
 # multiple SGD 
 
-""" config = PPOConfig().environment(env_name,disable_env_checking=True).resources(num_gpus=1).framework("torch").multi_agent(
+config = (
+      PPOConfig()
+      .environment(env_name,disable_env_checking=True)
+      .resources(num_gpus=1)
+      .framework("torch")
+      .multi_agent(
         policies={
             "attaccante": (None, obs_space, act_space, {}),
             "difensore": (None, obs_space, act_space, {}),
@@ -307,13 +336,18 @@ config.evaluation() """
         policy_mapping_fn=(lambda agent_id, *args, **kwargs: agent_id),
     ).training(
           model={
-                'use_lstm':True
-          }
+                "custom_model": "am_model"
+                },
     )
+)
+# PER IL CUSTOM_MODEL
+config.rl_module( _enable_rl_module_api=False)
+config.training(_enable_learner_api=False)
 
 config['evaluation_interval'] = 1
 config['create_env_on_driver'] = True
 
+""" 
 algo = config.build()
 print('TRAINING...')
 algo.train()
@@ -324,9 +358,8 @@ print('RESULTS')
 print(results) """
 
 """ results = tune.Tuner(
-        "PPO", param_space=config, run_config=air.RunConfig(stop=stop, verbose=1,checkpoint_config=air.CheckpointConfig(checkpoint_at_end=True))
+        "PPO", param_space=config.to_dict(), run_config=air.RunConfig(stop=stop, verbose=1,checkpoint_config=air.CheckpointConfig(checkpoint_at_end=True))
     ).fit()  """
-
 
 
 
