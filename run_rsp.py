@@ -119,7 +119,7 @@ config = (
      num_rollout_workers=1, rollout_fragment_length=30
      ).training(
         train_batch_size=200,
-        #model = { "custom_model" : "am_model",},
+        model = { "custom_model": "am_model", }
     ).multi_agent(
         policies={
             "attaccante": (None, obs_space, act_space, {}),
@@ -139,14 +139,21 @@ config = (
         }
     )
 )
-config['custom_model'] = { "custom_model": "am_model", }
-config["env_config"] = {"use_action_masking": True}
+
+# Mi risolve i problemi di mismatch con la rete
+config['hiddens'] = []
+config['dueling'] = False
+
+# Actin mask
+#config["env_config"] = {"use_action_masking": True}
+
+
 config['evaluation_interval'] = 1
 config['create_env_on_driver'] = True
+
 algo = config.build()
 algo.train()
 results = algo.evaluate()
-
 print(results.results)
 
 """ 
@@ -185,11 +192,12 @@ config = (
             "final_epsilon": 0.0,
             "epsilon_timesteps": 100000,  # Timesteps over which to anneal epsilon.
         }
-    ).training(
-          model={
-                "custom_model": "am_model",
-                },)
+    ).training(model = { "custom_model": "am_model", })
 )
+
+# Mi risolve i problemi di mismatch con la rete, non so perche, ma per l'action mask
+config['hiddens'] = []
+config['dueling'] = False
 
 config['evaluation_interval'] = 1
 config['create_env_on_driver'] = True
@@ -199,7 +207,7 @@ print('TRAINING...')
 algo.train()
 print('EVALUATE...')
 results = algo.evaluate()
-print(results.results) """
+print(results) """
 
 """ results = tune.run(
     "DQN",
