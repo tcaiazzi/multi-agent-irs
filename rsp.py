@@ -1,11 +1,11 @@
 import functools
 import json
 import numpy as np
+
 from gymnasium.spaces import Discrete,Box,Dict
-import numpy as np
+
 from pettingzoo import AECEnv
 from pettingzoo.utils import agent_selector, wrappers
-import tensorflow as tf
 
 from prePost import doAction,reward,terminationPartita,reward_mosse,curva_partita
 

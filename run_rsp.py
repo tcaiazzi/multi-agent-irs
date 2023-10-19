@@ -1,42 +1,31 @@
 import rsp
-from pettingzoo.test import api_test
-# algoritmo con solo tensorflow multi agente senza NN 
-from ray.rllib.algorithms import ppo
-from ray.tune.registry import register_env
-from ray.rllib.algorithms.bandit.bandit import BanditLinUCBConfig
-from ray.rllib.algorithms.pg import PGConfig
-from ray.rllib.env import PettingZooEnv,MultiAgentEnv
-from ray import air
-from ray import tune
-from ray.rllib.policy import TFPolicy,TorchPolicy
-from ray.rllib.policy.policy import PolicySpec
-from ray.rllib.examples.policy.rock_paper_scissors_dummies import AlwaysSameHeuristic
-from ray.rllib.utils import check_env
-from ray.rllib.algorithms.qmix import QMixConfig
-from gymnasium.spaces import Discrete, Dict, Box,Tuple
-import numpy as np
-from ray.rllib.algorithms.dqn import DQNConfig
-from pettingzoo.test import performance_benchmark
 import ray
-from gymnasium.spaces import Box, Discrete
+
 from ray import tune
-from ray.rllib.algorithms.dqn import DQNConfig
-from ray.rllib.algorithms.dqn.dqn_torch_model import DQNTorchModel
-from ray.rllib.env import PettingZooEnv
-from ray.rllib.models import ModelCatalog
-from ray.rllib.models.torch.fcnet import FullyConnectedNetwork as TorchFC
-from ray.rllib.utils.framework import try_import_torch
-from ray.rllib.utils.torch_utils import FLOAT_MAX
-from ray.tune.registry import register_env
-import os
+from ray import train
+
 from ray.rllib.algorithms.impala import ImpalaConfig
-from stable_baselines3 import DQN
-import gymnasium as gym
+from ray.rllib.algorithms.pg import PGConfig
+from ray.rllib.algorithms.dqn import DQNConfig
 from ray.rllib.algorithms.ppo import PPOConfig
 from ray.rllib.algorithms.apex_dqn.apex_dqn import ApexDQNConfig
-from ray.rllib.algorithms.algorithm import Algorithm
-import sys
+
+from ray.rllib.utils.framework import try_import_torch
+from ray.rllib.utils import check_env
+
 from ray.rllib.examples.models.action_mask_model import TorchActionMaskModel
+
+from ray.tune.registry import register_env
+
+from ray.rllib.models import ModelCatalog
+
+from ray.rllib.env import PettingZooEnv
+
+from pettingzoo.test import api_test
+from pettingzoo.test import performance_benchmark
+
+import sys
+
 
 # SERVE PER AVERE LO SPAZIO DELLE AZIONI DI DIMENSIONI DIVERSE
 # e VOLENDO ANCHE LE OBSERVATIONs
@@ -71,26 +60,25 @@ stop = {
 
         # passi ambientali dell'agente nell'ambiente
         # ci sarebbe un minimo di 200
-        #"timesteps_total": 3000,
+        "timesteps_total": 300,
 
         # ferma il training quando la ricompensa media dell'agente nell'episodio è pari o maggiore
-        #"episode_reward_mean": 200,
+        "episode_reward_mean": 200,
     }
 
 # Ray
 ray.shutdown()
 ray.init()
 
-
+# Definisco il mio ambiente
 def env_creator():
-        #env = RLCardBase("leduc-holdem", 2, (36,))
-        #env = aec_rps.env(render_mode="human")
         env = rsp.env(render_mode="human")
-        #env = TestEnv()
-        #env = MyEnv()
         return env
 
+# Nome ambiente
 env_name = "rsp"
+
+# Registro il mio ambiente
 register_env(env_name, lambda config: PettingZooEnv(pad_action_space_v0(env_creator())))
 #register_env(env_name, lambda config: PettingZooEnv(pad_observations_v0(pad_action_space_v0(env_creator()))))
 
@@ -100,7 +88,6 @@ ModelCatalog.register_custom_model("am_model", TorchActionMaskModel)
 
 # Mi servono per il check e l'inizializzazione degli algoritmi
 test_env = PettingZooEnv(pad_action_space_v0(env_creator()))
-#test_env = PettingZooEnv(pad_observations_v0(pad_action_space_v0(env_creator())))
 obs_space = test_env.observation_space
 act_space = test_env.action_space
 
@@ -128,7 +115,8 @@ config = (
         policy_mapping_fn=(lambda agent_id, *args, **kwargs: agent_id),
     ).debugging(
         log_level="DEBUG"
-    ).framework(framework="torch").exploration(
+    ).framework(framework="torch")
+    .exploration(
         exploration_config={
             # The Exploration class to use.
             "type": "EpsilonGreedy",
@@ -151,19 +139,20 @@ config['dueling'] = False
 config['evaluation_interval'] = 1
 config['create_env_on_driver'] = True
 
-algo = config.build()
+""" algo = config.build()
 algo.train()
 results = algo.evaluate()
-print(results.results)
+print(results.results) """
 
-""" 
-results = tune.run(
+
+results = tune.Tuner(
     "APEX",
-    stop=stop,
-    checkpoint_freq=10,
-    config=config.to_dict(),
-)
- """
+    run_config = train.RunConfig(stop=stop,verbose=1),
+    param_space = config.to_dict(),
+    tune_config = tune.TuneConfig(metric='mean_accuracy')
+).fit()
+print(results)
+
 #############################################################################################
 ###############################################  DQN  #######################################
 #############################################################################################
@@ -203,19 +192,17 @@ config['evaluation_interval'] = 1
 config['create_env_on_driver'] = True
 
 """ algo = config.build()
-print('TRAINING...')
 algo.train()
-print('EVALUATE...')
 results = algo.evaluate()
 print(results) """
 
-""" results = tune.run(
+""" results = tune.Tuner(
     "DQN",
     name="DQN",
     stop=stop,
     checkpoint_freq=10,
     config=config.to_dict(),
-) """
+).fit() """
 
 
 ###################################################################################################
@@ -268,9 +255,7 @@ config['create_env_on_driver'] = True
 
 """ 
 algo = config.build()
-print('TRAINING...')
 algo.train()
-print('EVALUATE...')
 results = algo.evaluate()
 print(results)  """
 
@@ -309,12 +294,9 @@ config['create_env_on_driver'] = True
 
 """ 
 algo = config.build()
-print('TRAINING...')
 algo.train()
-
-print('EVALUATE...')
-results = algo.evaluate(2)
-print(results) """
+results = algo.evaluate()
+print('RESULTS:',results) """
 
 """ results = tune.Tuner(
         "PG",
@@ -357,13 +339,10 @@ config['create_env_on_driver'] = True
 
 """ 
 algo = config.build()
-print('TRAINING...')
 algo.train()
-print('EVALUATE...')
 algo.evaluate()
 results = algo.evaluate()
-print('RESULTS')
-print(results) """
+print('RESULTS:',results) """
 
 """ results = tune.Tuner(
         "PPO", param_space=config.to_dict(), run_config=air.RunConfig(stop=stop, verbose=1,checkpoint_config=air.CheckpointConfig(checkpoint_at_end=True))
