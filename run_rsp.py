@@ -3,6 +3,7 @@ import ray
 
 from ray import tune
 from ray import train
+from ray import air
 
 from ray.rllib.algorithms.impala import ImpalaConfig
 from ray.rllib.algorithms.pg import PGConfig
@@ -42,16 +43,17 @@ from supersuit.multiagent_wrappers import pad_action_space_v0,pad_observations_v
 # AZIONI NON AUMENTABILI AUTOMATICAMENTE PERCHE COME CODIFICO IL SUO COMPORTAMENTO? ERRORE QUANDO SELEZIONA QUELLA MOSSA
 # SPAZIO DELLE OSSERVAZIONI ANCHE, POTREBBE NON GIUNGERE PIU ALL'ARRESTO PERCHÈ LE AZIONI NON LO MODIFICANO
 # GLI AGENTI POTREI (da pensare)
-if len(sys.argv) == 4:
+""" if len(sys.argv) == 4:
     lr = sys.argv[1]
     n_mosse = sys.argv[2] 
     n_iterazioni = sys.argv[3]
     print('lr:',lr)
     print('n_mosse:',n_mosse)
-    print('n_iterazioni:',n_iterazioni)
+    print('n_iterazioni:',n_iterazioni) """
 
 
 torch, nn = try_import_torch()
+#torch.cuda.empty_cache()
 
 # COndizioni di stopping degli algoritmi 
 stop = {
@@ -60,10 +62,10 @@ stop = {
 
         # passi ambientali dell'agente nell'ambiente
         # ci sarebbe un minimo di 200
-        "timesteps_total": 30,
+        "timesteps_total": 1,
 
         # ferma il training quando la ricompensa media dell'agente nell'episodio è pari o maggiore
-        "episode_reward_mean": 20,
+        "episode_reward_mean": 1,
     }
 
 # RAY  VIENE UTILIZZATO PER POTER FARE IL TUNING DEGLI IPERPARAMETRI
@@ -101,31 +103,37 @@ check_env(test_env)
 # è un DQN evoluto, ovvero DQN su architettura APE-x (una gpu che apprende e più worker cpu che collezionano esperienza)
 
 config = (
-      ApexDQNConfig()
-      .environment(env=env_name)
-      .resources(num_gpus=1).rollouts(
-     num_rollout_workers=1, rollout_fragment_length=30
-     ).training(
-        train_batch_size=200,
-        model = { "custom_model": "am_model", }
+    ApexDQNConfig()
+    .environment(
+            env=env_name
+    ).resources(
+            num_gpus=1
+    ).rollouts(
+            num_rollout_workers=1,
+            rollout_fragment_length=30
+    ).training(
+            train_batch_size=200,
+            model = { 
+                    "custom_model": "am_model",
+                }
     ).multi_agent(
-        policies={
-            "attaccante": (None, obs_space, act_space, {}),
-            "difensore": (None, obs_space, act_space, {}),
-        },
-        policy_mapping_fn=(lambda agent_id, *args, **kwargs: agent_id),
+            policies={
+                    "attaccante": (None, obs_space, act_space, {}),
+                    "difensore": (None, obs_space, act_space, {}),
+            },
+            policy_mapping_fn=(lambda agent_id, *args, **kwargs: agent_id),
     ).debugging(
-        log_level="DEBUG"
-    ).framework(framework="torch")
-    .exploration(
-        exploration_config={
-            # The Exploration class to use.
-            "type": "EpsilonGreedy",
-            # Config for the Exploration class' constructor:
-            "initial_epsilon": 0.1,
-            "final_epsilon": 0.0,
-            "epsilon_timesteps": 100000,  # Timesteps over which to anneal epsilon.
-        }
+    ).framework(
+            framework="torch"
+    ).exploration(
+            exploration_config={
+                    # The Exploration class to use.
+                    "type": "EpsilonGreedy",
+                    # Config for the Exploration class' constructor:
+                    "initial_epsilon": 0.1,
+                    "final_epsilon": 0.0,
+                    "epsilon_timesteps": 100000,  # Timesteps over which to anneal epsilon.
+            }
     )
 )
 
@@ -147,43 +155,49 @@ results = algo.evaluate()
 print(results) """
 
 
-""" results = tune.Tuner(
+results = tune.run(
     "APEX",
-    run_config = train.RunConfig(stop=stop,verbose=1),
-    param_space = config.to_dict(),
-    tune_config = tune.TuneConfig(metric='mean_accuracy')
-).fit()
-print(results) """
+    stop={"training_iteration": 1},
+    config = config.to_dict(),
+)
+print(results)
 
 #############################################################################################
 ###############################################  DQN  #######################################
 #############################################################################################
-config = (
-      DQNConfig()
-      .environment(
-      env=env_name
-      ).resources()
-      .rollouts(
-            num_rollout_workers=1, rollout_fragment_length=30
-            ).multi_agent(
-        policies={
-            "attaccante": (None, obs_space, act_space, {}),
-            "difensore": (None, obs_space, act_space, {}),
-        },
-        policy_mapping_fn=(lambda agent_id, *args, **kwargs: agent_id),
+""" config = (
+    DQNConfig()
+    .environment(
+            env=env_name
+    ).resources(
+                    
+    ).rollouts(
+            num_rollout_workers=1,
+            rollout_fragment_length=30
+    ).multi_agent(
+            policies={
+                    "attaccante": (None, obs_space, act_space, {}),
+                    "difensore": (None, obs_space, act_space, {}),
+                },
+            policy_mapping_fn=(lambda agent_id, *args, **kwargs: agent_id),
     ).debugging(
-        log_level="DEBUG"
-    ).framework(framework="torch")
-    .exploration(
-        exploration_config={
-            # The Exploration class to use.
-            "type": "EpsilonGreedy",
-            # Config for the Exploration class' constructor:
-            "initial_epsilon": 0.1,
-            "final_epsilon": 0.0,
-            "epsilon_timesteps": 100000,  # Timesteps over which to anneal epsilon.
-        }
-    ).training(model = { "custom_model": "am_model", })
+            log_level="DEBUG"
+    ).framework(
+            framework="torch"
+    ).exploration(
+            exploration_config={
+                    # The Exploration class to use.
+                    "type": "EpsilonGreedy",
+                    # Config for the Exploration class' constructor:
+                    "initial_epsilon": 0.1,
+                    "final_epsilon": 0.0,
+                    "epsilon_timesteps": 100000,  # Timesteps over which to anneal epsilon.
+                }
+    ).training(
+            model = { 
+                    "custom_model": "am_model", 
+                }
+    )
 )
 
 # Mi risolve i problemi di mismatch con la rete, non so perche, ma per l'action mask
@@ -191,7 +205,7 @@ config['hiddens'] = []
 config['dueling'] = False
 
 config['evaluation_interval'] = 1
-config['create_env_on_driver'] = True
+config['create_env_on_driver'] = True """
 
 """ algo = config.build()
 algo.train()
@@ -234,7 +248,7 @@ print(results) """
 # Basato sullo Stocasthic gradient discent (SGD)
 # gradiente stimato e non calcolato
 
-config = (
+""" config = (
       ImpalaConfig()
       .environment(env_name,disable_env_checking=True)
       .resources(num_gpus=1)
@@ -253,7 +267,7 @@ config = (
 )
 
 config['evaluation_interval'] = 1
-config['create_env_on_driver'] = True
+config['create_env_on_driver'] = True """
 
 """ 
 algo = config.build()
@@ -273,7 +287,7 @@ print(results)  """
 # vanilla policy gradients using experience collected from the latest interaction with the agent implementation 
 # (using experience collected from the latest interaction with the agent)
 
-config = (
+""" config = (
       PGConfig()
       .environment(env_name,disable_env_checking=True)
       .resources(num_gpus=1)
@@ -289,11 +303,11 @@ config = (
                 "custom_model": "am_model"
                 },
     )
-)
+) 
 
 config['evaluation_interval'] = 1
 config['create_env_on_driver'] = True
-
+"""
 """ 
 algo = config.build()
 algo.train()
@@ -315,7 +329,7 @@ config.evaluation() """
 # PG avanzato piu veloce
 # multiple SGD 
 
-config = (
+""" config = (
       PPOConfig()
       .environment(env_name,disable_env_checking=True)
       .resources(num_gpus=1)
@@ -337,13 +351,13 @@ config.rl_module( _enable_rl_module_api=False)
 config.training(_enable_learner_api=False)
 
 config['evaluation_interval'] = 1
-config['create_env_on_driver'] = True
+config['create_env_on_driver'] = True """
 
-algo = config.build()
+""" algo = config.build()
 algo.train()
 algo.evaluate()
 results = algo.evaluate()
-print('RESULTS:',results)
+print('RESULTS:',results) """
 
 """ results = tune.Tuner(
         "PPO", param_space=config.to_dict(), run_config=air.RunConfig(stop=stop, verbose=1,checkpoint_config=air.CheckpointConfig(checkpoint_at_end=True))
