@@ -60,13 +60,14 @@ stop = {
 
         # passi ambientali dell'agente nell'ambiente
         # ci sarebbe un minimo di 200
-        "timesteps_total": 300,
+        "timesteps_total": 30,
 
         # ferma il training quando la ricompensa media dell'agente nell'episodio è pari o maggiore
-        "episode_reward_mean": 200,
+        "episode_reward_mean": 20,
     }
 
-# Ray
+# RAY  VIENE UTILIZZATO PER POTER FARE IL TUNING DEGLI IPERPARAMETRI
+# SI PUO DEFINIRE UN RANGE ED IN AUTOMATICA FA I DIVERSI TRAINING CON LE DIVERSE CONFIG
 ray.shutdown()
 ray.init()
 
@@ -139,19 +140,20 @@ config['dueling'] = False
 config['evaluation_interval'] = 1
 config['create_env_on_driver'] = True
 
+# Qui non ho la stop condition
 """ algo = config.build()
-algo.train()
+results = algo.train()
 results = algo.evaluate()
-print(results.results) """
+print(results) """
 
 
-results = tune.Tuner(
+""" results = tune.Tuner(
     "APEX",
     run_config = train.RunConfig(stop=stop,verbose=1),
     param_space = config.to_dict(),
     tune_config = tune.TuneConfig(metric='mean_accuracy')
 ).fit()
-print(results)
+print(results) """
 
 #############################################################################################
 ###############################################  DQN  #######################################
@@ -198,11 +200,11 @@ print(results) """
 
 """ results = tune.Tuner(
     "DQN",
-    name="DQN",
-    stop=stop,
-    checkpoint_freq=10,
-    config=config.to_dict(),
-).fit() """
+    run_config = train.RunConfig(stop=stop,verbose=1),
+    param_space = config.to_dict(),
+    tune_config = tune.TuneConfig(metric='mean_accuracy'),
+).fit()
+print(results) """
 
 
 ###################################################################################################
@@ -337,12 +339,11 @@ config.training(_enable_learner_api=False)
 config['evaluation_interval'] = 1
 config['create_env_on_driver'] = True
 
-""" 
 algo = config.build()
 algo.train()
 algo.evaluate()
 results = algo.evaluate()
-print('RESULTS:',results) """
+print('RESULTS:',results)
 
 """ results = tune.Tuner(
         "PPO", param_space=config.to_dict(), run_config=air.RunConfig(stop=stop, verbose=1,checkpoint_config=air.CheckpointConfig(checkpoint_at_end=True))

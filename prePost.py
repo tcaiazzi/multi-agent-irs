@@ -70,9 +70,9 @@ def reward(agent,spazio,action):
     # per la funzione di reward
     REWARD_MAP = {
         'attaccante':{
-            0 : (1,1,1),
+            0 : (10,10,10),
             1 : (1,1,1),
-            2 : (1,1,1),
+            2 : (10,10,10),
             3 : (1,1,1),
             4 : (1,1,1),
             5 : (1,1,1),
