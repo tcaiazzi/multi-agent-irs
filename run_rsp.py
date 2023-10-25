@@ -53,19 +53,21 @@ from supersuit.multiagent_wrappers import pad_action_space_v0,pad_observations_v
 
 
 torch, nn = try_import_torch()
-#torch.cuda.empty_cache()
+torch.cuda.empty_cache()
 
 # COndizioni di stopping degli algoritmi 
 stop = {
         # epoche/passi dopo le quali il training si arresta
-        "training_iteration": 1,
+        "training_iteration": 2,
+
+        "timesteps_total":10,
 
         # passi ambientali dell'agente nell'ambiente
         # ci sarebbe un minimo di 200
-        "timesteps_total": 1,
+        "timesteps_total": 2,
 
         # ferma il training quando la ricompensa media dell'agente nell'episodio è pari o maggiore
-        "episode_reward_mean": 1,
+        "episode_reward_mean": 100,
     }
 
 # RAY  VIENE UTILIZZATO PER POTER FARE IL TUNING DEGLI IPERPARAMETRI
@@ -155,12 +157,12 @@ results = algo.evaluate()
 print(results) """
 
 
-results = tune.run(
+""" results = tune.run(
     "APEX",
-    stop={"training_iteration": 1},
+    stop=stop,
     config = config.to_dict(),
 )
-print(results)
+print(results) """
 
 #############################################################################################
 ###############################################  DQN  #######################################
@@ -248,7 +250,7 @@ print(results) """
 # Basato sullo Stocasthic gradient discent (SGD)
 # gradiente stimato e non calcolato
 
-""" config = (
+config = (
       ImpalaConfig()
       .environment(env_name,disable_env_checking=True)
       .resources(num_gpus=1)
@@ -267,7 +269,7 @@ print(results) """
 )
 
 config['evaluation_interval'] = 1
-config['create_env_on_driver'] = True """
+config['create_env_on_driver'] = True
 
 """ 
 algo = config.build()
@@ -277,8 +279,8 @@ print(results)  """
 
 """ results = tune.Tuner(
         "IMPALA", param_space=config.to_dict(), run_config=air.RunConfig(stop=stop, verbose=1)
-    ).fit() 
- """
+    ).fit()  """
+
 
 ############################################################################################
 ##############################################  PG  ########################################
@@ -287,7 +289,7 @@ print(results)  """
 # vanilla policy gradients using experience collected from the latest interaction with the agent implementation 
 # (using experience collected from the latest interaction with the agent)
 
-""" config = (
+config = (
       PGConfig()
       .environment(env_name,disable_env_checking=True)
       .resources(num_gpus=1)
@@ -303,23 +305,23 @@ print(results)  """
                 "custom_model": "am_model"
                 },
     )
-) 
+)  
 
 config['evaluation_interval'] = 1
 config['create_env_on_driver'] = True
-"""
+
 """ 
 algo = config.build()
 algo.train()
 results = algo.evaluate()
 print('RESULTS:',results) """
 
-""" results = tune.Tuner(
+results = tune.Tuner(
         "PG",
         param_space=config.to_dict(), 
         run_config=air.RunConfig(stop=stop, verbose=1)
     ).fit()
-config.evaluation() """
+config.evaluation()
 
 ##################################################################################################
 ################################################  PPO  ###########################################

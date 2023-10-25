@@ -17,7 +17,7 @@ curva_partita = {
 
 
 
-# APPLICA L'AZIONE ALLA SPAZIO 'LOGICA'
+# APPLICA L'AZIONE ALLo SPAZIO 'LOGICA'
 def doAction(action,spazio,agent):
     # mossa 0
     mossaValida = False
@@ -113,8 +113,10 @@ def reward(agent,spazio,action):
     return calcolo
 
 
+
 # CONTROLLA LO STATE PER TERMINAR EO MENO
-def terminationPartita(val,spazio):
+def terminationPartita(spazio):
+    val = False
     check = []
     if all(spazio['difensore']):
         val = True

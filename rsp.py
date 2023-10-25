@@ -81,6 +81,7 @@ class raw_env(AECEnv):
             for agent in self.possible_agents
         } """
         self.spazio = {}
+        
         # per ora non lo sto usando lo spazio dell'attaccante
         #self.spazio[self.possible_agents[0]] = [False]
         # Mi serve solo per rimuovere un wrap per usare il dizionario per l'action mask MA NON LO STO USANDO
@@ -337,7 +338,7 @@ class raw_env(AECEnv):
         """ self.truncations = {
             agent: self.num_moves >= self.NUM_ITERS for agent in self.agents
         } """
-        val = terminationPartita(False,self.spazio)
+        val = terminationPartita(self.spazio)
         self.terminations = {
             agent: val for agent in self.agents
         }
