@@ -167,7 +167,7 @@ print(results) """
 #############################################################################################
 ###############################################  DQN  #######################################
 #############################################################################################
-""" config = (
+config = (
     DQNConfig()
     .environment(
             env=env_name
@@ -207,7 +207,7 @@ config['hiddens'] = []
 config['dueling'] = False
 
 config['evaluation_interval'] = 1
-config['create_env_on_driver'] = True """
+config['create_env_on_driver'] = True
 
 """ algo = config.build()
 algo.train()
@@ -331,7 +331,7 @@ config.evaluation()
 # PG avanzato piu veloce
 # multiple SGD 
 
-""" config = (
+config = (
       PPOConfig()
       .environment(env_name,disable_env_checking=True)
       .resources(num_gpus=1)
@@ -353,7 +353,7 @@ config.rl_module( _enable_rl_module_api=False)
 config.training(_enable_learner_api=False)
 
 config['evaluation_interval'] = 1
-config['create_env_on_driver'] = True """
+config['create_env_on_driver'] = True 
 
 """ algo = config.build()
 algo.train()

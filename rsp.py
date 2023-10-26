@@ -76,8 +76,8 @@ class raw_env(AECEnv):
 
         # PER LA LOGICA
         """ self.spazio = {
-            # quando tutti e 3 True invalicabili
-            agent: [True,True,True]
+            # quando tutti e 3 1 invalicabili
+            agent: [1,1,1]
             for agent in self.possible_agents
         } """
         self.spazio = {}
@@ -85,15 +85,15 @@ class raw_env(AECEnv):
         # per ora non lo sto usando lo spazio dell'attaccante
         #self.spazio[self.possible_agents[0]] = [False]
         # Mi serve solo per rimuovere un wrap per usare il dizionario per l'action mask MA NON LO STO USANDO
-        self.spazio[self.possible_agents[1]] = [True,False,True,False,
-                                                True,False,True,False,
-                                                True,False,True,False,
-                                                True,False]
+        self.spazio[self.possible_agents[1]] = [1,0,1,0,
+                                                1,0,1,0,
+                                                1,0,1,0,
+                                                1,0]
         # spazio del difensore monitorato anche dall'attaccante per l'observation dopo un'action
-        self.spazio[self.possible_agents[1]] = [True,False,True,False,
-                                                True,False,True,False,
-                                                True,False,True,False,
-                                                True,False]
+        self.spazio[self.possible_agents[1]] = [1,0,1,0,
+                                                1,0,1,0,
+                                                1,0,1,0,
+                                                1,0]
         print('Spazii:',self.spazio)
 
         # optional: a mapping between agent name and ID
@@ -114,14 +114,14 @@ class raw_env(AECEnv):
         # Me ne basta uno solo
         self._observation_spaces[self.possible_agents[0]] = Dict(
                 {
-                    "observations": Box(low=0, high=1, shape=(14,), dtype=bool),
+                    "observations": Box(low=0, high=1, shape=(14,), dtype=int),
                     "action_mask": Box(low=0, high=1, shape=(14,), dtype=np.int8),
                 }
             )
         # per entrambi usiamo solo quello del difensore
         self._observation_spaces[self.possible_agents[1]] = Dict(
                 {
-                    "observations": Box(low=0, high=1, shape=(14,), dtype=bool),
+                    "observations": Box(low=0, high=1, shape=(14,), dtype=int),
                     "action_mask": Box(low=0, high=1, shape=(14,), dtype=np.int8),
                 }
             )
@@ -164,7 +164,7 @@ class raw_env(AECEnv):
 
         if agent == 'difensore':
             for i in range(len(self.spazio['difensore'])):
-                if self.spazio['difensore'][i] == False:
+                if self.spazio['difensore'][i] == 0:
                         legal_moves[i]=1
                 else:
                         legal_moves[i]=0
@@ -214,14 +214,14 @@ class raw_env(AECEnv):
         
         # PER LA LOGICA
         self.spazio = {}
-        self.spazio[self.possible_agents[0]] = [True,False,True,False,
-                                                True,False,True,False,
-                                                True,False,True,False,
-                                                True,False]
-        self.spazio[self.possible_agents[1]] = [True,False,True,False,
-                                                True,False,True,False,
-                                                True,False,True,False,
-                                                True,False]
+        self.spazio[self.possible_agents[0]] = [1,0,1,0,
+                                                1,0,1,0,
+                                                1,0,1,0,
+                                                1,0]
+        self.spazio[self.possible_agents[1]] = [1,0,1,0,
+                                                1,0,1,0,
+                                                1,0,1,0,
+                                                1,0]
     
         self.agents = self.possible_agents[:]
 
