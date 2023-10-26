@@ -13,10 +13,17 @@ from prePost import doAction,reward,terminationPartita,reward_mosse,curva_partit
 # 7 attacchi (pscan,pvsftpd,psmbd,pphpcgi,pircd,pdistccd,prmi) hanno una probabilità con tui il difensore lo valuta
 # 0 < T1 < T2 < 1 e p < T1 rumore, T1 < p < T2 possibile attacco (prevenzione), p > T2 attacco by IDS (contromisure),
 # p=1 attacco noto e strategia da attuare
-# 14 attributi influenzati dalle mie azioni
-# 20ina contromisure
-# tralascerei p e T
+# Lo stato del difensore è composto da: 7 p (una per ogni attacco) + 14 variabili di sistema,
+# presumibilmente l'attaccante ora vede tutto per un taining più efficace
 
+# il difensore ha 18 azioni, 21 componenti nello stato 
+# l'attaccante ne ha 7, lo stato esamina quello del difensore 
+# mi serve da sapere le pre/post condizioni delle azioni del difensore e dell'attaccante
+# Inoltre il difensore termina quando arriva o in uno stato target o nello stato clean,
+# considererei lo stato clean quello di partenza e lo stato target una configurazione delle anomalie innocua (DA DEFINIRE BENE)
+# per l'attaccante qual'è lo stato target di vittoria??
+
+# PER ORA:
 # ATTACCANTE 
 # azioni : 3 (come gli attacchi).. IMPEGANTIVO OGNI VOLTA STARE A CODIFICARE UNO SCENARIO
 # lo spazio monitora quello del difensore
@@ -114,14 +121,14 @@ class raw_env(AECEnv):
         # Me ne basta uno solo
         self._observation_spaces[self.possible_agents[0]] = Dict(
                 {
-                    "observations": Box(low=0, high=1, shape=(14,), dtype=int),
+                    "observations": Box(low=0, high=5, shape=(14,), dtype=int),
                     "action_mask": Box(low=0, high=1, shape=(14,), dtype=np.int8),
                 }
             )
         # per entrambi usiamo solo quello del difensore
         self._observation_spaces[self.possible_agents[1]] = Dict(
                 {
-                    "observations": Box(low=0, high=1, shape=(14,), dtype=int),
+                    "observations": Box(low=0, high=5, shape=(14,), dtype=int),
                     "action_mask": Box(low=0, high=1, shape=(14,), dtype=np.int8),
                 }
             )

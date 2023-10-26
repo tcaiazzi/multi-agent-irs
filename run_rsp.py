@@ -60,14 +60,14 @@ stop = {
         # epoche/passi dopo le quali il training si arresta
         "training_iteration": 2,
 
-        "timesteps_total":10,
+        "timesteps_total":2,
 
         # passi ambientali dell'agente nell'ambiente
         # ci sarebbe un minimo di 200
         "timesteps_total": 2,
 
         # ferma il training quando la ricompensa media dell'agente nell'episodio è pari o maggiore
-        "episode_reward_mean": 100,
+        "episode_reward_max": 100,
     }
 
 # RAY  VIENE UTILIZZATO PER POTER FARE IL TUNING DEGLI IPERPARAMETRI
@@ -214,13 +214,12 @@ algo.train()
 results = algo.evaluate()
 print(results) """
 
-""" results = tune.Tuner(
+results = tune.Tuner(
     "DQN",
     run_config = train.RunConfig(stop=stop,verbose=1),
     param_space = config.to_dict(),
     tune_config = tune.TuneConfig(metric='mean_accuracy'),
 ).fit()
-print(results) """
 
 
 ###################################################################################################
@@ -316,12 +315,12 @@ algo.train()
 results = algo.evaluate()
 print('RESULTS:',results) """
 
-results = tune.Tuner(
+""" results = tune.Tuner(
         "PG",
         param_space=config.to_dict(), 
         run_config=air.RunConfig(stop=stop, verbose=1)
     ).fit()
-config.evaluation()
+config.evaluation() """
 
 ##################################################################################################
 ################################################  PPO  ###########################################
