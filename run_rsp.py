@@ -1,9 +1,13 @@
 import rsp
 import ray
+import time
 
 from ray import tune
 from ray import train
 from ray import air
+
+from ray.rllib.algorithms.callbacks import DefaultCallbacks
+from ray.tune import Stopper
 
 from ray.rllib.algorithms.impala import ImpalaConfig
 from ray.rllib.algorithms.pg import PGConfig
@@ -103,7 +107,26 @@ check_env(test_env)
 ############################################## APEX-DQN #####################################
 #############################################################################################
 # è un DQN evoluto, ovvero DQN su architettura APE-x (una gpu che apprende e più worker cpu che collezionano esperienza)
+""" 
+# Fa dei controlli ad ogni episodi, così ad esempio si ferma la partita quando la cuulative reward del difensore super i 100
+class MyCallbacks(DefaultCallbacks):
+    def on_episode_end(self, worker, base_env, policies, episode, **kwargs):
+        # Controlla il valore della cumulative reward
+        if episode.agent_rewards['difensore'] > 100:
+            return True  # Interrompi il training """
 
+# Sempre che stia funzionando lo stopping a tempo
+class TimeStopper(Stopper):
+    def __init__(self):
+        self._start = time.time()
+        self._deadline = 60  # Stop all trials after 2 seconds
+
+    def __call__(self, trial_id, result):
+        return False
+
+    def stop_all(self):
+        return time.time() - self._start > self._deadline
+    
 config = (
     ApexDQNConfig()
     .environment(
@@ -147,8 +170,8 @@ config['dueling'] = False
 #config["env_config"] = {"use_action_masking": True}
 
 
-config['evaluation_interval'] = 1
-config['create_env_on_driver'] = True
+#config['evaluation_interval'] = 1
+#config['create_env_on_driver'] = True
 
 # Qui non ho la stop condition
 """ algo = config.build()
@@ -157,16 +180,17 @@ results = algo.evaluate()
 print(results) """
 
 
-""" results = tune.run(
+results = tune.Tuner(
     "APEX",
-    stop=stop,
-    config = config.to_dict(),
-)
-print(results) """
+    run_config = train.RunConfig(stop=TimeStopper(),verbose=1),
+    param_space = config.to_dict(),
+).fit()
+print(results)
 
 #############################################################################################
 ###############################################  DQN  #######################################
 #############################################################################################
+
 config = (
     DQNConfig()
     .environment(
@@ -199,27 +223,28 @@ config = (
             model = { 
                     "custom_model": "am_model", 
                 }
-    )
+    )#.callbacks(MyCallbacks)
 )
 
 # Mi risolve i problemi di mismatch con la rete, non so perche, ma per l'action mask
 config['hiddens'] = []
 config['dueling'] = False
 
-config['evaluation_interval'] = 1
-config['create_env_on_driver'] = True
+# NON RICORDO IL PERCHE'
+#config['evaluation_interval'] = 1
+#config['create_env_on_driver'] = True
 
 """ algo = config.build()
 algo.train()
 results = algo.evaluate()
 print(results) """
 
-results = tune.Tuner(
+
+""" results = tune.Tuner(
     "DQN",
     run_config = train.RunConfig(stop=stop,verbose=1),
     param_space = config.to_dict(),
-    tune_config = tune.TuneConfig(metric='mean_accuracy'),
-).fit()
+).fit() """
 
 
 ###################################################################################################
