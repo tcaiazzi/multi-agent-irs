@@ -131,7 +131,7 @@ class raw_env(AECEnv):
         # FlowRateLimit(4), UnlimitFlowRate(5), RedirectToHoneypot(6), UnHoneypot(7), IncreaseLog(8),
         # DecreaseLog(9), QuarantineHost(10), UnQuarantineHost(11), ManualResolution(12), SystemReboot(13),
         # SystemShutdown(14), SystemStart(15), BackupHost(16), SoftwareUpdate(17)]
-        self._action_spaces[self.possible_agents[1]] = Discrete(18)
+        self._action_spaces[self.possible_agents[1]] = Discrete(19)
 
         # DEVE ESSERE DELLA STESSA STRUTTURA DEL RITORNO DI observe() 
         self._observation_spaces = {}
@@ -150,14 +150,14 @@ class raw_env(AECEnv):
         self._observation_spaces[self.possible_agents[0]] = Dict(
                 {
                     "observations": Box(low=0, high=5, shape=(21,), dtype=int),
-                    "action_mask": Box(low=0, high=1, shape=(18,), dtype=np.int8),
+                    "action_mask": Box(low=0, high=1, shape=(19,), dtype=np.int8),
                 }
             )
         # per entrambi usiamo solo quello del difensore
         self._observation_spaces[self.possible_agents[1]] = Dict(
                 {
                     "observations": Box(low=0, high=5, shape=(21,), dtype=int),
-                    "action_mask": Box(low=0, high=1, shape=(18,), dtype=np.int8),
+                    "action_mask": Box(low=0, high=1, shape=(19,), dtype=np.int8),
                 }
             )
                     
@@ -204,11 +204,12 @@ class raw_env(AECEnv):
         # DIFENSORE AZIONI
         # [GenerateAlert(0), FirewallActivation(1), BlockSourceIp(2), UnblockSourceIp(3), FlowRateLimit(4), UnlimitFlowRate(5), 
 		# RedirectToHoneypot(6), UnHoneypot(7), IncreaseLog(8), DecreaseLog(9), QuarantineHost(10), UnQuarantineHost(11),
-		# ManualResolution(12), SystemReboot(13), SystemShutdown(14), SystemStart(15), BackupHost(16), SoftwareUpdate(17)]
+		# ManualResolution(12), SystemReboot(13), SystemShutdown(14), SystemStart(15), BackupHost(16), SoftwareUpdate(17),
+        # noOp(18)]
         
         # ATTACCANTE AZIONI
-        #[Pscan(0), Pvsftpd(1), Psmbd(2), Pphpcgi(3), Pircd(4), Pdistccd(5), Prmi(6)]
-        legal_moves = np.zeros(18,'int8')
+        #[Pscan(0), Pvsftpd(1), Psmbd(2), Pphpcgi(3), Pircd(4), Pdistccd(5), Prmi(6), noOp(7)]
+        legal_moves = np.zeros(19,'int8')
 
         preCondizioni(agent,self.spazio,legal_moves)
 
