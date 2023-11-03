@@ -180,12 +180,12 @@ results = algo.evaluate()
 print(results) """
 
 
-results = tune.Tuner(
+""" results = tune.Tuner(
     "APEX",
     run_config = train.RunConfig(stop=TimeStopper(),verbose=1),
     param_space = config.to_dict(),
 ).fit()
-print(results)
+print(results) """
 
 #############################################################################################
 ###############################################  DQN  #######################################
@@ -316,7 +316,7 @@ print(results)  """
 config = (
       PGConfig()
       .environment(env_name,disable_env_checking=True)
-      .resources(num_gpus=1)
+      .resources(num_gpus=0)
       .framework("torch")
       .multi_agent(
         policies={
@@ -340,12 +340,12 @@ algo.train()
 results = algo.evaluate()
 print('RESULTS:',results) """
 
-""" results = tune.Tuner(
+results = tune.Tuner(
         "PG",
         param_space=config.to_dict(), 
         run_config=air.RunConfig(stop=stop, verbose=1)
     ).fit()
-config.evaluation() """
+config.evaluation()
 
 ##################################################################################################
 ################################################  PPO  ###########################################

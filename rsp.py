@@ -7,7 +7,8 @@ from gymnasium.spaces import Discrete,Box,Dict
 from pettingzoo import AECEnv
 from pettingzoo.utils import agent_selector, wrappers
 
-from prePost import doAction,reward,terminationPartita,reward_mosse,curva_partita
+from prePost import doAction,reward,terminationPartita,reward_mosse,curva_partita,T1,T2
+
 
 
 # 7 attacchi (pscan,pvsftpd,psmbd,pphpcgi,pircd,pdistccd,prmi) hanno una probabilità con tui il difensore lo valuta
@@ -18,8 +19,6 @@ from prePost import doAction,reward,terminationPartita,reward_mosse,curva_partit
 
 # il difensore ha 18 azioni, 21 componenti nello stato 
 # l'attaccante ne ha 7, lo stato esamina quello del difensore 
-# mi serve da sapere le pre/post condizioni delle azioni del difensore e dell'attaccante
-# Inoltre il difensore termina quando arriva o in uno stato target o nello stato clean,
 # considererei lo stato clean quello di partenza e lo stato target una configurazione delle anomalie innocua (DA DEFINIRE BENE)
 # per l'attaccante qual'è lo stato target di vittoria??
 
@@ -95,12 +94,16 @@ class raw_env(AECEnv):
         self.spazio[self.possible_agents[1]] = [1,0,1,0,
                                                 1,0,1,0,
                                                 1,0,1,0,
-                                                1,0]
+                                                1,0,1,0,
+                                                1,0,1,0,
+                                                1]
         # spazio del difensore monitorato anche dall'attaccante per l'observation dopo un'action
         self.spazio[self.possible_agents[1]] = [1,0,1,0,
                                                 1,0,1,0,
                                                 1,0,1,0,
-                                                1,0]
+                                                1,0,1,0,
+                                                1,0,1,0,
+                                                1]
         print('Spazii:',self.spazio)
 
         # optional: a mapping between agent name and ID
@@ -111,25 +114,41 @@ class raw_env(AECEnv):
         # optional: we can define the observation and action spaces here as attributes to be used in their corresponding methods
         # SOLITAMENTE ALGORITMI ACCETTANO TUTTI DISCRETE, 1 VAL 1 MOSSA
         self._action_spaces = {}
-        self._action_spaces[self.possible_agents[0]] = Discrete(3)
-        self._action_spaces[self.possible_agents[1]] = Discrete(14)
-        #self._action_spaces = {agent: Discrete(3) for agent in self.possible_agents}
+        
+        # ATTACCANTE: attacchi=[Pscan(0), Pvsftpd(1), Psmbd(2), Pphpcgi(3), Pircd(4), Pdistccd(5), Prmi(6)]
+        self._action_spaces[self.possible_agents[0]] = Discrete(8)
+
+        # DIFENSORE: 18 azioni= [GenerateAlert(0), FirewallActivation(1), BlockSourceIp(2), UnblockSourceIp(3),
+        # FlowRateLimit(4), UnlimitFlowRate(5), RedirectToHoneypot(6), UnHoneypot(7), IncreaseLog(8),
+        # DecreaseLog(9), QuarantineHost(10), UnQuarantineHost(11), ManualResolution(12), SystemReboot(13),
+        # SystemShutdown(14), SystemStart(15), BackupHost(16), SoftwareUpdate(17)]
+        self._action_spaces[self.possible_agents[1]] = Discrete(18)
 
         # DEVE ESSERE DELLA STESSA STRUTTURA DEL RITORNO DI observe() 
         self._observation_spaces = {}
         # lo spazio dell'attaccante per ora non viene utilizzato
         # Me ne basta uno solo
+
+        # [ firewall([True/False])(0), blockedip([])(1), flowlimit_ips([])(2), alert([True/False])(3), honeypot_ips([])(4),
+        # log_verb([0-5])(5),
+	    # active([True/False])(6), quarantined([True/False])(7), rebooted([True/False])(8), backup([True/False])(9),
+        # updated([True/False])(10),
+	    # manuallySolved([True/False])(11), everQuarantined([True/False])(12), everShutDown([True/False])(13),
+	    # +
+	    # pscan([0-1])(14), pvsftpd([0-1])(15), psmbd([0-1])(16), pphpcgi([0-1])(17), pircd([0-1])(18), pdistccd([0-1])(19), prmi([0-1])(20),]
+
+
         self._observation_spaces[self.possible_agents[0]] = Dict(
                 {
-                    "observations": Box(low=0, high=5, shape=(14,), dtype=int),
-                    "action_mask": Box(low=0, high=1, shape=(14,), dtype=np.int8),
+                    "observations": Box(low=0, high=5, shape=(21,), dtype=int),
+                    "action_mask": Box(low=0, high=1, shape=(18,), dtype=np.int8),
                 }
             )
         # per entrambi usiamo solo quello del difensore
         self._observation_spaces[self.possible_agents[1]] = Dict(
                 {
-                    "observations": Box(low=0, high=5, shape=(14,), dtype=int),
-                    "action_mask": Box(low=0, high=1, shape=(14,), dtype=np.int8),
+                    "observations": Box(low=0, high=5, shape=(21,), dtype=int),
+                    "action_mask": Box(low=0, high=1, shape=(18,), dtype=np.int8),
                 }
             )
                     
@@ -160,35 +179,163 @@ class raw_env(AECEnv):
 # INVECE MOLTO IMPORTANTE OBSERVE CHE FA TORNRE L'OSSERVAZIONE IN BASE ALLA MOSSA
 # IN FATTI STO USANDO LA VARIABILE SPAZIO CHE ERA SATATA PROGETTATA PER LA MIA LOGICA INTERNA, IL COMPORTAMENTO
     def observe(self, agent):
-        """
-        Observe should return the observation of the specified agent. This function
-        should return a sane observation (though not necessarily the most up to date possible)
-        at any time after reset() is called.
-        """
-        # observation of one agent is the previous state of the other
+        # PRE CONDIZIONI
+
+        # STATO
+        # [ firewall([True/False])(0), blockedip([])(1), flowlimit_ips([])(2), alert([True/False])(3), honeypot_ips([])(4),
+        # log_verb([0-5])(5),
+	    # active([True/False])(6), quarantined([True/False])(7), rebooted([True/False])(8), backup([True/False])(9),
+        # updated([True/False])(10),
+	    # manuallySolved([True/False])(11), everQuarantined([True/False])(12), everShutDown([True/False])(13),
+	    # +
+	    # pscan([0-1])(14), pvsftpd([0-1])(15), psmbd([0-1])(16), pphpcgi([0-1])(17), pircd([0-1])(18), pdistccd([0-1])(19), prmi([0-1])(20),]
+
         # SERVE A FAR SI CHE IN UNO STATO ALCUNE AZIONI NON SIANO SELEZIONABILI
-        legal_moves = np.zeros(14,'int8')
+
+        # DIFENSORE AZIONI
+        # [GenerateAlert(0), FirewallActivation(1), BlockSourceIp(2), UnblockSourceIp(3), FlowRateLimit(4), UnlimitFlowRate(5), 
+		# RedirectToHoneypot(6), UnHoneypot(7), IncreaseLog(8), DecreaseLog(9), QuarantineHost(10), UnQuarantineHost(11),
+		# ManualResolution(12), SystemReboot(13), SystemShutdown(14), SystemStart(15), BackupHost(16), SoftwareUpdate(17)]
+        
+        # ATTACCANTE AZIONI
+        #[Pscan(0), Pvsftpd(1), Psmbd(2), Pphpcgi(3), Pircd(4), Pdistccd(5), Prmi(6)]
+        legal_moves = np.zeros(18,'int8')
 
         if agent == 'difensore':
-            for i in range(len(self.spazio['difensore'])):
-                if self.spazio['difensore'][i] == 0:
-                        legal_moves[i]=1
-                else:
-                        legal_moves[i]=0
-        else:
-            # mossa 0 nel caso anche solo uno dei primi 6 TRUE
-            for i in self.spazio['difensore'][:7]:
-                if i:
-                    legal_moves[0] = 1
-            # mossa 2 nel caso anche solo uno dei secondi 6 TRUE
-            for i in self.spazio['difensore'][7:]:
-                if i :
-                    legal_moves[2] = 1
-            # qualcosa fa
-            if self.spazio['difensore'][7]:
+            # pre condizioni del difensore
+            # Generate alert
+            if (self.spazio['difensore'][14] >= T1 or self.spazio['difensore'][15] >= T1 or self.spazio['difensore'][16] >= T1 or self.spazio['difensore'][17] >= T1 or self.spazio['difensore'][18] >= T1 or self.spazio['difensore'][19] >= T1 or self.spazio['difensore'][20] >= T1) and self.spazio['difensore'][3] == 0:
+                legal_moves[0] = 1
+            else:
+                legal_moves[0] = 0
+            # FirewallActivation
+            if (self.spazio['difensore'][14] >= T1 or self.spazio['difensore'][15] >= T1 or self.spazio['difensore'][16] >= T1 or self.spazio['difensore'][17] >= T1 or self.spazio['difensore'][18] >= T1 or self.spazio['difensore'][19] >= T1 or self.spazio['difensore'][20] >= T1) and self.spazio['difensore'][0] == 0 and self.spazio['difensore'][7] == 0 and self.spazio['difensore'][6] == 1 and self.spazio['difensore'][5] > 0:
                 legal_moves[1] = 1
-
-
+            else:
+                legal_moves[1] = 0
+            # BlockSourceIp
+            if self.spazio['difensore'][14] >= T2 and self.spazio['difensore'][0] == 1 and self.spazio['difensore'][7] == 0 and self.spazio['difensore'][6] == 1 and self.spazio['difensore'][1] == 0 and self.spazio['difensore'][3] == 1 and self.spazio['difensore'][5] > 1 : 
+                legal_moves[2] = 1
+            else:
+                legal_moves[2] = 0
+            # UnblockSourceIp
+            if self.spazio['difensore'][14] < T2 and self.spazio['difensore'][0] == 1 and self.spazio['difensore'][7] == 0 and self.spazio['difensore'][6] == 1 and self.spazio['difensore'][1] == 1 and self.spazio['difensore'][2] == 1 and self.spazio['difensore'][5] > 1 :
+                legal_moves[3] = 1
+            else:
+                legal_moves[3] = 0
+            # FlowRateLimit
+            if self.spazio['difensore'][14] >= T1 and self.spazio['difensore'][0] ==1 and self.spazio['difensore'][7] == 0 and self.spazio['difensore'][6] == 1 and self.spazio['difensore'][2] == 0 and self.spazio['difensore'][5] > 0 and self.spazio['difensore'][1] == 0 :
+                legal_moves[4] = 1
+            else:
+                legal_moves[4] = 0
+            # UnlimitFlowRate
+            if self.spazio['difensore'][14] < T1 and self.spazio['difensore'][0] ==1 and self.spazio['difensore'][7] == 0 and self.spazio['difensore'][6] == 1 and self.spazio['difensore'][2] == 1 and self.spazio['difensore'][5] > 0 :
+                legal_moves[5] = 1
+            else:
+                legal_moves[5] = 0
+            # RedirectToHoneypot
+            if self.spazio['difensore'][4] == 0 and (self.spazio['difensore'][15] >= T1 or self.spazio['difensore'][16] >= T1 or self.spazio['difensore'][17] >= T1 or self.spazio['difensore'][18] >= T1 or self.spazio['difensore'][19] >= T1 or self.spazio['difensore'][20] >= T1) and self.spazio['difensore'][0] == 1 and self.spazio['difensore'][7] == 0 and self.spazio['difensore'][6] == 1 :
+                legal_moves[6] = 1
+            else:
+                legal_moves[6] = 0
+            # UnHoneypot
+            if self.spazio['difensore'][4] == 1 and (self.spazio['difensore'][15] < T1 or self.spazio['difensore'][16] < T1 or self.spazio['difensore'][17] < T1 or self.spazio['difensore'][18] < T1 or self.spazio['difensore'][19] < T1 or self.spazio['difensore'][20] < T1) and self.spazio['difensore'][0] == 1 and self.spazio['difensore'][7] == 0 and self.spazio['difensore'][6] == 1 :
+                legal_moves[7] = 1
+            else:
+                legal_moves[7] = 0
+            # IncreaseLog
+            if self.spazio['difensore'][5] < 5 and (self.spazio['difensore'][14] >= T1 or self.spazio['difensore'][15] >= T1 or self.spazio['difensore'][16] >= T1 or self.spazio['difensore'][17] >= T1 or self.spazio['difensore'][18] >= T1 or self.spazio['difensore'][19] >= T1 or self.spazio['difensore'][20] >= T1) : 
+                legal_moves[8] = 1
+            else:
+                legal_moves[8] = 0
+            # DecreaseLog
+            if self.spazio['difensore'][5] > 0 and (self.spazio['difensore'][14] < T2 or self.spazio['difensore'][15] < T2 or self.spazio['difensore'][16] < T2 or self.spazio['difensore'][17] < T2 or self.spazio['difensore'][18] < T2 or self.spazio['difensore'][19] < T2 or self.spazio['difensore'][20] < T2) : 
+                legal_moves[9] = 1
+            else:
+                legal_moves[9] = 0
+            # QuarantineHost
+            if self.spazio['difensore'][7] == 0 and (self.spazio['difensore'][14] > T2 or self.spazio['difensore'][15] > T2 or self.spazio['difensore'][16] > T2 or self.spazio['difensore'][17] > T2 or self.spazio['difensore'][18] > T2 or self.spazio['difensore'][19] > T2 or self.spazio['difensore'][20] > T2) and self.spazio['difensore'][0] == 1 and self.spazio['difensore'][3] == 1 and self.spazio['difensore'][5] >= 4 :
+                legal_moves[10] = 1
+            else:
+                legal_moves[10] = 0    
+            # UnQuarantineHost    
+            if self.spazio['difensore'][7] == 1 and (self.spazio['difensore'][14] < T2 or self.spazio['difensore'][15] < T2 or self.spazio['difensore'][16] < T2 or self.spazio['difensore'][17] < T2 or self.spazio['difensore'][18] < T2 or self.spazio['difensore'][19] < T2 or self.spazio['difensore'][20] < T2) and self.spazio['difensore'][0] == 1 and self.spazio['difensore'][5] > 3 :
+                legal_moves[11] = 1
+            else:
+                legal_moves[11] = 0
+            # ManualResolution 
+            if self.spazio['difensore'][11] == 0 and (self.spazio['difensore'][15] == 1 or self.spazio['difensore'][16] == 1 or self.spazio['difensore'][17] == 1 or self.spazio['difensore'][18] == 1 or self.spazio['difensore'][19] == 1 or self.spazio['difensore'][20] == 1) and self.spazio['difensore'][0] == 1 and self.spazio['difensore'][7] == 1 and self.spazio['difensore'][8] == 1 and self.spazio['difensore'][10] == 1 and self.spazio['difensore'][3] == 1 and self.spazio['difensore'][9] == 1 :
+                legal_moves[12] = 1
+            else:
+                legal_moves[12] = 0
+            # SystemReboot
+            if self.spazio['difensore'][11] == 0 and self.spazio['difensore'][6] == 1 and (self.spazio['difensore'][15] == 1 or self.spazio['difensore'][16] == 1 or self.spazio['difensore'][17] == 1 or self.spazio['difensore'][18] == 1 or self.spazio['difensore'][19] == 1 or self.spazio['difensore'][20] == 1) and self.spazio['difensore'][0] == 1 and self.spazio['difensore'][7] == 1 and self.spazio['difensore'][8] == 1 and self.spazio['difensore'][10] == 1 and self.spazio['difensore'][3] == 1 and self.spazio['difensore'][9] == 1 :
+                legal_moves[13] = 1
+            else:
+                legal_moves[13] = 0
+            # SystemShutdown
+            if self.spazio['difensore'][11] == 0 and self.spazio['difensore'][6] == 1 and (self.spazio['difensore'][15] == 1 or self.spazio['difensore'][16] == 1 or self.spazio['difensore'][17] == 1 or self.spazio['difensore'][18] == 1 or self.spazio['difensore'][19] == 1 or self.spazio['difensore'][20] == 1) and self.spazio['difensore'][0] == 1 and self.spazio['difensore'][7] == 1 and self.spazio['difensore'][8] == 1 and self.spazio['difensore'][10] == 1 and self.spazio['difensore'][3] == 1 and self.spazio['difensore'][9] == 1 :
+                legal_moves[14] = 1
+            else:
+                legal_moves[14] = 0
+            # SystemStart
+            if self.spazio['difensore'][6] == 0 :
+                legal_moves[15] = 1
+            else:
+                legal_moves[15] = 0
+            # BackupHost
+            if self.spazio['difensore'][6] == 1 and self.spazio['difensore'][9] == 0 and (self.spazio['difensore'][15] > T1 or self.spazio['difensore'][16] > T1 or self.spazio['difensore'][17] > T1 or self.spazio['difensore'][18] > T1 or self.spazio['difensore'][19] > T1 or self.spazio['difensore'][20] > T1):
+                legal_moves[16] = 1
+            else:
+                legal_moves[16] = 0
+            # SoftwareUpdate
+            if self.spazio['difensore'][6] == 1 and self.spazio['difensore'][10] == 0 and (self.spazio['difensore'][15] > T1 or self.spazio['difensore'][16] > T1 or self.spazio['difensore'][17] > T1 or self.spazio['difensore'][18] > T1 or self.spazio['difensore'][19] > T1 or self.spazio['difensore'][20] > T1):
+                legal_moves[17] = 1
+            else:
+                legal_moves[17] = 0
+            
+        else:
+            # pre condizioni dell'attaccante
+            # Pscan
+            if self.spazio['difensore'][14] < T1:
+                legal_moves[0] = 1
+            else:
+                legal_moves[0] = 0
+            # Pvsftpd
+            if self.spazio['difensore'][15] < T1 and self.spazio['difensore'][14] > T2:
+                legal_moves[1] = 1
+            else:
+                legal_moves[1] = 0
+            # Psmbd
+            if self.spazio['difensore'][16] < T1 and self.spazio['difensore'][14] > T2:
+                legal_moves[2] = 1
+            else:
+                legal_moves[2] = 0
+            # Pphpcgi
+            if self.spazio['difensore'][17] < T1 and self.spazio['difensore'][14] > T2:
+                legal_moves[3] = 1
+            else:
+                legal_moves[3] = 0
+            # Pircd
+            if self.spazio['difensore'][18] < T1 and self.spazio['difensore'][14] > T2:
+                legal_moves[4] = 1
+            else:
+                legal_moves[4] = 0
+            # Pdistccd
+            if self.spazio['difensore'][19] < T1 and self.spazio['difensore'][14] > T2:
+                legal_moves[5] = 1
+            else:
+                legal_moves[5] = 0
+            # Prmi
+            if self.spazio['difensore'][20] < T1 and self.spazio['difensore'][14] > T2:
+                legal_moves[6] = 1
+            else:
+                legal_moves[6] = 0
+            # noOp
+            legal_moves[7] = 1
+            # Non ci sono mosse per l'attaccante
+            for i in range(8,18,1):
+                legal_moves[i] = 0
 
 
         print('\t')
@@ -224,11 +371,15 @@ class raw_env(AECEnv):
         self.spazio[self.possible_agents[0]] = [1,0,1,0,
                                                 1,0,1,0,
                                                 1,0,1,0,
-                                                1,0]
+                                                1,0,1,0,
+                                                1,0,1,0,
+                                                1]
         self.spazio[self.possible_agents[1]] = [1,0,1,0,
                                                 1,0,1,0,
                                                 1,0,1,0,
-                                                1,0]
+                                                1,0,1,0,
+                                                1,0,1,0,
+                                                1]
     
         self.agents = self.possible_agents[:]
 
@@ -354,14 +505,6 @@ class raw_env(AECEnv):
        
         # selects the next agent.
         self.agent_selection = self._agent_selector.next()
-        # Adds .rewards to ._cumulative_rewards
-        # PER FORZA QUI PERCHÈ LE REWARDS SI AZZERA OGNI VOLTA CHE SCAMBIA IL GIOCATORE
-        # ANNULLARE LE REWARD NEL CASO FINISCANO PARI
-        """ if self.num_moves < 100:
-            self._accumulate_rewards()
-        else:
-            self.rewards['attaccante'] = -self._cumulative_rewards['attaccante']
-            self.rewards['difensore'] = -self._cumulative_rewards['difensore'] """
         
         # SALVE TUTTE LE REWARD CUMULATIVE DI TUTTE LE PARTITE
         curva_partita['attaccante'].append((self.num_moves,self._cumulative_rewards['attaccante']))
