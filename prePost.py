@@ -316,7 +316,7 @@ def reward(agent,spazio,action):
     wi = 0.5
     tMax = 100
     cMax = 100
-    calcolo = -(-wt*(REWARD_MAP[agent][action][0]/tMax)-wc*(REWARD_MAP[agent][action][1]/cMax)-wi*(1))
+    calcolo = -(-wt*(REWARD_MAP[agent][action][0]/tMax)-wc*(REWARD_MAP[agent][action][1]/cMax)-wi*REWARD_MAP[agent][action][2])
     #calcolo = REWARD_MAP[agent][action][0]+REWARD_MAP[agent][action][1]+REWARD_MAP[agent][action][2]
     print('Reward:',calcolo)
     return calcolo

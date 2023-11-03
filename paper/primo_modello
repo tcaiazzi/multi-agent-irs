@@ -196,7 +196,9 @@ post: backup
 molte connessioni vengono chiuse quindi in shutdown e reboot io salverei il vaore suglie attacchi e poi con una certa probabilità li terrei
 reboot fa shutdown+start
 
-
+*** stato di partenza
+[0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+tutto spento tranne sistema attivo 1 e log 1 (con 0 mi esce)
 
 Sc = {s ∈ S |pscan < T1 ∧ pvsftpd < T1 ∧ psmbd < T1 ∧ pphpcдi < T1 ∧ pir c < T1 ∧ pdist cc < T1 ∧
 prmi < T1 ∧ blocked_ips = ∅ ∧ f lowlimited_ips = ∅ ∧ honeypot_ips = ∅ ∧ logVerb = 0 ∧ active ∧

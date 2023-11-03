@@ -88,22 +88,31 @@ class raw_env(AECEnv):
         } """
         self.spazio = {}
         
+        # STATO
+        # [ firewall([True/False])(0), blockedip([])(1), flowlimit_ips([])(2), alert([True/False])(3), honeypot_ips([])(4),
+        # log_verb([0-5])(5),
+        # active([True/False])(6), quarantined([True/False])(7), rebooted([True/False])(8), backup([True/False])(9),
+        # updated([True/False])(10),
+        # manuallySolved([True/False])(11), everQuarantined([True/False])(12), everShutDown([True/False])(13),
+        # +
+        # pscan([0-1])(14), pvsftpd([0-1])(15), psmbd([0-1])(16), pphpcgi([0-1])(17), pircd([0-1])(18), pdistccd([0-1])(19), prmi([0-1])(20),]
+
         # per ora non lo sto usando lo spazio dell'attaccante
         #self.spazio[self.possible_agents[0]] = [False]
         # Mi serve solo per rimuovere un wrap per usare il dizionario per l'action mask MA NON LO STO USANDO
-        self.spazio[self.possible_agents[1]] = [1,0,1,0,
-                                                1,0,1,0,
-                                                1,0,1,0,
-                                                1,0,1,0,
-                                                1,0,1,0,
-                                                1]
+        self.spazio[self.possible_agents[1]] = [0,0,0,0,
+                                                0,1,1,0,
+                                                0,0,0,0,
+                                                0,0,0,0,
+                                                0,0,0,0,
+                                                0]
         # spazio del difensore monitorato anche dall'attaccante per l'observation dopo un'action
-        self.spazio[self.possible_agents[1]] = [1,0,1,0,
-                                                1,0,1,0,
-                                                1,0,1,0,
-                                                1,0,1,0,
-                                                1,0,1,0,
-                                                1]
+        self.spazio[self.possible_agents[1]] = [0,0,0,0,
+                                                0,1,1,0,
+                                                0,0,0,0,
+                                                0,0,0,0,
+                                                0,0,0,0,
+                                                0]
         print('Spazii:',self.spazio)
 
         # optional: a mapping between agent name and ID
@@ -233,18 +242,18 @@ class raw_env(AECEnv):
         
         # PER LA LOGICA
         self.spazio = {}
-        self.spazio[self.possible_agents[0]] = [1,0,1,0,
-                                                1,0,1,0,
-                                                1,0,1,0,
-                                                1,0,1,0,
-                                                1,0,1,0,
-                                                1]
-        self.spazio[self.possible_agents[1]] = [1,0,1,0,
-                                                1,0,1,0,
-                                                1,0,1,0,
-                                                1,0,1,0,
-                                                1,0,1,0,
-                                                1]
+        self.spazio[self.possible_agents[0]] = [0,0,0,0,
+                                                0,1,1,0,
+                                                0,0,0,0,
+                                                0,0,0,0,
+                                                0,0,0,0,
+                                                0]
+        self.spazio[self.possible_agents[1]] = [0,0,0,0,
+                                                0,1,1,0,
+                                                0,0,0,0,
+                                                0,0,0,0,
+                                                0,0,0,0,
+                                                0]
     
         self.agents = self.possible_agents[:]
 
@@ -321,37 +330,6 @@ class raw_env(AECEnv):
             rw = reward(agent,self.spazio,action)
             self.rewards[agent] = rw
         
-        # VOLEVO FORZARE A FARLI SCEGLIERE SUBITO LE MOSSE MIGLIORI, PERCHÈ CON L'AUMENTARE DI MOSSE MENO REWARD
-        # PERÒ SOLO PER L'ATTCCANTE, PERCHÈ DEVE SBRIGARSI PRIMA CHE IL DIFENSORE LE BLOCCHI TUTTE
-        # PER IL DIFENSORE DATO CHE NON HA UNA SUPER MOSSA BASTA CHE NEL TEMPO NON PRENDA MOSSE INEFFICIENTI
-        """ if agent == 'attaccante':
-            if self.num_moves > 0:
-                # Reward attaccante dipendente dal tempo
-                #rw = rw/ (self.num_moves)
-                rw = rw
-        else:
-            rw = rw """
-                 
-        
-        #print('rw:',rw)
-        
-        # PER NON MANDARE LA REWARD TOTALE NEGATIVA
-        """ if agent == 'attaccante':
-            self.rewards[agent] = rw
-            # Mi influenza la reward dell'avversario
-            if self._cumulative_rewards['difensore'] >= rw:
-                self.rewards['difensore'] = (-rw)
-            else:
-                self.rewards['difensore'] = (-self.rewards['difensore'])
-           
-        elif agent == 'difensore':
-            self.rewards[agent] = rw
-            # Mi influenza la reward dell'avversario
-            if self._cumulative_rewards['attaccante'] >= rw:
-                self.rewards['attaccante'] = (-rw)
-            else:
-                self.rewards['attaccante'] = (-self.rewards['attaccante'])         
-        """ 
         
         ############################# CHECK ARRESTO (se sono nello stato sicuro) #########################
         
