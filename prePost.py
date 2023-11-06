@@ -1,6 +1,13 @@
 from matplotlib import pyplot as plt
 import numpy as np
 
+T1 = 0.33
+T2 = 0.66
+
+mosseDifensore = ['Generate alert','FirewallActivation','BlockSourceIp','UnblockSourceIp','FlowRateLimit','UnlimitFlowRate',
+                  'RedirectToHoneypot','UnRedirectToHoneypot','IncreaseLog','DecreaseLog','QuarantineHost','UnQuarantineHost',
+                  'ManualResolution','SystemReboot','SystemShutdown','SystemStart','BackupHost','SoftwareUpdate','noOp']
+
 # qui per ogni partita mette numero di mosse fatte e le cumulative reward finali di quella partita
 reward_mosse = {
     "attaccante":[],
@@ -13,8 +20,6 @@ curva_partita = {
     "difensore":[],
 }
 
-T1 = 0.33
-T2 = 0.66
 
 # Pre condizioni codificate nell'action mask
 def preCondizioni(agent,spazio,legal_moves):
@@ -23,8 +28,7 @@ def preCondizioni(agent,spazio,legal_moves):
         # Generate alert
         if ((spazio['difensore'][14] >= T1 or spazio['difensore'][15] >= T1 or spazio['difensore'][16] >= T1 or
             spazio['difensore'][17] >= T1 or spazio['difensore'][18] >= T1 or spazio['difensore'][19] >= T1 or 
-            spazio['difensore'][20] >= T1) 
-            and spazio['difensore'][3] == 0):
+            spazio['difensore'][20] >= T1) and spazio['difensore'][3] == 0 and spazio['difensore'][6] == 1):
             legal_moves[0] = 1
         else:
             legal_moves[0] = 0
@@ -83,7 +87,7 @@ def preCondizioni(agent,spazio,legal_moves):
         if (spazio['difensore'][5] < 5 and 
             (spazio['difensore'][14] >= T1 or spazio['difensore'][15] >= T1 or spazio['difensore'][16] >= T1 or 
              spazio['difensore'][17] >= T1 or spazio['difensore'][18] >= T1 or spazio['difensore'][19] >= T1 or 
-             spazio['difensore'][20] >= T1)) : 
+             spazio['difensore'][20] >= T1) and spazio['difensore'][6] == 1) : 
             legal_moves[8] = 1
         else:
             legal_moves[8] = 0
@@ -91,7 +95,7 @@ def preCondizioni(agent,spazio,legal_moves):
         if (spazio['difensore'][5] > 0 and 
             (spazio['difensore'][14] < T2 or spazio['difensore'][15] < T2 or spazio['difensore'][16] < T2 or 
              spazio['difensore'][17] < T2 or spazio['difensore'][18] < T2 or spazio['difensore'][19] < T2 or 
-             spazio['difensore'][20] < T2)) : 
+             spazio['difensore'][20] < T2) and spazio['difensore'][6] == 1) : 
             legal_moves[9] = 1
         else:
             legal_moves[9] = 0
@@ -100,7 +104,8 @@ def preCondizioni(agent,spazio,legal_moves):
             (spazio['difensore'][14] > T2 or spazio['difensore'][15] > T2 or spazio['difensore'][16] > T2 or 
              spazio['difensore'][17] > T2 or spazio['difensore'][18] > T2 or spazio['difensore'][19] > T2 or 
              spazio['difensore'][20] > T2) 
-            and spazio['difensore'][0] == 1 and spazio['difensore'][3] == 1 and spazio['difensore'][5] >= 4) :
+            and spazio['difensore'][0] == 1 and spazio['difensore'][3] == 1 and spazio['difensore'][5] >= 3 
+            and spazio['difensore'][6] == 1) :
             legal_moves[10] = 1
         else:
             legal_moves[10] = 0    
@@ -109,7 +114,7 @@ def preCondizioni(agent,spazio,legal_moves):
             (spazio['difensore'][14] < T2 or spazio['difensore'][15] < T2 or spazio['difensore'][16] < T2 or 
              spazio['difensore'][17] < T2 or spazio['difensore'][18] < T2 or spazio['difensore'][19] < T2 or 
              spazio['difensore'][20] < T2) 
-            and spazio['difensore'][0] == 1 and spazio['difensore'][5] > 3) :
+            and spazio['difensore'][0] == 1 and spazio['difensore'][5] > 3 and spazio['difensore'][6] == 1) :
             legal_moves[11] = 1
         else:
             legal_moves[11] = 0
@@ -118,7 +123,8 @@ def preCondizioni(agent,spazio,legal_moves):
             (spazio['difensore'][15] == 1 or spazio['difensore'][16] == 1 or spazio['difensore'][17] == 1 or 
              spazio['difensore'][18] == 1 or spazio['difensore'][19] == 1 or spazio['difensore'][20] == 1) 
             and spazio['difensore'][0] == 1 and spazio['difensore'][7] == 1 and spazio['difensore'][8] == 1 
-            and spazio['difensore'][10] == 1 and spazio['difensore'][3] == 1 and spazio['difensore'][9] == 1) :
+            and spazio['difensore'][10] == 1 and spazio['difensore'][3] == 1 and spazio['difensore'][9] == 1 
+            and spazio['difensore'][6] == 1) :
             legal_moves[12] = 1
         else:
             legal_moves[12] = 0
@@ -135,7 +141,7 @@ def preCondizioni(agent,spazio,legal_moves):
         if (spazio['difensore'][11] == 0 and spazio['difensore'][6] == 1 and 
             (spazio['difensore'][15] == 1 or spazio['difensore'][16] == 1 or spazio['difensore'][17] == 1 or 
              spazio['difensore'][18] == 1 or spazio['difensore'][19] == 1 or spazio['difensore'][20] == 1) 
-            and spazio['difensore'][0] == 1 and spazio['difensore'][7] == 1 and spazio['difensore'][8] == 1 
+            and spazio['difensore'][0] == 1 and spazio['difensore'][7] == 1 and spazio['difensore'][8] == 0 
             and spazio['difensore'][10] == 1 and spazio['difensore'][3] == 1 and spazio['difensore'][9] == 1) :
             legal_moves[14] = 1
         else:
@@ -161,41 +167,42 @@ def preCondizioni(agent,spazio,legal_moves):
             legal_moves[17] = 0
         # noOp (altrimenti se nulla è selezionbile sceglie a caso)
         legal_moves[18] = 1
+
         
     else:
         # pre condizioni dell'attaccante
         # Pscan
-        if spazio['difensore'][14] < T1:
+        if spazio['difensore'][14] < T1 and spazio['difensore'][6] == 1:
             legal_moves[0] = 1
         else:
             legal_moves[0] = 0
         # Pvsftpd
-        if spazio['difensore'][15] < T1 and spazio['difensore'][14] > T2:
+        if spazio['difensore'][15] < T1 and spazio['difensore'][14] > T2 and spazio['difensore'][6] == 1: 
             legal_moves[1] = 1
         else:
             legal_moves[1] = 0
         # Psmbd
-        if spazio['difensore'][16] < T1 and spazio['difensore'][14] > T2:
+        if spazio['difensore'][16] < T1 and spazio['difensore'][14] > T2 and spazio['difensore'][6] == 1:
             legal_moves[2] = 1
         else:
             legal_moves[2] = 0
         # Pphpcgi
-        if spazio['difensore'][17] < T1 and spazio['difensore'][14] > T2:
+        if spazio['difensore'][17] < T1 and spazio['difensore'][14] > T2 and spazio['difensore'][6] == 1:
             legal_moves[3] = 1
         else:
             legal_moves[3] = 0
         # Pircd
-        if spazio['difensore'][18] < T1 and spazio['difensore'][14] > T2:
+        if spazio['difensore'][18] < T1 and spazio['difensore'][14] > T2 and spazio['difensore'][6] == 1:
             legal_moves[4] = 1
         else:
             legal_moves[4] = 0
         # Pdistccd
-        if spazio['difensore'][19] < T1 and spazio['difensore'][14] > T2:
+        if spazio['difensore'][19] < T1 and spazio['difensore'][14] > T2 and spazio['difensore'][6] == 1:
             legal_moves[5] = 1
         else:
             legal_moves[5] = 0
         # Prmi
-        if spazio['difensore'][20] < T1 and spazio['difensore'][14] > T2:
+        if spazio['difensore'][20] < T1 and spazio['difensore'][14] > T2 and spazio['difensore'][6] == 1:
             legal_moves[6] = 1
         else:
             legal_moves[6] = 0
@@ -204,6 +211,14 @@ def preCondizioni(agent,spazio,legal_moves):
         # Non ci sono mosse per l'attaccante
         for i in range(8,19,1):
             legal_moves[i] = 0
+
+    if agent == 'difensore':
+        print('-----------------------------------------------------------------------------------------')
+        print(legal_moves)
+        for i in range(len(mosseDifensore)):
+            if legal_moves[i] == 1 :
+                print(mosseDifensore[i])
+
 
 
 # APPLICA L'AZIONE ALLo SPAZIO 'LOGICA'
@@ -220,6 +235,7 @@ def postCondizioni(action,spazio,agent):
 
     mossaValida = True
     if agent == 'difensore':
+        print(mosseDifensore[action])
         # GenerateAlert
         if action == 0 :
             spazio[agent][3] = 1
@@ -268,6 +284,7 @@ def postCondizioni(action,spazio,agent):
             # Pxx da scalare con prob
         # SystemReboot
         elif action == 13 :
+            spazio[agent][8] = 1
             # Scalare gli attacchi con una prob
             spazio[agent][14] = 0
             spazio[agent][15] = 0

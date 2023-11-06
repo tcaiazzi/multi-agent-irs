@@ -7,7 +7,7 @@ from gymnasium.spaces import Discrete,Box,Dict
 from pettingzoo import AECEnv
 from pettingzoo.utils import agent_selector, wrappers
 
-from prePost import postCondizioni,reward,terminationPartita,reward_mosse,curva_partita,T1,T2,preCondizioni
+from prePost import postCondizioni,reward,terminationPartita,reward_mosse,curva_partita,preCondizioni
 
 
 

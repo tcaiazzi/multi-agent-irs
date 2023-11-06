@@ -7,42 +7,42 @@ attacchi=[Pscan(0), Pvsftpd(1), Psmbd(2), Pphpcgi(3), Pircd(4), Pdistccd(5), Prm
 seleziona un'azione e con una probbilità mi altera la variabile relativa all'attacco
 	# port scan
 	Pscan,
-	pre: pscan < T1
+	pre: pscan < T1 and active
 	post: Pscan = 1
 	
 	# exploit on the vsftpd daemon
 	# vsftpd per usare FTP con autenticazioni con moduli PAM di linux
 	Pvsftpd,
-	pre: pvsftpd < T1 ∧ pscan ≥ T2
+	pre: pvsftpd < T1 ∧ pscan ≥ T2 and active
 	post: Pvsftpd=1
 	
 	# exploit on the smbd daemon
 	# smbd per la gestione di risorse condivise tra i serve (file,dischi,stampanti,..)
 	Psmbd,
-	pre: psmbd < T1 ∧ pscan ≥ T2
+	pre: psmbd < T1 ∧ pscan ≥ T2 and active
 	post: Psmbd = 1
 	
 	# exploit on the execution of PHP as a CGI application
 	Pphpcgi,
-	pre: pphpcgi < T1 ∧ pscan ≥ T2
+	pre: pphpcgi < T1 ∧ pscan ≥ T2 and active
 	post: Pphpcgi = 1
 	
 	# exploit on the ircd daemon
 	# ircd usato per mettere in ascolto il server per i client
 	Pircd,
-	pre: pircd < T1 ∧ pscan ≥ T2
+	pre: pircd < T1 ∧ pscan ≥ T2 and active
 	post: Pircd = 1
 	
 	# exploit on the distccd daemon
 	# distccd è un server per la compilazione dei sorgenti
 	Pdistccd,
-	pre: pdistccd < T1 ∧ pscan ≥ T2
+	pre: pdistccd < T1 ∧ pscan ≥ T2 and active
 	post: Pdistccd = 1
 	
 	# exploit on the rmi Java daemon
 	# rmi, per comunicazioni remote java app
 	Prmi,
-	pre: prmi < T1 ∧ pscan ≥ T2
+	pre: prmi < T1 ∧ pscan ≥ T2 and active
 	post: Prmi = 1
 	
 	# noOp
@@ -108,12 +108,13 @@ stato= [
 	
 18 azioni= [GenerateAlert(0), FirewallActivation(1), BlockSourceIp(2), UnblockSourceIp(3), FlowRateLimit(4), UnlimitFlowRate(5), 
 		RedirectToHoneypot(6), UnHoneypot(7), IncreaseLog(8), DecreaseLog(9), QuarantineHost(10), UnQuarantineHost(11),
-		ManualResolution(12), SystemReboot(13), SystemShutdown(14), SystemStart(15), BackupHost(16), SoftwareUpdate(17)]
+		ManualResolution(12), SystemReboot(13), SystemShutdown(14), SystemStart(15), BackupHost(16), SoftwareUpdate(17),
+		noOp(18)]
 OR = V 
 
 GENERATE ALERT
 pre: (pscan ≥ T1 ∨ pvsftpd ≥ T1 ∨ psmbd ≥ T1 ∨ pphpcgid ≥ T1 ∨ pdistccd ≥ T1 ∨ prmi ≥
-T1 ∨ pircd ≥ T1 ) ^ ¬alert
+T1 ∨ pircd ≥ T1 ) ^ ¬alert ^ active
 post: alert = True
 
 FIREWALL ACTIVATION
@@ -122,15 +123,15 @@ T1 ∨ pircd ≥ T1 ) ∧ ¬firewall ∧ ¬quarantined ∧ active ∧ logVerb > 
 post: Prob = 1, firewall = 1
 
 BLOCK SOURCE IP (blocco ip quando pscan aumenta e flow rate limit non sta bastando)
-pre: pscan ≥ T2 ∧ firewall ∧ ¬quarantined ∧ active ∧ badIP nonEsiste blocked_ips ∧ alert ∧ logVerb > 1
+pre: pscan ≥ T2 ∧ firewall ∧ ¬quarantined ∧ active ∧ badIP nonEsiste blocked_ips ∧ alert ∧ logVerb > 1 
 post: Prob = 1, blocked_ips = blocked_ips ∪ {badIP}, pscan = 0
 
 UNBLOCK SOURCE IP (unico dubbio è che duale a BLOCK, fa BLOCK->UNBLOCK dato che BLOCK fa pscan=0 con Prob = 1)
-pre: pscan < T2 ^ firewall ^ ¬quarantined ∧ active ^ badIp è flowlimit_ips ^  logVerb > 1 ^ badIp èin blockeip
+pre: pscan < T2 ^ firewall ^ ¬quarantined ∧ active ^ badIp è flowlimit_ips ^  logVerb > 1 ^ badIp èin blockeip 
 post: Prob = 1, badip rimosso blocked_ips
 
 FLOW RATE LIMIT 
-pre: pscan ≥ T1 ∧ firewall ∧ ¬quarantined ∧ active ∧ badIp nonEsiste flowlimit_ips ∧ logVerb > 0 ^ badIp nonè BlockIp
+pre: pscan ≥ T1 ∧ firewall ∧ ¬quarantined ∧ active ∧ badIp nonEsiste flowlimit_ips ∧ logVerb > 0 ^ badIp nonè BlockIp 
 post: pscan = 0 con probabilita 0.5, limited_ips = limited_ips ∪ {badIP}
 
 UNLIMIT FLOW RATE
@@ -143,36 +144,36 @@ pre: badip nonE' in honeypot_ips ^ ( pvsftpd ≥ T1 ∨ psmbd ≥ T1 ∨ pphpcgi
 post: honeypot_ips U badip ^ (pxxx >= T1 con Prob = 0.5 diventa pxxx = 0)
 
 UN-HONEYPOT
-pre: badip E' in honeypot_ips ^ ( pvsftpd < T1 ∨ psmbd < T1 ∨ pphpcgid < T1 ∨ pdistccd < T1 ∨ prmi < T1 ∨
- pircd < T1 ) ∧ firewall ∧ ¬quarantined ∧ active 
+pre: badip E' in honeypot_ips ^ ( pvsftpd < T1 ∨ psmbd < T1 ∨ pphpcgid < T1 ∨ pdistccd < T1 ∨ prmi < T1 ∨ 
+ pircd < T1 ) ∧ firewall ∧ ¬quarantined ^ active 
 post: rimuovere badip da honeypot_ips
 
 INCREASE LOG VERBOSITY
-pre: logVerb < 5 ^ (pscan ≥ T1 ∨ pvsftpd ≥ T1 ∨ psmbd ≥ T1 ∨ pphpcgid ≥ T1 ∨ pdistccd ≥ T1 ∨ prmi ≥ T1 ∨ pircd ≥ T1 )
+pre: logVerb < 5 ^ (pscan ≥ T1 ∨ pvsftpd ≥ T1 ∨ psmbd ≥ T1 ∨ pphpcgid ≥ T1 ∨ pdistccd ≥ T1 ∨ prmi ≥ T1 ∨ pircd ≥ T1 ) ^ active
 post: logVerb ++
 
 DECREASE LOG VERBOSITY
-pre: logVerb > 0 ^ (pscan < T2 ∨ pvsftpd < T2 ∨ psmbd < T2 ∨ pphpcgid < T2 ∨ pdistccd < T2 ∨ prmi < T2 ∨ pircd < T2 ) 
+pre: logVerb > 0 ^ (pscan < T2 ∨ pvsftpd < T2 ∨ psmbd < T2 ∨ pphpcgid < T2 ∨ pdistccd < T2 ∨ prmi < T2 ∨ pircd < T2 ) ^ active
 post: logVerd --
 
 QUARANTINE HOST
 pre: ¬quarantined ^ (pscan > T2 ∨ pvsftpd > T2 ∨ psmbd > T2 ∨ pphpcgid > T2 ∨ pdistccd > T2 ∨ prmi > T2 ∨ pircd > T2 ) ^
- firewall ^ alert ^ logverb >= 4
+ firewall ^ alert ^ logverb >= 4 ^ active
 post: quarantine  ^ (dovrei diminuire anche gli attacchi - la pxxx relativo alla tipologia di attacco)
 
 UNQUARANTINE HOST 
 pre: quarantined ^ (pscan < T2 ∨ pvsftpd < T2 ∨ psmbd < T2 ∨ pphpcgid < T2 ∨ pdistccd < T2 ∨ prmi < T2 ∨ pircd < T2 ) ^ 
-firewall ^ logVerb > 3
+firewall ^ logVerb > 3 ^ active
 post: ¬quarantined 
 
 MANUAL RESOLUTION
 pre: ¬manuallySolved ^ (pvsftpd = 1 ∨ psmbd = 1 ∨ pphpcgid = 1 ∨ pdistccd = 1 ∨ prmi = 1 ∨ pircd = 1 ) ^ firewall ^ 
-quarantined ^ rebooted ^ updated ^ alert ^ backup
+quarantined ^ rebooted ^ updated ^ alert ^ backup ^ active
 post: manuallySolved ^ (dovrei diminuire anche gli attacchi - la pxxx relativo alla tipologia di attacco)
 
 SYSTEM REBOOT
 pre: ¬manuallySolved ^ active ^ (pvsftpd = 1 ∨ psmbd = 1 ∨ pphpcgid = 1 ∨ pdistccd = 1 ∨ prmi = 1 ∨ pircd = 1 ) ^ firewall ^ 
-quarantined ^ rebooted ^ updated ^ alert ^ backup 
+quarantined ^ ¬rebooted ^ updated ^ alert ^ backup ^ active
 post: (pscan = 0 ^ pvsftpd = 0 ∨ psmbd = 0 ∨ pphpcgid = 0 ∨ pdistccd = 0 ∨ prmi = 0 ∨ pircd = 0) con probabilita 0.5 di interrompere un attacco
 
 SYSTEM SHUTDOWN
@@ -193,7 +194,7 @@ pre: active ^ ¬backup ^ (pvsftpd > T1 ∨ psmbd > T1 ∨ pphpcgid > T1 ∨ pdis
 post: backup
 
 *** SHUTDOWN/REBOOT prevedono lo spegnimento del sistema,
-molte connessioni vengono chiuse quindi in shutdown e reboot io salverei il vaore suglie attacchi e poi con una certa probabilità li terrei
+molte connessioni vengono chiuse quindi in shutdown e reboot io salverei il vaore sugli attacchi e poi con una certa probabilità li terrei
 reboot fa shutdown+start
 
 *** stato di partenza
