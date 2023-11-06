@@ -1,5 +1,6 @@
 from matplotlib import pyplot as plt
 import numpy as np
+import random
 
 T1 = 0.33
 T2 = 0.66
@@ -152,7 +153,8 @@ def preCondizioni(agent,spazio,legal_moves):
         else:
             legal_moves[15] = 0
         # BackupHost
-        if (spazio['difensore'][6] == 1 and spazio['difensore'][9] == 0 and 
+        if (spazio['difensore'][6] == 1 and spazio['difensore'][9] == 0 and spazio['difensore'][7] == 0 and
+            spazio['difensore'][10] == 0 and spazio['difensore'][3] == 1 and spazio['difensore'][5] > 1 and
             (spazio['difensore'][15] > T1 or spazio['difensore'][16] > T1 or spazio['difensore'][17] > T1 or 
              spazio['difensore'][18] > T1 or spazio['difensore'][19] > T1 or spazio['difensore'][20] > T1)):
             legal_moves[16] = 1
@@ -253,7 +255,9 @@ def postCondizioni(action,spazio,agent):
         elif action == 4 :
             spazio[agent][2] = 1
             # prob 0.5
-            spazio[agent][14] = 0
+            p = random.random()
+            if p < 0.5 :
+                spazio[agent][14] = 0
         # UnlimitFlowRate
         elif action == 5 :
             spazio[agent][2] = 0
@@ -261,6 +265,14 @@ def postCondizioni(action,spazio,agent):
         elif action == 6 :
             spazio[agent][4] = 1
             # Pxxx da scalare con prob 0.5
+            p = random.random()
+            # Pxx da scalare con prob
+            # PROVA PER VEDERE SE CONVERGE
+            if p < 0.5 :
+                spazio[agent][14] = 0
+                for j in range(15,21,1):
+                    if spazio[agent][j] > T2 :
+                        spazio[agent][j] = p
         # UnHoneypot
         elif action == 7 :
             spazio[agent][4] = 0
@@ -275,6 +287,13 @@ def postCondizioni(action,spazio,agent):
             spazio[agent][12] = 1
             spazio[agent][7] = 1
             # Pxx da scalare con prob
+            # PROVA PER VEDERE SE CONVERGE
+            p = random.random()
+            if p < 0.5 :
+                spazio[agent][14] = 0
+                for j in range(15,21,1):
+                    if spazio[agent][j] > T2 :
+                        spazio[agent][j] = p
         # UnQuarantineHost
         elif action == 11 :
             spazio[agent][7] = 0
@@ -282,6 +301,12 @@ def postCondizioni(action,spazio,agent):
         elif action == 12 :
             spazio[agent][11] = 1
             # Pxx da scalare con prob
+            # PROVA PER VEDERE SE CONVERGE
+            if p < 0.5 :
+                spazio[agent][14] = 0
+                for j in range(15,21,1):
+                    if spazio[agent][j] > T2 :
+                        spazio[agent][j] = p
         # SystemReboot
         elif action == 13 :
             spazio[agent][8] = 1
@@ -396,8 +421,13 @@ def reward(agent,spazio,action):
 def terminationPartita(spazio):
     val = False
     check = 0
-
-    if spazio['difensore'][14] < T1 and spazio['difensore'][15] < T1 and spazio['difensore'][16] < T1 and spazio['difensore'][17] < T1 and spazio['difensore'][18] < T1 and spazio['difensore'][19] < T1 and spazio['difensore'] [20] < T1 and spazio['difensore'] [1] == 0 and spazio['difensore'][2] == 0 and spazio['difensore'][4] == 0 and spazio['difensore'][5] == 0 and spazio['difensore'][6] == 1 and spazio['difensore'][7] == 0:
+    # clean system state + esclusione degli altri parametri (lascio solo il check degli attacchi sotto T1 
+    # come se gli altri fossero altri subsets states con minace in sicurezza)
+    # DEVO FAR TERMINARE ANCHE QUANDO HA VINTO l'ATTACCANTE ovvero sistema totalmente compromesso
+    # [1, 1, 1, 1, 1, 5, 1, 1, 0, 0, 1, 0, 1, 0, 1, 1, 1, 1, 1, 1, 1]
+    if ((spazio['difensore'][14] < T1 and spazio['difensore'][15] < T1 and spazio['difensore'][16] < T1 and spazio['difensore'][17] < T1 and spazio['difensore'][18] < T1 and spazio['difensore'][19] < T1 and spazio['difensore'] [20] < T1) 
+        or (spazio['difensore'][14] == T2 and spazio['difensore'][15] == T2 and spazio['difensore'][16] == T2 and spazio['difensore'][17] == T2 and pazio['difensore'][18] == T2 and spazio['difensore'][19] == T2 and spazio['difensore'][20] == T2 )): 
+        #and spazio['difensore'] [1] == 0 and spazio['difensore'][2] == 0 and spazio['difensore'][4] == 0 and spazio['difensore'][5] == 0 and spazio['difensore'][6] == 1 and spazio['difensore'][7] == 0):
         val = True
     return val
 

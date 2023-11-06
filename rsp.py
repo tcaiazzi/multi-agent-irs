@@ -335,7 +335,6 @@ class raw_env(AECEnv):
         ############################# CHECK ARRESTO (se sono nello stato sicuro) #########################
         
         # NON POSSONO AVERE VALORI DISCORDI GLI AGENTI delle terminations e troncation
-        # Dovrebbe arrestarlo 
         self.num_moves += 1
         """ self.truncations = {
             agent: self.num_moves >= self.NUM_ITERS for agent in self.agents
