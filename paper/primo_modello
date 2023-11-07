@@ -141,7 +141,7 @@ post: badip rimosso limited_ips
 REDIRECT TO HONEYPOT
 pre: badip nonE' in honeypot_ips ^ ( pvsftpd ≥ T1 ∨ psmbd ≥ T1 ∨ pphpcgid ≥ T1 ∨ pdistccd ≥ T1 ∨ prmi ≥ T1 ∨
  pircd ≥ T1 ) ^ firewall ∧ ¬quarantined ∧ active
-post: honeypot_ips U badip ^ (pxxx >= T1 con Prob = 0.5 diventa pxxx = 0)
+post: honeypot_ips U badip ^ Pscan = 0 (pxxx >= T1 con Prob = 0.5 diventa pxxx = 0)
 
 UN-HONEYPOT
 pre: badip E' in honeypot_ips ^ ( pvsftpd < T1 ∨ psmbd < T1 ∨ pphpcgid < T1 ∨ pdistccd < T1 ∨ prmi < T1 ∨ 
@@ -169,17 +169,17 @@ post: ¬quarantined
 MANUAL RESOLUTION
 pre: ¬manuallySolved ^ (pvsftpd = 1 ∨ psmbd = 1 ∨ pphpcgid = 1 ∨ pdistccd = 1 ∨ prmi = 1 ∨ pircd = 1 ) ^ firewall ^ 
 quarantined ^ rebooted ^ updated ^ alert ^ backup ^ active
-post: manuallySolved ^ (dovrei diminuire anche gli attacchi - la pxxx relativo alla tipologia di attacco)
+post: manuallySolved ^ tutti attacchi a 0 ^ ¬quarantined ^ active
 
 SYSTEM REBOOT
 pre: ¬manuallySolved ^ active ^ (pvsftpd = 1 ∨ psmbd = 1 ∨ pphpcgid = 1 ∨ pdistccd = 1 ∨ prmi = 1 ∨ pircd = 1 ) ^ firewall ^ 
 quarantined ^ ¬rebooted ^ updated ^ alert ^ backup ^ active
-post: (pscan = 0 ^ pvsftpd = 0 ∨ psmbd = 0 ∨ pphpcgid = 0 ∨ pdistccd = 0 ∨ prmi = 0 ∨ pircd = 0) con probabilita 0.5 di interrompere un attacco
+post: rebooted ^  (pscan = 0 ^ pvsftpd = 0 ∨ psmbd = 0 ∨ pphpcgid = 0 ∨ pdistccd = 0 ∨ prmi = 0 ∨ pircd = 0) con probabilita 0.3 di interrompere un attacco
 
 SYSTEM SHUTDOWN
 pre: ¬manuallySolved ^ active ^ (pvsftpd = 1 ∨ psmbd = 1 ∨ pphpcgid = 1 ∨ pdistccd = 1 ∨ prmi = 1 ∨ pircd = 1 ) ^ firewall ^ 
 quarantined ^ rebooted ^ updated ^ alert ^ backup 
-post: (pscan = 0 ^ pvsftpd = 0 ∨ psmbd = 0 ∨ pphpcgid = 0 ∨ pdistccd = 0 ∨ prmi = 0 ∨ pircd = 0) ^ ¬active
+post:  ¬active ^ evershutdown
 
 SYSTEM START
 pre: ¬active
@@ -187,7 +187,7 @@ post: (pscan = 0 ^ pvsftpd = 0 ∨ psmbd = 0 ∨ pphpcgid = 0 ∨ pdistccd = 0 �
 
 SOFTWARE UPDATE
 pre: active ^ ¬updated ^ ( pvsftpd > T1 ∨ psmbd > T1 ∨ pphpcgid > T1 ∨ pdistccd > T1 ∨ prmi > T1 ∨ pircd > T1)
-post: updated
+post: (pscan = 0 ^ pvsftpd = 0 ∨ psmbd = 0 ∨ pphpcgid = 0 ∨ pdistccd = 0 ∨ prmi = 0 ∨ pircd = 0) ^ updated
 
 BACKUP HOST
 pre: active ^ ¬backup ^ (pvsftpd > T1 ∨ psmbd > T1 ∨ pphpcgid > T1 ∨ pdistccd > T1 ∨ prmi > T1 ∨ pircd > T1 ) ^

@@ -168,7 +168,13 @@ def preCondizioni(agent,spazio,legal_moves):
         else:
             legal_moves[17] = 0
         # noOp (altrimenti se nulla è selezionbile sceglie a caso)
-        legal_moves[18] = 1
+        # se nessuna mossa è selezionabile allora noop
+        noOp = True
+        for z in range(18):
+            if (legal_moves[z] == 1):
+                noOp = False
+        if noOp:
+            legal_moves[18] = 1
 
         
     else:
@@ -209,7 +215,14 @@ def preCondizioni(agent,spazio,legal_moves):
         else:
             legal_moves[6] = 0
         # noOp
-        legal_moves[7] = 1
+        # se nessuna mossa è selezionabile allora noop
+        noOp = True
+        for z in range(7):
+            if (legal_moves[z] == 1):
+                noOp = False
+        if noOp:
+            legal_moves[7] = 1
+
         # Non ci sono mosse per l'attaccante
         for i in range(8,19,1):
             legal_moves[i] = 0
@@ -263,16 +276,17 @@ def postCondizioni(action,spazio,agent):
             spazio[agent][2] = 0
         # RedirectToHoneypot
         elif action == 6 :
+            spazio[agent][14] = 0
             spazio[agent][4] = 1
             # Pxxx da scalare con prob 0.5
-            p = random.random()
             # Pxx da scalare con prob
             # PROVA PER VEDERE SE CONVERGE
-            if p < 0.5 :
+            """ p = random.random()
+                if p < 0.5 :
                 spazio[agent][14] = 0
                 for j in range(15,21,1):
                     if spazio[agent][j] > T2 :
-                        spazio[agent][j] = p
+                        spazio[agent][j] = p """
         # UnHoneypot
         elif action == 7 :
             spazio[agent][4] = 0
@@ -288,48 +302,45 @@ def postCondizioni(action,spazio,agent):
             spazio[agent][7] = 1
             # Pxx da scalare con prob
             # PROVA PER VEDERE SE CONVERGE
-            p = random.random()
+            """ p = random.random()
             if p < 0.5 :
                 spazio[agent][14] = 0
                 for j in range(15,21,1):
                     if spazio[agent][j] > T2 :
-                        spazio[agent][j] = p
+                        spazio[agent][j] = p """
         # UnQuarantineHost
         elif action == 11 :
             spazio[agent][7] = 0
         # ManualResolution
         elif action == 12 :
+            spazio[agent][6] = 1
+            spazio[agent][7] = 0
             spazio[agent][11] = 1
             # Pxx da scalare con prob
             # PROVA PER VEDERE SE CONVERGE
-            if p < 0.5 :
-                spazio[agent][14] = 0
-                for j in range(15,21,1):
-                    if spazio[agent][j] > T2 :
-                        spazio[agent][j] = p
+            for j in range(14,21,1):
+                spazio[agent][j] = 0
+
         # SystemReboot
         elif action == 13 :
             spazio[agent][8] = 1
-            # Scalare gli attacchi con una prob
-            spazio[agent][14] = 0
-            spazio[agent][15] = 0
-            spazio[agent][16] = 0
-            spazio[agent][17] = 0
-            spazio[agent][18] = 0
-            spazio[agent][19] = 0
-            spazio[agent][20] = 0
+            p = random.random()
+            if p < 0.3 :
+                # Scalare gli attacchi con una prob
+                spazio[agent][14] = 0
+                spazio[agent][15] = 0
+                spazio[agent][16] = 0
+                spazio[agent][17] = 0
+                spazio[agent][18] = 0
+                spazio[agent][19] = 0
+                spazio[agent][20] = 0
+
         # SystemShutdown
         elif action == 14 :
             spazio[agent][13] = 1
             spazio[agent][6] = 0
             # Tutti gli attacchi a 0 con una prob
-            spazio[agent][14] = 0
-            spazio[agent][15] = 0
-            spazio[agent][16] = 0
-            spazio[agent][17] = 0
-            spazio[agent][18] = 0
-            spazio[agent][19] = 0
-            spazio[agent][20] = 0
+    
         # SystemStart
         elif action == 15 :
             spazio[agent][6] = 1
@@ -339,6 +350,13 @@ def postCondizioni(action,spazio,agent):
         # SoftwareUpdate
         elif action == 17 :
             spazio[agent][10] = 1
+            spazio[agent][14] = 0
+            spazio[agent][15] = 0
+            spazio[agent][16] = 0
+            spazio[agent][17] = 0
+            spazio[agent][18] = 0
+            spazio[agent][19] = 0
+            spazio[agent][20] = 0
 
     
     elif agent == 'attaccante':
