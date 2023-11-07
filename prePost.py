@@ -9,6 +9,8 @@ mosseDifensore = ['Generate alert','FirewallActivation','BlockSourceIp','Unblock
                   'RedirectToHoneypot','UnRedirectToHoneypot','IncreaseLog','DecreaseLog','QuarantineHost','UnQuarantineHost',
                   'ManualResolution','SystemReboot','SystemShutdown','SystemStart','BackupHost','SoftwareUpdate','noOp']
 
+mosseAttaccante = ['Pscan','Pvsftpd','Psmbd','Pphpcgi','Pircd','Pdistccd','Prmi', 'noOp']
+
 # qui per ogni partita mette numero di mosse fatte e le cumulative reward finali di quella partita
 reward_mosse = {
     "attaccante":[],
@@ -233,6 +235,12 @@ def preCondizioni(agent,spazio,legal_moves):
         for i in range(len(mosseDifensore)):
             if legal_moves[i] == 1 :
                 print(mosseDifensore[i])
+    else :
+        print('-----------------------------------------------------------------------------------------')
+        print(legal_moves)
+        for i in range(len(mosseAttaccante)):
+            if legal_moves[i] == 1 :
+                print(mosseAttaccante[i])
 
 
 
