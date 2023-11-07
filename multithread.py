@@ -20,7 +20,7 @@ def visualizza_reward_mosse():
         x.append(i[0])
     plt.figure()
     plt.ylabel('n mosse')
-    plt.xlabel('t')
+    plt.xlabel('partite')
     plt.plot(np.arange(len(x)),x)
 
     # Grafico 2

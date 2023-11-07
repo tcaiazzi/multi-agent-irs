@@ -444,7 +444,7 @@ def terminationPartita(spazio):
     # DEVO FAR TERMINARE ANCHE QUANDO HA VINTO l'ATTACCANTE ovvero sistema totalmente compromesso
     # [1, 1, 1, 1, 1, 5, 1, 1, 0, 0, 1, 0, 1, 0, 1, 1, 1, 1, 1, 1, 1]
     if ((spazio['difensore'][14] < T1 and spazio['difensore'][15] < T1 and spazio['difensore'][16] < T1 and spazio['difensore'][17] < T1 and spazio['difensore'][18] < T1 and spazio['difensore'][19] < T1 and spazio['difensore'] [20] < T1) 
-        or (spazio['difensore'][14] == T2 and spazio['difensore'][15] == T2 and spazio['difensore'][16] == T2 and spazio['difensore'][17] == T2 and pazio['difensore'][18] == T2 and spazio['difensore'][19] == T2 and spazio['difensore'][20] == T2 )): 
+        or (spazio['difensore'][14] == T2 and spazio['difensore'][15] == T2 and spazio['difensore'][16] == T2 and spazio['difensore'][17] == T2 and spazio['difensore'][18] == T2 and spazio['difensore'][19] == T2 and spazio['difensore'][20] == T2 )): 
         #and spazio['difensore'] [1] == 0 and spazio['difensore'][2] == 0 and spazio['difensore'][4] == 0 and spazio['difensore'][5] == 0 and spazio['difensore'][6] == 1 and spazio['difensore'][7] == 0):
         val = True
     return val
