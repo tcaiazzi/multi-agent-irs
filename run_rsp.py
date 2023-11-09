@@ -47,17 +47,6 @@ from supersuit.multiagent_wrappers import pad_action_space_v0,pad_observations_v
 # episode_reward È LA SOMMA DELLE REWARD ATTACCANTE E DIFENSORE (AD OGNI TURNO NE VINCE UNO SOLO)
 # MI SON FATTO UN RESULT TUTTO MIO CUSTOM, PER ORA SCRIVE SUL FILE MA MODIFICABILE
 
-# prendo parametri in input
-# AZIONI NON AUMENTABILI AUTOMATICAMENTE PERCHE COME CODIFICO IL SUO COMPORTAMENTO? ERRORE QUANDO SELEZIONA QUELLA MOSSA
-# SPAZIO DELLE OSSERVAZIONI ANCHE, POTREBBE NON GIUNGERE PIU ALL'ARRESTO PERCHÈ LE AZIONI NON LO MODIFICANO
-# GLI AGENTI POTREI (da pensare)
-""" if len(sys.argv) == 4:
-    lr = sys.argv[1]
-    n_mosse = sys.argv[2] 
-    n_iterazioni = sys.argv[3]
-    print('lr:',lr)
-    print('n_mosse:',n_mosse)
-    print('n_iterazioni:',n_iterazioni) """
 
 
 torch, nn = try_import_torch()
