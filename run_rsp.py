@@ -7,6 +7,7 @@ from ray import train
 from ray import air
 
 from ray.rllib.algorithms.callbacks import DefaultCallbacks
+from ray.rllib.algorithms.algorithm import Algorithm
 from ray.tune import Stopper
 
 from ray.rllib.algorithms.impala import ImpalaConfig
@@ -14,6 +15,7 @@ from ray.rllib.algorithms.pg import PGConfig
 from ray.rllib.algorithms.dqn import DQNConfig
 from ray.rllib.algorithms.ppo import PPOConfig
 from ray.rllib.algorithms.apex_dqn.apex_dqn import ApexDQNConfig
+
 
 from ray.rllib.utils.framework import try_import_torch
 from ray.rllib.utils import check_env
@@ -29,6 +31,7 @@ from ray.rllib.env import PettingZooEnv
 from pettingzoo.test import api_test
 from pettingzoo.test import performance_benchmark
 
+import subprocess
 import sys
 
 
@@ -62,16 +65,16 @@ torch.cuda.empty_cache()
 # COndizioni di stopping degli algoritmi 
 stop = {
         # epoche/passi dopo le quali il training si arresta
-        "training_iteration": 2,
+        "training_iteration": 10,
 
-        "timesteps_total":2,
+        #"timesteps_total":2,
 
         # passi ambientali dell'agente nell'ambiente
         # ci sarebbe un minimo di 200
-        "timesteps_total": 2,
+        #"timesteps_total": 2,
 
         # ferma il training quando la ricompensa media dell'agente nell'episodio è pari o maggiore
-        "episode_reward_max": 100,
+        #"episode_reward_max": 5,
     }
 
 # RAY  VIENE UTILIZZATO PER POTER FARE IL TUNING DEGLI IPERPARAMETRI
@@ -165,6 +168,8 @@ config = (
 # Mi risolve i problemi di mismatch con la rete
 config['hiddens'] = []
 config['dueling'] = False
+# per l'evaluation
+config['evaluation_interval'] = 1
 
 # Actin mask
 #config["env_config"] = {"use_action_masking": True}
@@ -175,17 +180,18 @@ config['dueling'] = False
 
 # Qui non ho la stop condition
 """ algo = config.build()
-results = algo.train()
-results = algo.evaluate()
-print(results) """
+#results = algo.train()
+#results = algo.evaluate()
+#print(results) """
 
 
 """ results = tune.Tuner(
     "APEX",
     run_config = train.RunConfig(stop=TimeStopper(),verbose=1),
-    param_space = config.to_dict(),
+    param_space = config,
 ).fit()
-print(results) """
+
+results = algo.evaluate() """
 
 #############################################################################################
 ###############################################  DQN  #######################################
@@ -196,7 +202,7 @@ config = (
     .environment(
             env=env_name
     ).resources(
-                    
+            num_gpus=1 
     ).rollouts(
             num_rollout_workers=1,
             rollout_fragment_length=30
@@ -222,29 +228,31 @@ config = (
     ).training(
             model = { 
                     "custom_model": "am_model", 
-                }
+                },
     )#.callbacks(MyCallbacks)
 )
 
 # Mi risolve i problemi di mismatch con la rete, non so perche, ma per l'action mask
 config['hiddens'] = []
 config['dueling'] = False
+# per l'evaluation
+config['evaluation_interval'] = 1
 
 # NON RICORDO IL PERCHE'
 #config['evaluation_interval'] = 1
 #config['create_env_on_driver'] = True
 
-""" algo = config.build()
-algo.train()
-results = algo.evaluate()
-print(results) """
+algo = config.build()
 
-
-""" results = tune.Tuner(
+results = tune.Tuner(
     "DQN",
     run_config = train.RunConfig(stop=stop,verbose=1),
-    param_space = config.to_dict(),
-).fit() """
+    param_space = config,
+).fit()
+
+results = algo.evaluate()
+
+
 
 
 ###################################################################################################
@@ -294,17 +302,22 @@ config = (
 
 config['evaluation_interval'] = 1
 config['create_env_on_driver'] = True
+# per l'evaluation
+config['evaluation_interval'] = 1
 
 """ 
 algo = config.build()
-algo.train()
-results = algo.evaluate()
-print(results)  """
+#algo.train()
+#results = algo.evaluate()
+#print(results)
 
-""" results = tune.Tuner(
-        "IMPALA", param_space=config.to_dict(), run_config=air.RunConfig(stop=stop, verbose=1)
-    ).fit()  """
+results = tune.Tuner(
+        "IMPALA", 
+        param_space=config, 
+        run_config=air.RunConfig(stop=stop, verbose=1)
+    ).fit()
 
+results = algo.evaluate() """
 
 ############################################################################################
 ##############################################  PG  ########################################
@@ -333,19 +346,21 @@ config = (
 
 config['evaluation_interval'] = 1
 config['create_env_on_driver'] = True
+# per l'evaluation
+config['evaluation_interval'] = 1
 
 """ 
 algo = config.build()
-algo.train()
-results = algo.evaluate()
-print('RESULTS:',results) """
+#algo.train()
+#results = algo.evaluate()
 
 results = tune.Tuner(
         "PG",
-        param_space=config.to_dict(), 
+        param_space=config, 
         run_config=air.RunConfig(stop=stop, verbose=1)
-    ).fit()
-config.evaluation()
+    ).fit() 
+    
+results = algo.evaluate() """
 
 ##################################################################################################
 ################################################  PPO  ###########################################
@@ -378,52 +393,20 @@ config.training(_enable_learner_api=False)
 
 config['evaluation_interval'] = 1
 config['create_env_on_driver'] = True 
+# per l'evaluation
+config['evaluation_interval'] = 1
 
 """ algo = config.build()
-algo.train()
-algo.evaluate()
-results = algo.evaluate()
-print('RESULTS:',results) """
+#algo.train()
+#algo.evaluate()
+#results = algo.evaluate()
 
-""" results = tune.Tuner(
-        "PPO", param_space=config.to_dict(), run_config=air.RunConfig(stop=stop, verbose=1,checkpoint_config=air.CheckpointConfig(checkpoint_at_end=True))
-    ).fit()  """
+results = tune.Tuner(
+        "PPO", 
+        param_space=config, 
+        run_config=air.RunConfig(stop=stop, verbose=1)
+    ).fit()  
 
+results = algo.evaluate() """
 
-
-
-
-
-############################################ PER VEDERLO GIOCARE #####################################
-# Così va ma senza polisi sceglie random, ma va la logica della reward e dello stopping
-""" env = rsp.env(render_mode="human")
-env.reset(seed=42)
-action = 0
-
-for agent in env.agent_iter():
-
-    if len(env.agents)>1:
-        print('\n')
-        print('Seleziono agente:',agent)
-        observation, reward, termination, truncation, info = env.last()
-
-        if termination or truncation:
-            action = None
-        else:
-            # this is where you would insert your polic
-            mask = observation["action_mask"]
-            action = env.action_space(agent).sample(mask)
-
-        print('Osservazione:',observation)
-        print('Azione selezionata da eseguire:',action)
-        print('Reward accumulata:',reward)
-        print('Termination:',termination)
-        print('Troncation:',truncation)
-        print('Step:')
-        env.step(action)
-    else:
-        api_test(env, num_cycles=1000, verbose_progress=True)
-        env.close()
-        break
-
-env.close() """
+######################################## EVALUATION CHECKPOINT ##############################################

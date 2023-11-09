@@ -431,9 +431,9 @@ def reward(agent,spazio,action):
             18 : (0,0,0)
         }
     }
-    wt = 0.5
-    wc = 0.5
-    wi = 0.5
+    wt = 0.32
+    wc = 0.34
+    wi = 0.34
     tMax = 100
     cMax = 100
     calcolo = -(-wt*(REWARD_MAP[agent][action][0]/tMax)-wc*(REWARD_MAP[agent][action][1]/cMax)-wi*REWARD_MAP[agent][action][2])

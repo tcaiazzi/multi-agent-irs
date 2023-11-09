@@ -9,19 +9,44 @@ def visualizza_reward_mosse():
     with open("/home/matteo/Documenti/GitHub/tesiMagistrale/reward_mosse.txt", "r") as file:
         dati = file.read()
     dati_dict = json.loads(dati)
-    print(dati_dict)
+    #print(dati_dict)
+
+    a = dati_dict['attaccante']
+    b = dati_dict['difensore']
+
+    # Grafico 4
+    # insieme di 2 e 3
+    app = dati_dict['attaccante']
+    bpp = dati_dict['difensore']
+    """ print('APP:',app)
+    print('BPP:',bpp) """
+
+    yA = []
+    yB = []
+
+    for i in range(len(app)) :
+        yA.append(app[i][1])
+        yB.append(bpp[i][1])
+    """ print('YA:',yA)
+    print('YB:',yB) """
+    plt.figure()
+    plt.title('PG:')
+    plt.ylabel('reward')
+    plt.xlabel('t')
+    #plt.xlabel('numero mosse per partita')
+    plt.plot(np.arange(len(yA)),yA)
+    plt.plot(np.arange(len(yB)),yB)
+    plt.legend(['attaccante','difensore'])
 
     # Grafico 1
     # il numero di mosse fatte nel tempo, per partita
-    a = dati_dict['attaccante']
-    x = []
     y = []
     for i in a :
-        x.append(i[0])
+        y.append(i[0])
     plt.figure()
     plt.ylabel('n mosse')
     plt.xlabel('partite')
-    plt.plot(np.arange(len(x)),x)
+    plt.plot(np.arange(len(y)),y)
 
     # Grafico 2
     # reward rispetto al numero di mosse fatte dall'attaccante
@@ -31,8 +56,8 @@ def visualizza_reward_mosse():
     for i in a :
         x.append(i[0])
         y.append(i[1])
-    print(len(x))
-    print(len(y))
+    """ print(len(x))
+    print(len(y)) """
     plt.figure()
     plt.title('PG campioni:'+str(len(x)))
     plt.ylabel('reward attaccante')
@@ -43,41 +68,17 @@ def visualizza_reward_mosse():
     # reward rispetto al numero di mosse fatte dal difensore
     x = []
     y = []
-    b = dati_dict['difensore']
     b.sort()
     for i in b :
         x.append(i[0])
         y.append(i[1])
-    print(len(x))
-    print(len(y))
+    """ print(len(x))
+    print(len(y)) """
     plt.figure()
     plt.title('PG campioni:'+str(len(x)))
     plt.ylabel('reward difensore')
     plt.xlabel('numero mosse per partita')
     plt.plot(x,y)
-
-    # Grafico 4
-    # insieme di 2 e 3
-    xA = []
-    yA = []
-    xB = []
-    yB = []
-    a.sort()
-    b.sort()
-    for i in range(len(a)) :
-        xA.append(a[i][1])
-        yA.append(a[i][0])
-        xB.append(b[i][1])
-        yB.append(b[i][0])
-    print(len(xA))
-    print(len(xB))
-    plt.figure()
-    plt.title('PG campioni:'+str(len(xA)))
-    plt.ylabel('reward')
-    plt.xlabel('numero mosse per partita')
-    plt.plot(yA,xA)
-    plt.plot(yB,xB)
-    plt.legend(['attaccante','difensore'])
 
     plt.show()
 
