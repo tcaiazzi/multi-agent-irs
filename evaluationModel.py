@@ -1,4 +1,4 @@
-from algoritmiTraining import DQN, ApexDQN
+from algoritmiTraining import DQN, ApexDQN,Impala
 
 # path di un modello DQN trainato con 20 training iteration, che non so se equivalgono a 20 epoche
 # 4095 episodi totali, ovvero mosse totali ottenute da tutte le partite
@@ -8,6 +8,7 @@ pathDQN = '/home/matteo/ray_results/DQN_2023-11-09_10-37-19/DQN_rsp_93b6e_00000_
 
 pathApexDQN = '/home/matteo/ray_results/APEX_2023-11-09_17-23-28/APEX_rsp_50df4_00000_0_2023-11-09_17-23-28/checkpoint_000000'
 
+pathImpala = '/home/matteo/ray_results/IMPALA_2023-11-09_17-37-35/IMPALA_rsp_49896_00000_0_2023-11-09_17-37-35/checkpoint_000000'
 ############################################ PER VEDERLO GIOCARE #####################################
 # Così va ma senza polisi sceglie random, ma va la logica della reward e dello stopping
 
@@ -16,7 +17,8 @@ from visualizzazione import visualizza_reward_mosse
 
 # Algoritmi
 #config = DQN().config
-config = ApexDQN().config
+#config = ApexDQN().config
+config = Impala().config
 
 
 # Mi risolve i problemi di mismatch con la rete, non so perche, ma per l'action mask
@@ -29,7 +31,8 @@ config['evaluation_interval'] = 1
 algo = config.build()
 
 #algo.restore(pathDQN)
-algo.restore(pathApexDQN)
+#algo.restore(pathApexDQN)
+algo.restore(pathImpala)
 
 algo.evaluate()
 

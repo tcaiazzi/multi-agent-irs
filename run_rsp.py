@@ -33,7 +33,7 @@ from pettingzoo.test import performance_benchmark
 
 from visualizzazione import visualizza_reward_mosse
 
-from algoritmiTraining import DQN,ApexDQN
+from algoritmiTraining import DQN,ApexDQN,Impala
 
 
 # SERVE PER AVERE LO SPAZIO DELLE AZIONI DI DIMENSIONI DIVERSE
@@ -139,9 +139,7 @@ config['dueling'] = False
 # per l'evaluation
 config['evaluation_interval'] = 1
 
-
-# Qui non ho la stop condition
-algo = config.build()
+""" algo = config.build()
 
 results = tune.Tuner(
     "APEX",
@@ -149,7 +147,7 @@ results = tune.Tuner(
     param_space = config,
 ).fit()
 
-visualizza_reward_mosse()
+visualizza_reward_mosse() """
 
 #############################################################################################
 ###############################################  DQN  #######################################
@@ -202,34 +200,12 @@ visualizza_reward_mosse() """
 # Basato sullo Stocasthic gradient discent (SGD)
 # gradiente stimato e non calcolato
 
-config = (
-      ImpalaConfig()
-      .environment(env_name,disable_env_checking=True)
-      .resources(num_gpus=1)
-      .framework("torch")
-      .multi_agent(
-        policies={
-            "attaccante": (None, obs_space, act_space, {}),
-            "difensore": (None, obs_space, act_space, {}),
-        },
-        policy_mapping_fn=(lambda agent_id, *args, **kwargs: agent_id),
-    ).training(
-          model={
-                "custom_model": "am_model"
-                },
-    )
-)
+config = Impala().config
 
-config['evaluation_interval'] = 1
-config['create_env_on_driver'] = True
 # per l'evaluation
 config['evaluation_interval'] = 1
 
-""" 
 algo = config.build()
-#algo.train()
-#results = algo.evaluate()
-#print(results)
 
 results = tune.Tuner(
         "IMPALA", 
@@ -237,7 +213,7 @@ results = tune.Tuner(
         run_config=air.RunConfig(stop=stop, verbose=1)
     ).fit()
 
-results = algo.evaluate() """
+visualizza_reward_mosse()
 
 ############################################################################################
 ##############################################  PG  ########################################

@@ -127,3 +127,23 @@ class ApexDQN:
             }
     )
 )
+          
+class Impala():
+     def __init__(self):
+          self.config = (
+      ImpalaConfig()
+      .environment(env_name,disable_env_checking=True)
+      .resources(num_gpus=1)
+      .framework("torch")
+      .multi_agent(
+        policies={
+            "attaccante": (None, obs_space, act_space, {}),
+            "difensore": (None, obs_space, act_space, {}),
+        },
+        policy_mapping_fn=(lambda agent_id, *args, **kwargs: agent_id),
+    ).training(
+          model={
+                "custom_model": "am_model"
+                },
+    )
+)
