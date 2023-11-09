@@ -33,7 +33,7 @@ from pettingzoo.test import performance_benchmark
 
 from visualizzazione import visualizza_reward_mosse
 
-from algoritmiTraining import DQN,ApexDQN,Impala
+from algoritmiTraining import DQN,ApexDQN,Impala,PG,PPO
 
 
 # SERVE PER AVERE LO SPAZIO DELLE AZIONI DI DIMENSIONI DIVERSE
@@ -222,33 +222,15 @@ visualizza_reward_mosse()
 # vanilla policy gradients using experience collected from the latest interaction with the agent implementation 
 # (using experience collected from the latest interaction with the agent)
 
-config = (
-      PGConfig()
-      .environment(env_name,disable_env_checking=True)
-      .resources(num_gpus=0)
-      .framework("torch")
-      .multi_agent(
-        policies={
-            "attaccante": (None, obs_space, act_space, {}),
-            "difensore": (None, obs_space, act_space, {}),
-        },
-        policy_mapping_fn=(lambda agent_id, *args, **kwargs: agent_id),
-    ).training(
-          model={
-                "custom_model": "am_model"
-                },
-    )
-)  
+config = PG().config
 
 config['evaluation_interval'] = 1
 config['create_env_on_driver'] = True
 # per l'evaluation
 config['evaluation_interval'] = 1
 
-""" 
+
 algo = config.build()
-#algo.train()
-#results = algo.evaluate()
 
 results = tune.Tuner(
         "PG",
@@ -256,7 +238,7 @@ results = tune.Tuner(
         run_config=air.RunConfig(stop=stop, verbose=1)
     ).fit() 
     
-results = algo.evaluate() """
+visualizza_reward_mosse()
 
 ##################################################################################################
 ################################################  PPO  ###########################################
@@ -266,36 +248,17 @@ results = algo.evaluate() """
 # PG avanzato piu veloce
 # multiple SGD 
 
-config = (
-      PPOConfig()
-      .environment(env_name,disable_env_checking=True)
-      .resources(num_gpus=1)
-      .framework("torch")
-      .multi_agent(
-        policies={
-            "attaccante": (None, obs_space, act_space, {}),
-            "difensore": (None, obs_space, act_space, {}),
-        },
-        policy_mapping_fn=(lambda agent_id, *args, **kwargs: agent_id),
-    ).training(
-          model={
-                "custom_model": "am_model"
-                },
-    )
-)
-# PER IL CUSTOM_MODEL
+config = PPO().config
+""" # PER IL CUSTOM_MODEL
 config.rl_module( _enable_rl_module_api=False)
-config.training(_enable_learner_api=False)
+config.training(_enable_learner_api=False) """
 
 config['evaluation_interval'] = 1
 config['create_env_on_driver'] = True 
 # per l'evaluation
 config['evaluation_interval'] = 1
 
-""" algo = config.build()
-#algo.train()
-#algo.evaluate()
-#results = algo.evaluate()
+algo = config.build()
 
 results = tune.Tuner(
         "PPO", 
@@ -303,6 +266,6 @@ results = tune.Tuner(
         run_config=air.RunConfig(stop=stop, verbose=1)
     ).fit()  
 
-results = algo.evaluate() """
+visualizza_reward_mosse()
 
 ######################################## EVALUATION CHECKPOINT ##############################################
