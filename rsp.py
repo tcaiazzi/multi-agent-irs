@@ -297,11 +297,11 @@ class raw_env(AECEnv):
             # SALVOLE INFO NEI FILE
             #visualizza()
             file_uno = open("/home/matteo/Documenti/GitHub/tesiMagistrale/reward_mosse.txt", "w")
-            file_due = open("/home/matteo/Documenti/GitHub/tesiMagistrale/curva_partita.txt", "w")
+            #file_due = open("/home/matteo/Documenti/GitHub/tesiMagistrale/curva_partita.txt", "w")
             file_uno.write(json.dumps(reward_mosse))
-            file_due.write(json.dumps(curva_partita))
+            #file_due.write(json.dumps(curva_partita))
             file_uno.close()
-            file_due.close()
+            #file_due.close()
             
             print('Action dead:',action)
             print('Rewards dead:',self._cumulative_rewards)
@@ -350,8 +350,8 @@ class raw_env(AECEnv):
         self.agent_selection = self._agent_selector.next()
         
         # SALVE TUTTE LE REWARD CUMULATIVE DI TUTTE LE PARTITE
-        curva_partita['attaccante'].append((self.num_moves,self._cumulative_rewards['attaccante']))
-        curva_partita['difensore'].append((self.num_moves,self._cumulative_rewards['difensore']))
+        #curva_partita['attaccante'].append((self.num_moves,self._cumulative_rewards['attaccante']))
+        #curva_partita['difensore'].append((self.num_moves,self._cumulative_rewards['difensore']))
 
 
         self._accumulate_rewards()

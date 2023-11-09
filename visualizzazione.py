@@ -1,8 +1,6 @@
-import threading
-import subprocess
 from matplotlib import pyplot as plt
-import numpy as np
 import json
+import numpy as np
 
 def visualizza_reward_mosse():
     dati = ''
@@ -18,8 +16,8 @@ def visualizza_reward_mosse():
     # insieme di 2 e 3
     app = dati_dict['attaccante']
     bpp = dati_dict['difensore']
-    print('APP:',app)
-    print('BPP:',bpp)
+    """ print('APP:',app)
+    print('BPP:',bpp) """
 
     yA = []
     yB = []
@@ -80,9 +78,12 @@ def visualizza_reward_mosse():
     plt.xlabel('numero mosse per partita')
     plt.plot(x,y)
 
+def showAll():
     plt.show()
 
-def visualizza_curva_partita():
+
+
+""" def visualizza_curva_partita():
     dati = ''
     with open("/home/matteo/Documenti/GitHub/tesiMagistrale/curva_partita.txt", "r") as file:
         dati = file.read()
@@ -113,34 +114,4 @@ def visualizza_curva_partita():
             appB = []
             appA.append(a[i][1])
             appB.append(b[i][1])
-    plt.show()
-
-
-def programma1():
-    try : 
-        # Lancia RUN_RSP.py
-        subprocess.run(["python3", '/home/matteo/Documenti/GitHub/tesiMagistrale/run_rsp.py'])
-
-        # multithread ->
-        #               lancia run_rsp->
-        #                               che lancia rsp->
-        #                                               che usa prePost
-        #               alla fine lancia visualizza_reward_mosse
-
-        visualizza_reward_mosse()
-        #visualizza_curva_partita()
-
-    except Exception as e :
-        print(e)
-
-
-t1 = threading.Thread(target=programma1)
-#t2 = threading.Thread(target=programma2)
-
-# Avviare i thread
-t1.start()
-#t2.start()
-
-# Attendere che entrambi i thread terminino
-#t1.join()
-#t2.join()
+    plt.show() """

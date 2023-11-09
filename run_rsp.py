@@ -31,8 +31,9 @@ from ray.rllib.env import PettingZooEnv
 from pettingzoo.test import api_test
 from pettingzoo.test import performance_benchmark
 
-import subprocess
-import sys
+from visualizzazione import visualizza_reward_mosse,showAll
+
+from algoritmiTraining import DQN
 
 
 # SERVE PER AVERE LO SPAZIO DELLE AZIONI DI DIMENSIONI DIVERSE
@@ -65,7 +66,7 @@ torch.cuda.empty_cache()
 # COndizioni di stopping degli algoritmi 
 stop = {
         # epoche/passi dopo le quali il training si arresta
-        "training_iteration": 10,
+        "training_iteration": 5,
 
         #"timesteps_total":2,
 
@@ -119,7 +120,7 @@ class MyCallbacks(DefaultCallbacks):
             return True  # Interrompi il training """
 
 # Sempre che stia funzionando lo stopping a tempo
-class TimeStopper(Stopper):
+""" class TimeStopper(Stopper):
     def __init__(self):
         self._start = time.time()
         self._deadline = 60  # Stop all trials after 2 seconds
@@ -128,7 +129,7 @@ class TimeStopper(Stopper):
         return False
 
     def stop_all(self):
-        return time.time() - self._start > self._deadline
+        return time.time() - self._start > self._deadline """
     
 config = (
     ApexDQNConfig()
@@ -174,8 +175,6 @@ config['evaluation_interval'] = 1
 # Actin mask
 #config["env_config"] = {"use_action_masking": True}
 
-
-#config['evaluation_interval'] = 1
 #config['create_env_on_driver'] = True
 
 # Qui non ho la stop condition
@@ -197,50 +196,14 @@ results = algo.evaluate() """
 ###############################################  DQN  #######################################
 #############################################################################################
 
-config = (
-    DQNConfig()
-    .environment(
-            env=env_name
-    ).resources(
-            num_gpus=1 
-    ).rollouts(
-            num_rollout_workers=1,
-            rollout_fragment_length=30
-    ).multi_agent(
-            policies={
-                    "attaccante": (None, obs_space, act_space, {}),
-                    "difensore": (None, obs_space, act_space, {}),
-                },
-            policy_mapping_fn=(lambda agent_id, *args, **kwargs: agent_id),
-    ).debugging(
-            log_level="DEBUG"
-    ).framework(
-            framework="torch"
-    ).exploration(
-            exploration_config={
-                    # The Exploration class to use.
-                    "type": "EpsilonGreedy",
-                    # Config for the Exploration class' constructor:
-                    "initial_epsilon": 0.1,
-                    "final_epsilon": 0.0,
-                    "epsilon_timesteps": 100000,  # Timesteps over which to anneal epsilon.
-                }
-    ).training(
-            model = { 
-                    "custom_model": "am_model", 
-                },
-    )#.callbacks(MyCallbacks)
-)
+config = DQN().config
 
 # Mi risolve i problemi di mismatch con la rete, non so perche, ma per l'action mask
 config['hiddens'] = []
 config['dueling'] = False
+
 # per l'evaluation
 config['evaluation_interval'] = 1
-
-# NON RICORDO IL PERCHE'
-#config['evaluation_interval'] = 1
-#config['create_env_on_driver'] = True
 
 algo = config.build()
 
@@ -250,7 +213,17 @@ results = tune.Tuner(
     param_space = config,
 ).fit()
 
-results = algo.evaluate()
+visualizza_reward_mosse()
+
+config.evaluation()
+
+showAll()
+
+""" algo = config.build()
+algo.restore('/home/matteo/ray_results/DQN_2023-11-09_10-37-19/DQN_rsp_93b6e_00000_0_2023-11-09_10-37-19/checkpoint_000000')
+algo.evaluate() """
+
+
 
 
 

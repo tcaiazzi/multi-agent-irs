@@ -1,7 +1,4 @@
-from ray import tune
-from ray import train
-from ray import air
-import gymnasium
+from algoritmiTraining import DQN
 
 # path di un modello DQN trainato con 20 training iteration, che non so se equivalgono a 20 epoche
 # 4095 episodi totali, ovvero mosse totali ottenute da tutte le partite
@@ -13,8 +10,23 @@ path = '/home/matteo/ray_results/DQN_2023-11-09_10-37-19/DQN_rsp_93b6e_00000_0_2
 # Così va ma senza polisi sceglie random, ma va la logica della reward e dello stopping
 
 from ray.rllib.algorithms.algorithm import Algorithm
-algo = Algorithm.from_checkpoint(path)
+
+
+config = DQN().config
+
+
+# Mi risolve i problemi di mismatch con la rete, non so perche, ma per l'action mask
+config['hiddens'] = []
+config['dueling'] = False
+
+# per l'evaluation
+config['evaluation_interval'] = 1
+
+algo = config.build()
+algo.restore(path)
 algo.evaluate()
+
+#######################################################################################################################
 
 """ env = rsp.env(render_mode="human")
 env.reset(seed=42)
