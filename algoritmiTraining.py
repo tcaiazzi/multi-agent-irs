@@ -50,6 +50,8 @@ test_env = PettingZooEnv(pad_action_space_v0(env_creator()))
 obs_space = test_env.observation_space
 act_space = test_env.action_space
 
+# Verifico l'ambiente così ch se faccio modifiche me lo dice senza fare il running e l'inizializzazione degli algoritmi
+check_env(test_env)
 
 
 class DQN:

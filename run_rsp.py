@@ -83,29 +83,6 @@ stop = {
 ray.shutdown()
 ray.init()
 
-# Definisco il mio ambiente
-def env_creator():
-        env = rsp.env(render_mode="human")
-        return env
-
-# Nome ambiente
-env_name = "rsp"
-
-# Registro il mio ambiente
-register_env(env_name, lambda config: PettingZooEnv(pad_action_space_v0(env_creator())))
-#register_env(env_name, lambda config: PettingZooEnv(pad_observations_v0(pad_action_space_v0(env_creator()))))
-
-# Mi serve per usare l'action mask in odo da avere ad ogni step solo specifiche mosse
-# senza dover gestire io mosse non selezionabili
-ModelCatalog.register_custom_model("am_model", TorchActionMaskModel)
-
-# Mi servono per il check e l'inizializzazione degli algoritmi
-test_env = PettingZooEnv(pad_action_space_v0(env_creator()))
-obs_space = test_env.observation_space
-act_space = test_env.action_space
-
-# Verifico l'ambiente così ch se faccio modifiche me lo dice senza fare il running e l'inizializzazione degli algoritmi
-check_env(test_env)
 
 ################################################# RAY #######################################
 ############################################## APEX-DQN #####################################
