@@ -31,9 +31,9 @@ from ray.rllib.env import PettingZooEnv
 from pettingzoo.test import api_test
 from pettingzoo.test import performance_benchmark
 
-from visualizzazione import visualizza_reward_mosse,showAll
+from visualizzazione import visualizza_reward_mosse
 
-from algoritmiTraining import DQN
+from algoritmiTraining import DQN,ApexDQN
 
 
 # SERVE PER AVERE LO SPAZIO DELLE AZIONI DI DIMENSIONI DIVERSE
@@ -66,7 +66,7 @@ torch.cuda.empty_cache()
 # COndizioni di stopping degli algoritmi 
 stop = {
         # epoche/passi dopo le quali il training si arresta
-        "training_iteration": 5,
+        "training_iteration": 1,
 
         #"timesteps_total":2,
 
@@ -131,40 +131,7 @@ class MyCallbacks(DefaultCallbacks):
     def stop_all(self):
         return time.time() - self._start > self._deadline """
     
-config = (
-    ApexDQNConfig()
-    .environment(
-            env=env_name
-    ).resources(
-            num_gpus=1
-    ).rollouts(
-            num_rollout_workers=1,
-            rollout_fragment_length=30
-    ).training(
-            train_batch_size=200,
-            model = { 
-                    "custom_model": "am_model",
-                }
-    ).multi_agent(
-            policies={
-                    "attaccante": (None, obs_space, act_space, {}),
-                    "difensore": (None, obs_space, act_space, {}),
-            },
-            policy_mapping_fn=(lambda agent_id, *args, **kwargs: agent_id),
-    ).debugging(
-    ).framework(
-            framework="torch"
-    ).exploration(
-            exploration_config={
-                    # The Exploration class to use.
-                    "type": "EpsilonGreedy",
-                    # Config for the Exploration class' constructor:
-                    "initial_epsilon": 0.1,
-                    "final_epsilon": 0.0,
-                    "epsilon_timesteps": 100000,  # Timesteps over which to anneal epsilon.
-            }
-    )
-)
+config = ApexDQN().config
 
 # Mi risolve i problemi di mismatch con la rete
 config['hiddens'] = []
@@ -172,25 +139,17 @@ config['dueling'] = False
 # per l'evaluation
 config['evaluation_interval'] = 1
 
-# Actin mask
-#config["env_config"] = {"use_action_masking": True}
-
-#config['create_env_on_driver'] = True
 
 # Qui non ho la stop condition
-""" algo = config.build()
-#results = algo.train()
-#results = algo.evaluate()
-#print(results) """
+algo = config.build()
 
-
-""" results = tune.Tuner(
+results = tune.Tuner(
     "APEX",
-    run_config = train.RunConfig(stop=TimeStopper(),verbose=1),
+    run_config = train.RunConfig(stop=stop,verbose=1),
     param_space = config,
 ).fit()
 
-results = algo.evaluate() """
+visualizza_reward_mosse()
 
 #############################################################################################
 ###############################################  DQN  #######################################
@@ -205,7 +164,7 @@ config['dueling'] = False
 # per l'evaluation
 config['evaluation_interval'] = 1
 
-algo = config.build()
+""" algo = config.build()
 
 results = tune.Tuner(
     "DQN",
@@ -213,19 +172,7 @@ results = tune.Tuner(
     param_space = config,
 ).fit()
 
-visualizza_reward_mosse()
-
-config.evaluation()
-
-showAll()
-
-""" algo = config.build()
-algo.restore('/home/matteo/ray_results/DQN_2023-11-09_10-37-19/DQN_rsp_93b6e_00000_0_2023-11-09_10-37-19/checkpoint_000000')
-algo.evaluate() """
-
-
-
-
+visualizza_reward_mosse() """
 
 
 ###################################################################################################

@@ -89,3 +89,41 @@ class DQN:
                 },
     )#.callbacks(MyCallbacks)
 )
+
+
+class ApexDQN:
+     def __init__(self):
+          self.config = (
+    ApexDQNConfig()
+    .environment(
+            env=env_name
+    ).resources(
+            num_gpus=1
+    ).rollouts(
+            num_rollout_workers=1,
+            rollout_fragment_length=30
+    ).training(
+            train_batch_size=200,
+            model = { 
+                    "custom_model": "am_model",
+                }
+    ).multi_agent(
+            policies={
+                    "attaccante": (None, obs_space, act_space, {}),
+                    "difensore": (None, obs_space, act_space, {}),
+            },
+            policy_mapping_fn=(lambda agent_id, *args, **kwargs: agent_id),
+    ).debugging(
+    ).framework(
+            framework="torch"
+    ).exploration(
+            exploration_config={
+                    # The Exploration class to use.
+                    "type": "EpsilonGreedy",
+                    # Config for the Exploration class' constructor:
+                    "initial_epsilon": 0.1,
+                    "final_epsilon": 0.0,
+                    "epsilon_timesteps": 100000,  # Timesteps over which to anneal epsilon.
+            }
+    )
+)

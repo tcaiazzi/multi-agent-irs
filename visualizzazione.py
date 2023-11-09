@@ -78,7 +78,6 @@ def visualizza_reward_mosse():
     plt.xlabel('numero mosse per partita')
     plt.plot(x,y)
 
-def showAll():
     plt.show()
 
 
