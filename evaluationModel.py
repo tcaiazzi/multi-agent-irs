@@ -13,6 +13,7 @@ pathImpala = '/home/matteo/ray_results/IMPALA_2023-11-09_17-37-35/IMPALA_rsp_498
 pathPG = '/home/matteo/ray_results/PG_2023-11-09_17-42-28/PG_rsp_f85b7_00000_0_2023-11-09_17-42-28/checkpoint_000000'
 
 pathPPO = '/home/matteo/ray_results/PPO_2023-11-09_17-46-29/PPO_rsp_879a7_00000_0_2023-11-09_17-46-29/checkpoint_000000'
+
 ############################################ PER VEDERLO GIOCARE #####################################
 # Così va ma senza polisi sceglie random, ma va la logica della reward e dello stopping
 

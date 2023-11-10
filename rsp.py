@@ -331,7 +331,6 @@ class raw_env(AECEnv):
             rw = reward(agent,self.spazio,action)
             self.rewards[agent] -= rw
         
-        
         ############################# CHECK ARRESTO (se sono nello stato sicuro) #########################
         
         # NON POSSONO AVERE VALORI DISCORDI GLI AGENTI delle terminations e troncation
@@ -355,12 +354,14 @@ class raw_env(AECEnv):
 
 
         self._accumulate_rewards()
+        self.rewards[agent] = 0
 
         # PERCHÈ L'AVEVANO MESSA?? SE LA METTO AD OGNI ROUND MI SI AZZERA
         #self._cumulative_rewards[agent] = 0
         print('Num Mosse:',self.num_moves)
         print('Truncation:',self.truncations)
         print('Termination:',self.terminations)
+        print('Rewards:', self.rewards)
         print('reward cumulative:',self._cumulative_rewards)
         
         if self.render_mode == "human":
