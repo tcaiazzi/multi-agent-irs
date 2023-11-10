@@ -4,7 +4,7 @@ import numpy as np
 
 def visualizza_reward_mosse():
     dati = ''
-    with open("/home/matteo/Documenti/GitHub/tesiMagistrale/reward_mosse.txt", "r") as file:
+    with open("/home/matteo/Documenti/GitHub/tesiMagistrale/fileGrafici/reward_mosse.txt", "r") as file:
         dati = file.read()
     dati_dict = json.loads(dati)
     #print(dati_dict)
@@ -84,7 +84,7 @@ def visualizza_reward_mosse():
 
 """ def visualizza_curva_partita():
     dati = ''
-    with open("/home/matteo/Documenti/GitHub/tesiMagistrale/curva_partita.txt", "r") as file:
+    with open("/home/matteo/Documenti/GitHub/tesiMagistrale/fileGrafici/curva_partita.txt", "r") as file:
         dati = file.read()
     dati_dict = json.loads(dati)
 

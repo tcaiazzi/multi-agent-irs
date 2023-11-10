@@ -296,8 +296,8 @@ class raw_env(AECEnv):
             
             # SALVOLE INFO NEI FILE
             #visualizza()
-            file_uno = open("/home/matteo/Documenti/GitHub/tesiMagistrale/reward_mosse.txt", "w")
-            #file_due = open("/home/matteo/Documenti/GitHub/tesiMagistrale/curva_partita.txt", "w")
+            file_uno = open("/home/matteo/Documenti/GitHub/tesiMagistrale/fileGrafici/reward_mosse.txt", "w")
+            #file_due = open("/home/matteo/Documenti/GitHub/tesiMagistrale/fileGrafici/curva_partita.txt", "w")
             file_uno.write(json.dumps(reward_mosse))
             #file_due.write(json.dumps(curva_partita))
             file_uno.close()
