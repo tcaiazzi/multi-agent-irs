@@ -4,7 +4,8 @@ from algoritmiTraining import DQN, ApexDQN,Impala,PG,PPO
 # 4095 episodi totali, ovvero mosse totali ottenute da tutte le partite
 # num_env_steps_sampled 20400 non so cosa sia 
 # num_env_steps_trained 20704 non so cosa sia
-pathDQN = '/home/matteo/ray_results/DQN_2023-11-09_10-37-19/DQN_rsp_93b6e_00000_0_2023-11-09_10-37-19/checkpoint_000000'
+#pathDQN = '/home/matteo/ray_results/DQN_2023-11-09_10-37-19/DQN_rsp_93b6e_00000_0_2023-11-09_10-37-19/checkpoint_000000'
+pathDQN = '/home/matteo/ray_results/DQN_2023-11-10_11-33-13/DQN_rsp_8da5e_00000_0_2023-11-10_11-33-14/checkpoint_000000'
 
 pathApexDQN = '/home/matteo/ray_results/APEX_2023-11-09_17-23-28/APEX_rsp_50df4_00000_0_2023-11-09_17-23-28/checkpoint_000000'
 

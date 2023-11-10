@@ -455,7 +455,7 @@ def reward(agent,spazio,action):
     wi = 0.34
     tMax = 100
     cMax = 100
-    calcolo = -(-wt*(REWARD_MAP[agent][action][0]/tMax)-wc*(REWARD_MAP[agent][action][1]/cMax)-wi*REWARD_MAP[agent][action][2])
+    calcolo = (-wt*(REWARD_MAP[agent][action][0]/tMax)-wc*(REWARD_MAP[agent][action][1]/cMax)-wi*REWARD_MAP[agent][action][2])
     #calcolo = REWARD_MAP[agent][action][0]+REWARD_MAP[agent][action][1]+REWARD_MAP[agent][action][2]
     print('Reward:',calcolo)
     return calcolo
@@ -470,8 +470,7 @@ def terminationPartita(spazio):
     # come se gli altri fossero altri subsets states con minace in sicurezza)
     # DEVO FAR TERMINARE ANCHE QUANDO HA VINTO l'ATTACCANTE ovvero sistema totalmente compromesso
     # [1, 1, 1, 1, 1, 5, 1, 1, 0, 0, 1, 0, 1, 0, 1, 1, 1, 1, 1, 1, 1]
-    if ((spazio['difensore'][14] < T1 and spazio['difensore'][15] < T1 and spazio['difensore'][16] < T1 and spazio['difensore'][17] < T1 and spazio['difensore'][18] < T1 and spazio['difensore'][19] < T1 and spazio['difensore'] [20] < T1) 
-        or (spazio['difensore'][14] == T2 and spazio['difensore'][15] == T2 and spazio['difensore'][16] == T2 and spazio['difensore'][17] == T2 and spazio['difensore'][18] == T2 and spazio['difensore'][19] == T2 and spazio['difensore'][20] == T2 )): 
+    if (spazio['difensore'][14] < T1 and spazio['difensore'][15] < T1 and spazio['difensore'][16] < T1 and spazio['difensore'][17] < T1 and spazio['difensore'][18] < T1 and spazio['difensore'][19] < T1 and spazio['difensore'] [20] < T1): 
         #and spazio['difensore'] [1] == 0 and spazio['difensore'][2] == 0 and spazio['difensore'][4] == 0 and spazio['difensore'][5] == 0 and spazio['difensore'][6] == 1 and spazio['difensore'][7] == 0):
         val = True
     return val

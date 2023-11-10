@@ -55,7 +55,7 @@ torch.cuda.empty_cache()
 # COndizioni di stopping degli algoritmi 
 stop = {
         # epoche/passi dopo le quali il training si arresta
-        "training_iteration": 1,
+        "training_iteration": 5,
 
         #"timesteps_total":2,
 
@@ -128,7 +128,7 @@ config['dueling'] = False
 # per l'evaluation
 config['evaluation_interval'] = 1
 
-""" algo = config.build()
+algo = config.build()
 
 results = tune.Tuner(
     "DQN",
@@ -136,7 +136,7 @@ results = tune.Tuner(
     param_space = config,
 ).fit()
 
-visualizza_reward_mosse() """
+visualizza_reward_mosse()
 
 
 ###################################################################################################
@@ -171,7 +171,7 @@ config = Impala().config
 # per l'evaluation
 config['evaluation_interval'] = 1
 
-algo = config.build()
+""" algo = config.build()
 
 results = tune.Tuner(
         "IMPALA", 
@@ -179,7 +179,7 @@ results = tune.Tuner(
         run_config=air.RunConfig(stop=stop, verbose=1)
     ).fit()
 
-visualizza_reward_mosse()
+visualizza_reward_mosse() """
 
 ############################################################################################
 ##############################################  PG  ########################################
@@ -196,7 +196,7 @@ config['create_env_on_driver'] = True
 config['evaluation_interval'] = 1
 
 
-algo = config.build()
+""" algo = config.build()
 
 results = tune.Tuner(
         "PG",
@@ -204,7 +204,7 @@ results = tune.Tuner(
         run_config=air.RunConfig(stop=stop, verbose=1)
     ).fit() 
     
-visualizza_reward_mosse()
+visualizza_reward_mosse() """
 
 ##################################################################################################
 ################################################  PPO  ###########################################
@@ -224,7 +224,7 @@ config['create_env_on_driver'] = True
 # per l'evaluation
 config['evaluation_interval'] = 1
 
-algo = config.build()
+""" algo = config.build()
 
 results = tune.Tuner(
         "PPO", 
@@ -232,6 +232,6 @@ results = tune.Tuner(
         run_config=air.RunConfig(stop=stop, verbose=1)
     ).fit()  
 
-visualizza_reward_mosse()
+visualizza_reward_mosse() """
 
 ######################################## EVALUATION CHECKPOINT ##############################################
