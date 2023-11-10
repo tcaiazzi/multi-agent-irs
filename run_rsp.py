@@ -55,7 +55,7 @@ torch.cuda.empty_cache()
 # COndizioni di stopping degli algoritmi 
 stop = {
         # epoche/passi dopo le quali il training si arresta
-        "training_iteration": 5,
+        "training_iteration": 10,
 
         #"timesteps_total":2,
 
@@ -104,7 +104,7 @@ config['hiddens'] = []
 config['dueling'] = False
 # per l'evaluation
 config['evaluation_interval'] = 1
-""" 
+
 algo = config.build()
 
 results = tune.Tuner(
@@ -113,7 +113,7 @@ results = tune.Tuner(
     param_space = config,
 ).fit()
 
-visualizza_reward_mosse() """
+visualizza_reward_mosse()
 
 #############################################################################################
 ###############################################  DQN  #######################################
@@ -130,13 +130,13 @@ config['evaluation_interval'] = 1
 
 algo = config.build()
 
-results = tune.Tuner(
+""" results = tune.Tuner(
     "DQN",
     run_config = train.RunConfig(stop=stop,verbose=1),
     param_space = config,
 ).fit()
 
-visualizza_reward_mosse()
+visualizza_reward_mosse() """
 
 
 ###################################################################################################

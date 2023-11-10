@@ -342,7 +342,7 @@ def postCondizioni(action,spazio,agent):
         elif action == 13 :
             spazio[agent][8] = 1
             p = random.random()
-            if p < 0.3 :
+            if p < 0.5 :
                 # Scalare gli attacchi con una prob
                 spazio[agent][14] = 0
                 spazio[agent][15] = 0
@@ -358,7 +358,7 @@ def postCondizioni(action,spazio,agent):
             spazio[agent][6] = 0
             # Tutti gli attacchi a 0 con una prob
             p = random.random()
-            if p < 0.3 :
+            if p < 0.5 :
                 # Scalare gli attacchi con una prob
                 spazio[agent][14] = 0
                 spazio[agent][15] = 0
