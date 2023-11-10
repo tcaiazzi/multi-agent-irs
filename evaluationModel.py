@@ -1,19 +1,15 @@
 from algoritmiTraining import DQN, ApexDQN,Impala,PG,PPO
 
-# path di un modello DQN trainato con 20 training iteration, che non so se equivalgono a 20 epoche
-# 4095 episodi totali, ovvero mosse totali ottenute da tutte le partite
-# num_env_steps_sampled 20400 non so cosa sia 
-# num_env_steps_trained 20704 non so cosa sia
-#pathDQN = '/home/matteo/ray_results/DQN_2023-11-09_10-37-19/DQN_rsp_93b6e_00000_0_2023-11-09_10-37-19/checkpoint_000000'
-pathDQN = '/home/matteo/ray_results/DQN_2023-11-10_11-33-13/DQN_rsp_8da5e_00000_0_2023-11-10_11-33-14/checkpoint_000000'
 
-pathApexDQN = '/home/matteo/ray_results/APEX_2023-11-09_17-23-28/APEX_rsp_50df4_00000_0_2023-11-09_17-23-28/checkpoint_000000'
+pathDQN = '/home/matteo/ray_results/DQN_2023-11-10_12-27-34/DQN_rsp_25267_00000_0_2023-11-10_12-27-34/checkpoint_000000'
 
-pathImpala = '/home/matteo/ray_results/IMPALA_2023-11-09_17-37-35/IMPALA_rsp_49896_00000_0_2023-11-09_17-37-35/checkpoint_000000'
+pathApexDQN = ''
 
-pathPG = '/home/matteo/ray_results/PG_2023-11-09_17-42-28/PG_rsp_f85b7_00000_0_2023-11-09_17-42-28/checkpoint_000000'
+pathImpala = ''
 
-pathPPO = '/home/matteo/ray_results/PPO_2023-11-09_17-46-29/PPO_rsp_879a7_00000_0_2023-11-09_17-46-29/checkpoint_000000'
+pathPG = ''
+
+pathPPO =  ''
 
 ############################################ PER VEDERLO GIOCARE #####################################
 # Così va ma senza polisi sceglie random, ma va la logica della reward e dello stopping
@@ -22,11 +18,11 @@ from ray.rllib.algorithms.algorithm import Algorithm
 from visualizzazione import visualizza_reward_mosse
 
 # Algoritmi
-#config = DQN().config
+config = DQN().config
 #config = ApexDQN().config
 #config = Impala().config
 #config = PG().config
-config = PPO().config
+#config = PPO().config
 
 
 # Mi risolve i problemi di mismatch con la rete, non so perche, ma per l'action mask
@@ -38,11 +34,11 @@ config['evaluation_interval'] = 1
 
 algo = config.build()
 
-#algo.restore(pathDQN)
+algo.restore(pathDQN)
 #algo.restore(pathApexDQN)
 #algo.restore(pathImpala)
 #algo.restore(pathPG)
-algo.restore(pathPPO)
+#algo.restore(pathPPO)
 
 algo.evaluate()
 

@@ -144,7 +144,7 @@ def preCondizioni(agent,spazio,legal_moves):
         if (spazio['difensore'][11] == 0 and spazio['difensore'][6] == 1 and 
             (spazio['difensore'][15] == 1 or spazio['difensore'][16] == 1 or spazio['difensore'][17] == 1 or 
              spazio['difensore'][18] == 1 or spazio['difensore'][19] == 1 or spazio['difensore'][20] == 1) 
-            and spazio['difensore'][0] == 1 and spazio['difensore'][7] == 1 and spazio['difensore'][8] == 0 
+            and spazio['difensore'][0] == 1 and spazio['difensore'][7] == 1 
             and spazio['difensore'][3] == 1 and spazio['difensore'][9] == 1) :
             legal_moves[13] = 1
         else:
@@ -153,7 +153,7 @@ def preCondizioni(agent,spazio,legal_moves):
         if (spazio['difensore'][11] == 0 and spazio['difensore'][6] == 1 and 
             (spazio['difensore'][15] == 1 or spazio['difensore'][16] == 1 or spazio['difensore'][17] == 1 or 
              spazio['difensore'][18] == 1 or spazio['difensore'][19] == 1 or spazio['difensore'][20] == 1) 
-            and spazio['difensore'][0] == 1 and spazio['difensore'][7] == 1 and spazio['difensore'][13] == 1 
+            and spazio['difensore'][0] == 1 and spazio['difensore'][7] == 1 
             and spazio['difensore'][3] == 1 and spazio['difensore'][9] == 1) :
             legal_moves[14] = 1
         else:

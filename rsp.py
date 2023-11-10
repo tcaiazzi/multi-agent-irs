@@ -329,7 +329,10 @@ class raw_env(AECEnv):
         print('Mossa valida:',mossaValida)
         if mossaValida:
             rw = reward(agent,self.spazio,action)
-            self.rewards[agent] += rw
+            if agent == 'difensore':
+                self.rewards[agent] += rw
+            else:
+                self.rewards[agent] -= rw
         
         ############################# CHECK ARRESTO (se sono nello stato sicuro) #########################
         

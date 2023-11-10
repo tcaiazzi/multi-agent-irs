@@ -104,8 +104,8 @@ config['hiddens'] = []
 config['dueling'] = False
 # per l'evaluation
 config['evaluation_interval'] = 1
-
-""" algo = config.build()
+""" 
+algo = config.build()
 
 results = tune.Tuner(
     "APEX",
