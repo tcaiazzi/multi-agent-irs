@@ -27,6 +27,15 @@ curva_partita = {
 # Pre condizioni codificate nell'action mask
 def preCondizioni(agent,spazio,legal_moves):
     if agent == 'difensore':
+        # STATO
+        # [ firewall([True/False])(0), blockedip([])(1), flowlimit_ips([])(2), alert([True/False])(3), honeypot_ips([])(4),
+        # log_verb([0-5])(5),
+        # active([True/False])(6), quarantined([True/False])(7), rebooted([True/False])(8), backup([True/False])(9),
+        # updated([True/False])(10),
+        # manuallySolved([True/False])(11), everQuarantined([True/False])(12), everShutDown([True/False])(13),
+        # +
+        # pscan([0-1])(14), pvsftpd([0-1])(15), psmbd([0-1])(16), pphpcgi([0-1])(17), pircd([0-1])(18), pdistccd([0-1])(19), prmi([0-1])(20),]
+
         # pre condizioni del difensore
         # Generate alert
         if ((spazio['difensore'][14] >= T1 or spazio['difensore'][15] >= T1 or spazio['difensore'][16] >= T1 or
@@ -135,8 +144,8 @@ def preCondizioni(agent,spazio,legal_moves):
         if (spazio['difensore'][11] == 0 and spazio['difensore'][6] == 1 and 
             (spazio['difensore'][15] == 1 or spazio['difensore'][16] == 1 or spazio['difensore'][17] == 1 or 
              spazio['difensore'][18] == 1 or spazio['difensore'][19] == 1 or spazio['difensore'][20] == 1) 
-            and spazio['difensore'][0] == 1 and spazio['difensore'][7] == 1 and spazio['difensore'][8] == 1 
-            and spazio['difensore'][10] == 1 and spazio['difensore'][3] == 1 and spazio['difensore'][9] == 1) :
+            and spazio['difensore'][0] == 1 and spazio['difensore'][7] == 1 and spazio['difensore'][8] == 0 
+            and spazio['difensore'][3] == 1 and spazio['difensore'][9] == 1) :
             legal_moves[13] = 1
         else:
             legal_moves[13] = 0
@@ -144,8 +153,8 @@ def preCondizioni(agent,spazio,legal_moves):
         if (spazio['difensore'][11] == 0 and spazio['difensore'][6] == 1 and 
             (spazio['difensore'][15] == 1 or spazio['difensore'][16] == 1 or spazio['difensore'][17] == 1 or 
              spazio['difensore'][18] == 1 or spazio['difensore'][19] == 1 or spazio['difensore'][20] == 1) 
-            and spazio['difensore'][0] == 1 and spazio['difensore'][7] == 1 and spazio['difensore'][8] == 0 
-            and spazio['difensore'][10] == 1 and spazio['difensore'][3] == 1 and spazio['difensore'][9] == 1) :
+            and spazio['difensore'][0] == 1 and spazio['difensore'][7] == 1 and spazio['difensore'][13] == 1 
+            and spazio['difensore'][3] == 1 and spazio['difensore'][9] == 1) :
             legal_moves[14] = 1
         else:
             legal_moves[14] = 0
@@ -156,7 +165,7 @@ def preCondizioni(agent,spazio,legal_moves):
             legal_moves[15] = 0
         # BackupHost
         if (spazio['difensore'][6] == 1 and spazio['difensore'][9] == 0 and spazio['difensore'][7] == 0 and
-            spazio['difensore'][10] == 0 and spazio['difensore'][3] == 1 and spazio['difensore'][5] > 1 and
+            spazio['difensore'][3] == 1 and spazio['difensore'][5] > 1 and
             (spazio['difensore'][15] > T1 or spazio['difensore'][16] > T1 or spazio['difensore'][17] > T1 or 
              spazio['difensore'][18] > T1 or spazio['difensore'][19] > T1 or spazio['difensore'][20] > T1)):
             legal_moves[16] = 1
@@ -352,6 +361,7 @@ def postCondizioni(action,spazio,agent):
         # SystemStart
         elif action == 15 :
             spazio[agent][6] = 1
+            spazio[agent][8] = 1
         # BackupHost
         elif action == 16 :
             spazio[agent][9] = 1

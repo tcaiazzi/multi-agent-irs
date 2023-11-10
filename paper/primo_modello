@@ -173,17 +173,17 @@ post: manuallySolved ^ tutti attacchi a 0 ^ ¬quarantined ^ active
 
 SYSTEM REBOOT
 pre: ¬manuallySolved ^ active ^ (pvsftpd = 1 ∨ psmbd = 1 ∨ pphpcgid = 1 ∨ pdistccd = 1 ∨ prmi = 1 ∨ pircd = 1 ) ^ firewall ^ 
-quarantined ^ ¬rebooted ^ updated ^ alert ^ backup ^ active
+quarantined ^ ¬rebooted ^ alert ^ backup
 post: rebooted ^  (pscan = 0 ^ pvsftpd = 0 ∨ psmbd = 0 ∨ pphpcgid = 0 ∨ pdistccd = 0 ∨ prmi = 0 ∨ pircd = 0) con probabilita 0.3 di interrompere un attacco
 
 SYSTEM SHUTDOWN
 pre: ¬manuallySolved ^ active ^ (pvsftpd = 1 ∨ psmbd = 1 ∨ pphpcgid = 1 ∨ pdistccd = 1 ∨ prmi = 1 ∨ pircd = 1 ) ^ firewall ^ 
-quarantined ^ rebooted ^ updated ^ alert ^ backup 
+quarantined ^ ¬everShutdown  ^ alert ^ backup 
 post:  ¬active ^ evershutdown
 
 SYSTEM START
 pre: ¬active
-post: (pscan = 0 ^ pvsftpd = 0 ∨ psmbd = 0 ∨ pphpcgid = 0 ∨ pdistccd = 0 ∨ prmi = 0 ∨ pircd = 0) con probabilita 0.5 di interrompere un attacco ^ active
+post: (pscan = 0 ^ pvsftpd = 0 ∨ psmbd = 0 ∨ pphpcgid = 0 ∨ pdistccd = 0 ∨ prmi = 0 ∨ pircd = 0) con probabilita 0.5 di interrompere un attacco ^ active ^ rebooted
 
 SOFTWARE UPDATE
 pre: active ^ ¬updated ^ ( pvsftpd > T1 ∨ psmbd > T1 ∨ pphpcgid > T1 ∨ pdistccd > T1 ∨ prmi > T1 ∨ pircd > T1)
@@ -191,7 +191,7 @@ post: (pscan = 0 ^ pvsftpd = 0 ∨ psmbd = 0 ∨ pphpcgid = 0 ∨ pdistccd = 0 �
 
 BACKUP HOST
 pre: active ^ ¬backup ^ (pvsftpd > T1 ∨ psmbd > T1 ∨ pphpcgid > T1 ∨ pdistccd > T1 ∨ prmi > T1 ∨ pircd > T1 ) ^
-∧¬quarantined ∧ alerted ∧ loдV erb > 1 ∧ ¬softwareU pToDate
+∧¬quarantined ∧ alerted ∧ loдV erb > 1 
 post: backup
 
 *** SHUTDOWN/REBOOT prevedono lo spegnimento del sistema,
