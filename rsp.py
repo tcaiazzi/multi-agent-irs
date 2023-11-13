@@ -9,6 +9,7 @@ from pettingzoo.utils import agent_selector, wrappers
 
 from prePost import postCondizioni,reward,terminationPartita,reward_mosse,curva_partita,preCondizioni
 
+
 import sys
 import os
 
@@ -299,6 +300,8 @@ class raw_env(AECEnv):
             reward_mosse[self.agent_selection].append((self.num_moves,self._cumulative_rewards[self.agent_selection]))
             
             # SALVOLE INFO NEI FILE
+            # apro in write perche butto dentro la struttura dati in prePost
+            # che mi tiene tutto ed alla fine ho i dati di tutto
             file_uno = open("/home/matteo/Documenti/GitHub/tesiMagistrale/fileGrafici/reward_mosse.txt", "w")
             #file_due = open("/home/matteo/Documenti/GitHub/tesiMagistrale/fileGrafici/curva_partita.txt", "w")
             file_uno.write(json.dumps(reward_mosse))
