@@ -1,8 +1,11 @@
 from algoritmiTraining import DQN, ApexDQN,Impala,PG,PPO
+from ray.rllib.algorithms.algorithm import Algorithm
+from visualizzazione import visualizza_reward_mosse
+
 
 # 20 training iteration
-#pathDQN = '/home/matteo/ray_results/DQN_2023-11-10_12-40-26/DQN_rsp_f0eb6_00000_0_2023-11-10_12-40-26/checkpoint_000000'
-pathDQN = '/home/matteo/ray_results/DQN_2023-11-10_13-31-51/DQN_rsp_2008b_00000_0_2023-11-10_13-31-51/checkpoint_000000'
+pathDQN = '/home/matteo/ray_results/DQN_2023-11-10_12-40-26/DQN_rsp_f0eb6_00000_0_2023-11-10_12-40-26/checkpoint_000000'
+#pathDQN = '/home/matteo/ray_results/DQN_2023-11-10_13-31-51/DQN_rsp_2008b_00000_0_2023-11-10_13-31-51/checkpoint_000000'
 
 # sarebbe dovuto risultare piu veloce ma sul mio non sembra, se dqn riesco a spingermi liberamente a 20 training it.
 # con apex ci mette dippiu, 30minuti per 10 trainin iteration e 100 partite(?)
@@ -28,16 +31,13 @@ pathPPO =  '/home/matteo/ray_results/PPO_2023-11-10_14-32-44/PPO_rsp_a15d1_00000
 ############################################ PER VEDERLO GIOCARE #####################################
 # Così va ma senza polisi sceglie random, ma va la logica della reward e dello stopping
 
-from ray.rllib.algorithms.algorithm import Algorithm
-from visualizzazione import visualizza_reward_mosse
 
 # Algoritmi
 #config = DQN().config
-config = ApexDQN().config
+#config = ApexDQN().config
 #config = Impala().config
 #config = PG().config
-#config = PPO().config
-
+config = PPO().config
 
 # Mi risolve i problemi di mismatch con la rete, non so perche, ma per l'action mask
 config['hiddens'] = []
@@ -49,10 +49,10 @@ config['evaluation_interval'] = 1
 algo = config.build()
 
 #algo.restore(pathDQN)
-algo.restore(pathApexDQN)
+#algo.restore(pathApexDQN)
 #algo.restore(pathImpala)
 #algo.restore(pathPG)
-#algo.restore(pathPPO)
+algo.restore(pathPPO)
 
 algo.evaluate()
 
