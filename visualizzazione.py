@@ -5,8 +5,6 @@ import numpy as np
 import sys
 import os
 
-from rsp import path
-
 def visualizza_reward_mosse():
     dati = ''
     #with open(pathCompleto, "r") as file:
