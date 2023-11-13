@@ -55,7 +55,7 @@ torch.cuda.empty_cache()
 # COndizioni di stopping degli algoritmi 
 stop = {
         # epoche/passi dopo le quali il training si arresta
-        "training_iteration": 1,
+        "training_iteration": 20,
 
         #"timesteps_total":2,
 
@@ -73,7 +73,31 @@ ray.shutdown()
 ray.init()
 
 
+
 ################################################# RAY #######################################
+#############################################################################################
+###############################################  DQN  #######################################
+#############################################################################################
+
+config = DQN().config
+
+# Mi risolve i problemi di mismatch con la rete, non so perche, ma per l'action mask
+config['hiddens'] = []
+config['dueling'] = False
+
+# per l'evaluation
+config['evaluation_interval'] = 1
+
+algo = config.build()
+
+results = tune.Tuner(
+    "DQN",
+    run_config = train.RunConfig(stop=stop,verbose=1),
+    param_space = config,
+).fit()
+
+visualizza_reward_mosse() 
+
 ############################################## APEX-DQN #####################################
 #############################################################################################
 # è un DQN evoluto, ovvero DQN su architettura APE-x (una gpu che apprende e più worker cpu che collezionano esperienza)
@@ -115,28 +139,6 @@ results = tune.Tuner(
 
 visualizza_reward_mosse() """
 
-#############################################################################################
-###############################################  DQN  #######################################
-#############################################################################################
-
-config = DQN().config
-
-# Mi risolve i problemi di mismatch con la rete, non so perche, ma per l'action mask
-config['hiddens'] = []
-config['dueling'] = False
-
-# per l'evaluation
-config['evaluation_interval'] = 1
-
-algo = config.build()
-
-results = tune.Tuner(
-    "DQN",
-    run_config = train.RunConfig(stop=stop,verbose=1),
-    param_space = config,
-).fit()
-
-visualizza_reward_mosse() 
 
 ###################################################################################################
 #########################################  IMPALA-PG-PPO  #########################################
