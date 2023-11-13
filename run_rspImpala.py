@@ -75,71 +75,6 @@ ray.init()
 
 
 ################################################# RAY #######################################
-#############################################################################################
-###############################################  DQN  #######################################
-#############################################################################################
-
-config = DQN().config
-
-# Mi risolve i problemi di mismatch con la rete, non so perche, ma per l'action mask
-config['hiddens'] = []
-config['dueling'] = False
-
-# per l'evaluation
-config['evaluation_interval'] = 1
-
-algo = config.build()
-
-""" results = tune.Tuner(
-    "DQN",
-    run_config = train.RunConfig(stop=stop,verbose=1),
-    param_space = config,
-).fit()
-
-visualizza_reward_mosse()  """
-
-############################################## APEX-DQN #####################################
-#############################################################################################
-# è un DQN evoluto, ovvero DQN su architettura APE-x (una gpu che apprende e più worker cpu che collezionano esperienza)
-""" 
-# Fa dei controlli ad ogni episodi, così ad esempio si ferma la partita quando la cuulative reward del difensore super i 100
-class MyCallbacks(DefaultCallbacks):
-    def on_episode_end(self, worker, base_env, policies, episode, **kwargs):
-        # Controlla il valore della cumulative reward
-        if episode.agent_rewards['difensore'] > 100:
-            return True  # Interrompi il training """
-
-# Sempre che stia funzionando lo stopping a tempo
-""" class TimeStopper(Stopper):
-    def __init__(self):
-        self._start = time.time()
-        self._deadline = 60  # Stop all trials after 2 seconds
-
-    def __call__(self, trial_id, result):
-        return False
-
-    def stop_all(self):
-        return time.time() - self._start > self._deadline """
-    
-config = ApexDQN().config
-
-# Mi risolve i problemi di mismatch con la rete
-config['hiddens'] = []
-config['dueling'] = False
-# per l'evaluation
-config['evaluation_interval'] = 1
-
-""" algo = config.build()
-
-results = tune.Tuner(
-    "APEX",
-    run_config = train.RunConfig(stop=stop,verbose=1),
-    param_space = config,
-).fit()
-
-visualizza_reward_mosse() """
-
-
 ###################################################################################################
 #########################################  IMPALA-PG-PPO  #########################################
 # Sono algoritmi che permettono l'implementazioni di reti neurali come lSTM-RNN-... 
@@ -167,12 +102,13 @@ visualizza_reward_mosse() """
 # Basato sullo Stocasthic gradient discent (SGD)
 # gradiente stimato e non calcolato
 
+
 config = Impala().config
 
 # per l'evaluation
 config['evaluation_interval'] = 1
 
-""" algo = config.build()
+algo = config.build()
 
 results = tune.Tuner(
         "IMPALA", 
@@ -180,59 +116,4 @@ results = tune.Tuner(
         run_config=air.RunConfig(stop=stop, verbose=1)
     ).fit()
 
-visualizza_reward_mosse() """
-
-############################################################################################
-##############################################  PG  ########################################
-############################################################################################
-# Policy gradient
-# vanilla policy gradients using experience collected from the latest interaction with the agent implementation 
-# (using experience collected from the latest interaction with the agent)
-
-config = PG().config
-
-config['evaluation_interval'] = 1
-config['create_env_on_driver'] = True
-# per l'evaluation
-config['evaluation_interval'] = 1
-
-
-""" algo = config.build()
-
-results = tune.Tuner(
-        "PG",
-        param_space=config, 
-        run_config=air.RunConfig(stop=stop, verbose=1)
-    ).fit() 
-    
-visualizza_reward_mosse() """
-
-##################################################################################################
-################################################  PPO  ###########################################
-##################################################################################################
-# Proximal Policy Optimization e fa uso del PG con l'aggiunta di clipped objective function 
-# (penalizzando grandicambiamenti nella policy)
-# PG avanzato piu veloce
-# multiple SGD 
-
-config = PPO().config
-""" # PER IL CUSTOM_MODEL
-config.rl_module( _enable_rl_module_api=False)
-config.training(_enable_learner_api=False) """
-
-config['evaluation_interval'] = 1
-config['create_env_on_driver'] = True 
-# per l'evaluation
-config['evaluation_interval'] = 1
-
-algo = config.build()
-
-""" results = tune.Tuner(
-        "PPO", 
-        param_space=config, 
-        run_config=air.RunConfig(stop=stop, verbose=1)
-    ).fit()  
-
-visualizza_reward_mosse() """
-
-######################################## EVALUATION CHECKPOINT ##############################################
+visualizza_reward_mosse()
