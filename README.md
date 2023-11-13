@@ -1,4 +1,4 @@
-# tesiMagistrale
+# IRS: Intrusion Response System
 NOTA: Multithread non ancora utilizzato/sfruttato
 
 lanciare python3 run_rsp.py (lui usa algoritmiTraining per l'implementazione dei modelli e visualizzazione per vedere i grafici di training )
