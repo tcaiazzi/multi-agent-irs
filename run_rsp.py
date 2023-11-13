@@ -55,7 +55,7 @@ torch.cuda.empty_cache()
 # COndizioni di stopping degli algoritmi 
 stop = {
         # epoche/passi dopo le quali il training si arresta
-        "training_iteration": 20,
+        "training_iteration": 2,
 
         #"timesteps_total":2,
 
@@ -90,13 +90,13 @@ config['evaluation_interval'] = 1
 
 algo = config.build()
 
-results = tune.Tuner(
+""" results = tune.Tuner(
     "DQN",
     run_config = train.RunConfig(stop=stop,verbose=1),
     param_space = config,
 ).fit()
 
-visualizza_reward_mosse() 
+visualizza_reward_mosse()  """
 
 ############################################## APEX-DQN #####################################
 #############################################################################################
@@ -129,7 +129,7 @@ config['dueling'] = False
 # per l'evaluation
 config['evaluation_interval'] = 1
 
-""" algo = config.build()
+algo = config.build()
 
 results = tune.Tuner(
     "APEX",
@@ -137,7 +137,7 @@ results = tune.Tuner(
     param_space = config,
 ).fit()
 
-visualizza_reward_mosse() """
+visualizza_reward_mosse()
 
 
 ###################################################################################################
@@ -225,9 +225,9 @@ config['create_env_on_driver'] = True
 # per l'evaluation
 config['evaluation_interval'] = 1
 
-""" algo = config.build()
+algo = config.build()
 
-results = tune.Tuner(
+""" results = tune.Tuner(
         "PPO", 
         param_space=config, 
         run_config=air.RunConfig(stop=stop, verbose=1)

@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 dati_dict = ''
-with open("/home/matteo/Documenti/GitHub/tesiMagistrale/fileGrafici/DQN_reward_mosse.txt", "r") as file:
+with open("/home/matteo/Documenti/GitHub/tesiMagistrale/fileGrafici/DQN_train_reward_mosse.txt", "r") as file:
         dati = file.read()
 dati_dict = json.loads(dati)
 
@@ -21,7 +21,7 @@ plt.plot(np.arange(len(yB)),yB)
 
 
 dati_dict = ''
-with open("/home/matteo/Documenti/GitHub/tesiMagistrale/fileGrafici/ApexDQN_reward_mosse.txt", "r") as file:
+with open("/home/matteo/Documenti/GitHub/tesiMagistrale/fileGrafici/ApexDQN_train_reward_mosse.txt", "r") as file:
         dati = file.read()
 dati_dict = json.loads(dati)
 
@@ -39,7 +39,7 @@ plt.plot(np.arange(len(yB)),yB)
 
 
 dati_dict = ''
-with open("/home/matteo/Documenti/GitHub/tesiMagistrale/fileGrafici/Impala_reward_mosse.txt", "r") as file:
+with open("/home/matteo/Documenti/GitHub/tesiMagistrale/fileGrafici/Impala_train_reward_mosse.txt", "r") as file:
         dati = file.read()
 dati_dict = json.loads(dati)
 
@@ -57,7 +57,7 @@ plt.plot(np.arange(len(yB)),yB)
 
 
 dati_dict = ''
-with open("/home/matteo/Documenti/GitHub/tesiMagistrale/fileGrafici/PG_reward_mosse.txt", "r") as file:
+with open("/home/matteo/Documenti/GitHub/tesiMagistrale/fileGrafici/PG_train_reward_mosse.txt", "r") as file:
         dati = file.read()
 dati_dict = json.loads(dati)
 
@@ -75,7 +75,7 @@ plt.plot(np.arange(len(yB)),yB)
 
 
 dati_dict = ''
-with open("/home/matteo/Documenti/GitHub/tesiMagistrale/fileGrafici/PPO_reward_mosse.txt", "r") as file:
+with open("/home/matteo/Documenti/GitHub/tesiMagistrale/fileGrafici/PPO_train_reward_mosse.txt", "r") as file:
         dati = file.read()
 dati_dict = json.loads(dati)
 
