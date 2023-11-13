@@ -34,7 +34,7 @@ def visualizza_reward_mosse():
     """ print('YA:',yA)
     print('YB:',yB) """
     plt.figure()
-    plt.title('ADDESTRAMENTO')
+    plt.title('ADDESTRAMENTO/EVALUATE')
     plt.ylabel('reward')
     plt.xlabel('t')
     #plt.xlabel('numero mosse per partita')
@@ -51,7 +51,7 @@ def visualizza_reward_mosse():
     for i in a :
         y.append(i[0])
     plt.figure()
-    plt.title('MOSSE fatte per ogni partita')
+    plt.title('MOSSE ATT+DIF fatte per ogni partita')
     plt.ylabel('n mosse')
     plt.xlabel('partite')
     plt.plot(np.arange(len(y)),y)
@@ -70,7 +70,7 @@ def visualizza_reward_mosse():
     """ print(len(x))
     print(len(y)) """
     plt.figure()
-    plt.title('REWARD nel tempo dell attaccante')
+    plt.title('REWARD attaccante rispetto il N.MOSSE')
     plt.ylabel('reward attaccante')
     plt.xlabel('numero mosse per partita')
     plt.plot(x,y)
@@ -87,7 +87,7 @@ def visualizza_reward_mosse():
     print(len(y)) """
     plt.figure()
     plt.title('')
-    plt.ylabel('reward difensore')
+    plt.title('REWARD difensore rispetto il N.MOSSE')
     plt.xlabel('numero mosse per partita')
     plt.plot(x,y)
 
