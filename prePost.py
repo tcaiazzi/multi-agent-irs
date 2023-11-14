@@ -172,7 +172,7 @@ def preCondizioni(agent,spazio,legal_moves):
         else:
             legal_moves[16] = 0
         # SoftwareUpdate
-        if (spazio['difensore'][6] == 1 and spazio['difensore'][10] == 0 and 
+        if (spazio['difensore'][6] == 1 and spazio['difensore'][10] == 0 and spazio['difensore'][9] == 1 and 
             (spazio['difensore'][15] > T1 or spazio['difensore'][16] > T1 or spazio['difensore'][17] > T1 or 
              spazio['difensore'][18] > T1 or spazio['difensore'][19] > T1 or spazio['difensore'][20] > T1)) :
             legal_moves[17] = 1

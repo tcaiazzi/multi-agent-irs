@@ -40,11 +40,11 @@ pathPPO = '/home/matteo/ray_results/PPO_2023-11-13_15-29-22/PPO_rsp_09b75_00000_
 
 
 # Algoritmi
-#config = DQN().config
+config = DQN().config
 #config = ApexDQN().config
 #config = Impala().config
 #config = PG().config
-config = PPO().config
+#config = PPO().config
 
 # Mi risolve i problemi di mismatch con la rete, non so perche, ma per l'action mask
 config['hiddens'] = []
@@ -55,11 +55,11 @@ config['evaluation_interval'] = 1
 
 algo = config.build()
 
-#algo.restore(pathDQN)
+algo.restore(pathDQN)
 #algo.restore(pathApexDQN)
 #algo.restore(pathImpala)
 #algo.restore(pathPG)
-algo.restore(pathPPO)
+#algo.restore(pathPPO)
 
 algo.evaluate()
 

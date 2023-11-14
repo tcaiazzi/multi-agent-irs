@@ -186,7 +186,7 @@ pre: ¬active
 post: (pscan = 0 ^ pvsftpd = 0 ∨ psmbd = 0 ∨ pphpcgid = 0 ∨ pdistccd = 0 ∨ prmi = 0 ∨ pircd = 0) con probabilita 0.5 di interrompere un attacco ^ active ^ rebooted
 
 SOFTWARE UPDATE
-pre: active ^ ¬updated ^ ( pvsftpd > T1 ∨ psmbd > T1 ∨ pphpcgid > T1 ∨ pdistccd > T1 ∨ prmi > T1 ∨ pircd > T1)
+pre: active ^ ¬updated ^ ( pvsftpd > T1 ∨ psmbd > T1 ∨ pphpcgid > T1 ∨ pdistccd > T1 ∨ prmi > T1 ∨ pircd > T1) ^ backup
 post: (pscan = 0 ^ pvsftpd = 0 ∨ psmbd = 0 ∨ pphpcgid = 0 ∨ pdistccd = 0 ∨ prmi = 0 ∨ pircd = 0) ^ updated
 
 BACKUP HOST
