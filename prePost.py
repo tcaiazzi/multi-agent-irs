@@ -50,17 +50,19 @@ def preCondizioni(agent,spazio,legal_moves):
         else:
             legal_moves[0] = 0
         # FirewallActivation
+        # preso dal paper
         if ((spazio['difensore'][14] >= T1 or spazio['difensore'][15] >= T1 or spazio['difensore'][16] >= T1 or 
             spazio['difensore'][17] >= T1 or spazio['difensore'][18] >= T1 or spazio['difensore'][19] >= T1 or 
             spazio['difensore'][20] >= T1) 
-            and spazio['difensore'][0] == 0 and spazio['difensore'][6] == 1 and spazio['difensore'][5] > 0):
+            and spazio['difensore'][0] == 0 and spazio['difensore'][6] == 1 and spazio['difensore'][7] == 0 and spazio['difensore'][5] > 0):
             legal_moves[1] = 1
         else:
             legal_moves[1] = 0
         # BlockSourceIp
+        # preso dal paper
         if (spazio['difensore'][14] >= T2 and spazio['difensore'][0] == 1 and
             spazio['difensore'][6] == 1 and spazio['difensore'][1] == 0 and spazio['difensore'][3] == 1 and
-            spazio['difensore'][5] > 1) : 
+            spazio['difensore'][5] > 1 and spazio['difensore'][7] == 0) : 
             legal_moves[2] = 1
         else:
             legal_moves[2] = 0
@@ -72,9 +74,10 @@ def preCondizioni(agent,spazio,legal_moves):
         else:
             legal_moves[3] = 0
         # FlowRateLimit
+        # preso dal paper
         if (spazio['difensore'][14] >= T1 and spazio['difensore'][0] ==1 and spazio['difensore'][3] == 1 and
             spazio['difensore'][6] == 1 and spazio['difensore'][2] == 0 and spazio['difensore'][5] > 0 and
-            spazio['difensore'][1] == 0) :
+            spazio['difensore'][1] == 0 and spazio['difensore'][7] == 0) :
             legal_moves[4] = 1
         else:
             legal_moves[4] = 0
@@ -177,6 +180,7 @@ def preCondizioni(agent,spazio,legal_moves):
         else:
             legal_moves[16] = 0
         # SoftwareUpdate
+        # detto dal prof: deve aver fatto backup
         if (spazio['difensore'][6] == 1 and spazio['difensore'][10] == 0 and spazio['difensore'][9] == 1 and 
             (spazio['difensore'][15] > T1 or spazio['difensore'][16] > T1 or spazio['difensore'][17] > T1 or 
              spazio['difensore'][18] > T1 or spazio['difensore'][19] > T1 or spazio['difensore'][20] > T1)) :
@@ -384,6 +388,7 @@ def postCondizioni(action,spazio,agent):
             spazio[agent][9] = 1
         # SoftwareUpdate
         elif action == 17 :
+            spazio[agent][5] = 0
             spazio[agent][10] = 1
             spazio[agent][14] = 0
             spazio[agent][15] = 0
@@ -476,8 +481,7 @@ def terminationPartita(spazio):
     check = 0
     # clean system state + esclusione degli altri parametri (lascio solo il check degli attacchi sotto T1 
     # come se gli altri fossero altri subsets states con minace in sicurezza)
-    # DEVO FAR TERMINARE ANCHE QUANDO HA VINTO l'ATTACCANTE ovvero sistema totalmente compromesso
-    # [1, 1, 1, 1, 1, 5, 1, 1, 0, 0, 1, 0, 1, 0, 1, 1, 1, 1, 1, 1, 1]
+    # Consigliata dal professore
     if (spazio['difensore'][14] < T1 and spazio['difensore'][15] < T1 and spazio['difensore'][16] < T1 and spazio['difensore'][17] < T1 and spazio['difensore'][18] < T1 and spazio['difensore'][19] < T1 and spazio['difensore'] [20] < T1 
         and spazio['difensore'] [1] == 0 and spazio['difensore'][2] == 0 and spazio['difensore'][4] == 0 and spazio['difensore'][5] == 0 and spazio['difensore'][6] == 1 and spazio['difensore'][7] == 0):
         val = True

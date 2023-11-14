@@ -34,8 +34,9 @@ pathPG = '/home/matteo/ray_results/PG_2023-11-14_12-00-12/PG_rsp_fba1c_00000_0_2
 # pero piu lento in realta pero nell'evaluation fa 6 mosse e non 4 mmmh
 #pathPPO =  '/home/matteo/ray_results/PPO_2023-11-10_14-32-44/PPO_rsp_a15d1_00000_0_2023-11-10_14-32-44/checkpoint_000000'
 # 20 training iteration
-pathPPO = '/home/matteo/ray_results/PPO_2023-11-13_15-29-22/PPO_rsp_09b75_00000_0_2023-11-13_15-29-22/checkpoint_000000'
-
+#pathPPO = '/home/matteo/ray_results/PPO_2023-11-13_15-29-22/PPO_rsp_09b75_00000_0_2023-11-13_15-29-22/checkpoint_000000'
+#pathPPO = '/home/matteo/ray_results/PPO_2023-11-14_12-11-47/PPO_rsp_9a365_00000_0_2023-11-14_12-11-47/checkpoint_000000'
+pathPPO = '/home/matteo/ray_results/PPO_2023-11-14_12-54-55/PPO_rsp_a0853_00000_0_2023-11-14_12-54-55/checkpoint_000000'
 ############################################ PER VEDERLO GIOCARE #####################################
 # Così va ma senza polisi sceglie random, ma va la logica della reward e dello stopping
 
@@ -44,8 +45,8 @@ pathPPO = '/home/matteo/ray_results/PPO_2023-11-13_15-29-22/PPO_rsp_09b75_00000_
 #config = DQN().config
 #config = ApexDQN().config
 #config = Impala().config
-config = PG().config
-#config = PPO().config
+#config = PG().config
+config = PPO().config
 
 # Mi risolve i problemi di mismatch con la rete, non so perche, ma per l'action mask
 config['hiddens'] = []
@@ -59,8 +60,8 @@ algo = config.build()
 #algo.restore(pathDQN)
 #algo.restore(pathApexDQN)
 #algo.restore(pathImpala)
-algo.restore(pathPG)
-#algo.restore(pathPPO)
+#algo.restore(pathPG)
+algo.restore(pathPPO)
 
 algo.evaluate()
 
