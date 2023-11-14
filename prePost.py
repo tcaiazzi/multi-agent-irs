@@ -150,7 +150,7 @@ def preCondizioni(agent,spazio,legal_moves):
             legal_moves[12] = 0
         # SystemReboot
         if (spazio['difensore'][11] == 0 and spazio['difensore'][6] == 1 and 
-            (spazio['difensore'][15] == 1 or spazio['difensore'][16] == 1 or spazio['difensore'][17] == 1 or 
+            (spazio['difensore'][14] == 1 or spazio['difensore'][15] == 1 or spazio['difensore'][16] == 1 or spazio['difensore'][17] == 1 or 
              spazio['difensore'][18] == 1 or spazio['difensore'][19] == 1 or spazio['difensore'][20] == 1) 
             and spazio['difensore'][0] == 1 and spazio['difensore'][7] == 1 
             and spazio['difensore'][3] == 1 ) :
@@ -159,7 +159,7 @@ def preCondizioni(agent,spazio,legal_moves):
             legal_moves[13] = 0
         # SystemShutdown
         if (spazio['difensore'][11] == 0 and spazio['difensore'][6] == 1 and 
-            (spazio['difensore'][15] == 1 or spazio['difensore'][16] == 1 or spazio['difensore'][17] == 1 or 
+            (spazio['difensore'][14] == 1 or spazio['difensore'][15] == 1 or spazio['difensore'][16] == 1 or spazio['difensore'][17] == 1 or 
              spazio['difensore'][18] == 1 or spazio['difensore'][19] == 1 or spazio['difensore'][20] == 1) 
             and spazio['difensore'][0] == 1 and spazio['difensore'][7] == 1 
             and spazio['difensore'][3] == 1 ) :
@@ -199,38 +199,41 @@ def preCondizioni(agent,spazio,legal_moves):
         
     else:
         # pre condizioni dell'attaccante
+        # In tutte ho inserito che se il software viene aggiornato neanche più il pscan si può fare 
+        # altrimenti non ce la farebbe mai ad uscire perche deve decrementare i log
+
         # Pscan
-        if spazio['difensore'][14] < T1 and spazio['difensore'][6] == 1:
+        if spazio['difensore'][14] < T1 and spazio['difensore'][6] == 1 and spazio['difensore'][10] == 0:
             legal_moves[0] = 1
         else:
             legal_moves[0] = 0
         # Pvsftpd
-        if spazio['difensore'][15] < T1 and spazio['difensore'][14] > T2 and spazio['difensore'][6] == 1: 
+        if spazio['difensore'][15] < T1 and spazio['difensore'][14] > T2 and spazio['difensore'][6] == 1 and spazio['difensore'][10] == 0: 
             legal_moves[1] = 1
         else:
             legal_moves[1] = 0
         # Psmbd
-        if spazio['difensore'][16] < T1 and spazio['difensore'][14] > T2 and spazio['difensore'][6] == 1:
+        if spazio['difensore'][16] < T1 and spazio['difensore'][14] > T2 and spazio['difensore'][6] == 1 and spazio['difensore'][10] == 0:
             legal_moves[2] = 1
         else:
             legal_moves[2] = 0
         # Pphpcgi
-        if spazio['difensore'][17] < T1 and spazio['difensore'][14] > T2 and spazio['difensore'][6] == 1:
+        if spazio['difensore'][17] < T1 and spazio['difensore'][14] > T2 and spazio['difensore'][6] == 1 and spazio['difensore'][10] == 0:
             legal_moves[3] = 1
         else:
             legal_moves[3] = 0
         # Pircd
-        if spazio['difensore'][18] < T1 and spazio['difensore'][14] > T2 and spazio['difensore'][6] == 1:
+        if spazio['difensore'][18] < T1 and spazio['difensore'][14] > T2 and spazio['difensore'][6] == 1 and spazio['difensore'][10] == 0:
             legal_moves[4] = 1
         else:
             legal_moves[4] = 0
         # Pdistccd
-        if spazio['difensore'][19] < T1 and spazio['difensore'][14] > T2 and spazio['difensore'][6] == 1:
+        if spazio['difensore'][19] < T1 and spazio['difensore'][14] > T2 and spazio['difensore'][6] == 1 and spazio['difensore'][10] == 0:
             legal_moves[5] = 1
         else:
             legal_moves[5] = 0
         # Prmi
-        if spazio['difensore'][20] < T1 and spazio['difensore'][14] > T2 and spazio['difensore'][6] == 1:
+        if spazio['difensore'][20] < T1 and spazio['difensore'][14] > T2 and spazio['difensore'][6] == 1 and spazio['difensore'][10] == 0:
             legal_moves[6] = 1
         else:
             legal_moves[6] = 0
@@ -388,7 +391,6 @@ def postCondizioni(action,spazio,agent):
             spazio[agent][9] = 1
         # SoftwareUpdate
         elif action == 17 :
-            spazio[agent][5] = 0
             spazio[agent][10] = 1
             spazio[agent][14] = 0
             spazio[agent][15] = 0
@@ -486,4 +488,14 @@ def terminationPartita(spazio):
         and spazio['difensore'] [1] == 0 and spazio['difensore'][2] == 0 and spazio['difensore'][4] == 0 and spazio['difensore'][5] == 0 and spazio['difensore'][6] == 1 and spazio['difensore'][7] == 0):
         val = True
     return val
+
+def generazioneSpazioRandom():
+    # STATO CHE AVEVO SUPPOSTO IO DI PARTENZA
+    spazio = [0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+    for i in range(21):
+        if i == 5:
+            spazio[i] = random.randint(0,5)
+        else:
+            spazio[i] = random.randint(0,1)
+    return spazio
 

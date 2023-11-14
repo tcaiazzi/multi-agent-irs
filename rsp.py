@@ -7,7 +7,7 @@ from gymnasium.spaces import Discrete,Box,Dict
 from pettingzoo import AECEnv
 from pettingzoo.utils import agent_selector, wrappers
 
-from prePost import postCondizioni,reward,terminationPartita,reward_mosse,curva_partita,preCondizioni,lastMosse
+from prePost import postCondizioni,reward,terminationPartita,reward_mosse,curva_partita,preCondizioni,lastMosse,generazioneSpazioRandom
 
 
 import sys
@@ -79,7 +79,7 @@ class raw_env(AECEnv):
     def __init__(self, render_mode=None):
 
         # Questa è la truncation cosi esce per non girare all'infinito
-        self.NUM_ITERS = 100
+        self.NUM_ITERS = 1000
 
         # Mappa che in base all'azione eseguita mi da costo, impatto, ecc dell'azione
 
@@ -105,19 +105,12 @@ class raw_env(AECEnv):
         # per ora non lo sto usando lo spazio dell'attaccante
         #self.spazio[self.possible_agents[0]] = [False]
         # Mi serve solo per rimuovere un wrap per usare il dizionario per l'action mask MA NON LO STO USANDO
-        self.spazio[self.possible_agents[1]] = [0,0,0,0,
-                                                0,1,1,0,
-                                                0,0,0,0,
-                                                0,0,0,0,
-                                                0,0,0,0,
-                                                0]
+
+
+
+        self.spazio[self.possible_agents[0]] = generazioneSpazioRandom()
         # spazio del difensore monitorato anche dall'attaccante per l'observation dopo un'action
-        self.spazio[self.possible_agents[1]] = [0,0,0,0,
-                                                0,1,1,0,
-                                                0,0,0,0,
-                                                0,0,0,0,
-                                                0,0,0,0,
-                                                0]
+        self.spazio[self.possible_agents[1]] = generazioneSpazioRandom()
         print('Spazii:',self.spazio)
 
         # optional: a mapping between agent name and ID
@@ -248,18 +241,8 @@ class raw_env(AECEnv):
         
         # PER LA LOGICA
         self.spazio = {}
-        self.spazio[self.possible_agents[0]] = [0,0,0,0,
-                                                0,1,1,0,
-                                                0,0,0,0,
-                                                0,0,0,0,
-                                                0,0,0,0,
-                                                0]
-        self.spazio[self.possible_agents[1]] = [0,0,0,0,
-                                                0,1,1,0,
-                                                0,0,0,0,
-                                                0,0,0,0,
-                                                0,0,0,0,
-                                                0]
+        self.spazio[self.possible_agents[0]] = generazioneSpazioRandom()
+        self.spazio[self.possible_agents[1]] = generazioneSpazioRandom()
     
         self.agents = self.possible_agents[:]
 
@@ -346,18 +329,24 @@ class raw_env(AECEnv):
 
         # NON POSSONO AVERE VALORI DISCORDI GLI AGENTI delle terminations e troncation
         self.num_moves += 1
-
         
         val = terminationPartita(self.spazio)
+        # se la condizione di aresto generale lo ferma bene altrimenti...
         self.terminations = {
             agent: val for agent in self.agents
         }
         if not(val):
+            # prova a fermarlo il fatto che le ultime due mosse se sono nop e nop (att e diff) allora basta 
+            # non possono fare piu niente
             if lastMosse['difensore'] == 18 and lastMosse['attaccante'] == 7:
                 self.terminations = {
                     agent: True for agent in self.agents
                 }
-
+            # se non puo arrestarlo neanche quello provo a vedere il num di mosse
+            else:
+                self.terminations = {
+                    agent: self.num_moves >= self.NUM_ITERS for agent in self.agents
+                }
         ##################################################################################################
        
         # selects the next agent.
