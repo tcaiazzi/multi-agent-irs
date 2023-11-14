@@ -4,7 +4,11 @@ NOTA: Multithread non ancora utilizzato/sfruttato
 lanciare python3 run_rsp.py (lui usa algoritmiTraining per l'implementazione dei modelli e visualizzazione per vedere i grafici di training )
 	invoca rsp.py che si avvale di prePost per il training
 	
-	|run_rsp--->
+	|run_rspDQN--->
+	|run_rspApexDQN--->
+	|run_rspImpala--->
+	|run_rspPG--->
+	|run_rspPPO--->
 		|algoritmiTraining--->
 		|rsp--->
 			|prePost
