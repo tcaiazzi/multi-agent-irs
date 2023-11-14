@@ -7,7 +7,7 @@ from gymnasium.spaces import Discrete,Box,Dict
 from pettingzoo import AECEnv
 from pettingzoo.utils import agent_selector, wrappers
 
-from prePost import postCondizioni,reward,terminationPartita,reward_mosse,curva_partita,preCondizioni
+from prePost import postCondizioni,reward,terminationPartita,reward_mosse,curva_partita,preCondizioni,lastMosse
 
 
 import sys
@@ -342,15 +342,21 @@ class raw_env(AECEnv):
         
         ############################# CHECK ARRESTO (se sono nello stato sicuro) #########################
         
+        lastMosse[agent] = action
+
         # NON POSSONO AVERE VALORI DISCORDI GLI AGENTI delle terminations e troncation
         self.num_moves += 1
-        """ self.truncations = {
-            agent: self.num_moves >= self.NUM_ITERS for agent in self.agents
-        } """
+
+        
         val = terminationPartita(self.spazio)
         self.terminations = {
             agent: val for agent in self.agents
         }
+        if not(val):
+            if lastMosse['difensore'] == 18 and lastMosse['attaccante'] == 7:
+                self.terminations = {
+                    agent: True for agent in self.agents
+                }
 
         ##################################################################################################
        

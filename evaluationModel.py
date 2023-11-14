@@ -25,7 +25,8 @@ pathImpala = '/home/matteo/ray_results/IMPALA_2023-11-13_15-21-42/IMPALA_rsp_f7f
 # Sembra instabile e lento a convergere e lento
 #pathPG = '/home/matteo/ray_results/PG_2023-11-10_14-23-40/PG_rsp_5d2bd_00000_0_2023-11-10_14-23-40/checkpoint_000000'
 # 20 training iteration
-pathPG = '/home/matteo/ray_results/PG_2023-11-13_15-27-23/PG_rsp_c341d_00000_0_2023-11-13_15-27-24/checkpoint_000000'
+#pathPG = '/home/matteo/ray_results/PG_2023-11-13_15-27-23/PG_rsp_c341d_00000_0_2023-11-13_15-27-24/checkpoint_000000'
+pathPG = '/home/matteo/ray_results/PG_2023-11-14_12-00-12/PG_rsp_fba1c_00000_0_2023-11-14_12-00-12/checkpoint_000000'
 
 # per 20 mi sembra che ci stia mettendo anche piu tempo di PG dopo prendi i tempi
 # Sembra partire meglio fin da subito, ovvero sembra piu stabile il grafico ma converge piu lentamente
@@ -40,10 +41,10 @@ pathPPO = '/home/matteo/ray_results/PPO_2023-11-13_15-29-22/PPO_rsp_09b75_00000_
 
 
 # Algoritmi
-config = DQN().config
+#config = DQN().config
 #config = ApexDQN().config
 #config = Impala().config
-#config = PG().config
+config = PG().config
 #config = PPO().config
 
 # Mi risolve i problemi di mismatch con la rete, non so perche, ma per l'action mask
@@ -55,10 +56,10 @@ config['evaluation_interval'] = 1
 
 algo = config.build()
 
-algo.restore(pathDQN)
+#algo.restore(pathDQN)
 #algo.restore(pathApexDQN)
 #algo.restore(pathImpala)
-#algo.restore(pathPG)
+algo.restore(pathPG)
 #algo.restore(pathPPO)
 
 algo.evaluate()

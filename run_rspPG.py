@@ -55,7 +55,7 @@ torch.cuda.empty_cache()
 # COndizioni di stopping degli algoritmi 
 stop = {
         # epoche/passi dopo le quali il training si arresta
-        "training_iteration": 10,
+        "training_iteration": 50,
 
         #"timesteps_total":2,
 

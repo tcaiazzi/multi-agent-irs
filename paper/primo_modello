@@ -119,23 +119,23 @@ post: alert = True
 
 FIREWALL ACTIVATION
 pre: (pscan ≥ T1 ∨ pvsftpd ≥ T1 ∨ psmbd ≥ T1 ∨ pphpcgid ≥ T1 ∨ pdistccd ≥ T1 ∨ prmi ≥
-T1 ∨ pircd ≥ T1 ) ∧ ¬firewall ∧ ¬quarantined ∧ active ∧ logVerb > 0
+T1 ∨ pircd ≥ T1 ) ∧ ¬firewall ∧ active ∧ logVerb > 0
 post: Prob = 1, firewall = 1
 
 BLOCK SOURCE IP (blocco ip quando pscan aumenta e flow rate limit non sta bastando)
-pre: pscan ≥ T2 ∧ firewall ∧ ¬quarantined ∧ active ∧ badIP nonEsiste blocked_ips ∧ alert ∧ logVerb > 1 
+pre: pscan ≥ T2 ∧ firewall ∧ active ∧ badIP nonEsiste blocked_ips ∧ alert ∧ logVerb > 1 
 post: Prob = 1, blocked_ips = blocked_ips ∪ {badIP}, pscan = 0
 
 UNBLOCK SOURCE IP (unico dubbio è che duale a BLOCK, fa BLOCK->UNBLOCK dato che BLOCK fa pscan=0 con Prob = 1)
-pre: pscan < T2 ^ firewall ^ ¬quarantined ∧ active ^ badIp è flowlimit_ips ^  logVerb > 1 ^ badIp èin blockeip 
+pre: pscan < T2 ^ firewall ∧ active ^ badIp è blockeip ^  logVerb > 1 
 post: Prob = 1, badip rimosso blocked_ips
 
 FLOW RATE LIMIT 
-pre: pscan ≥ T1 ∧ firewall ∧ ¬quarantined ∧ active ∧ badIp nonEsiste flowlimit_ips ∧ logVerb > 0 ^ badIp nonè BlockIp 
+pre: pscan ≥ T1 ∧ firewall ∧ active ∧ badIp nonEsiste flowlimit_ips ^ alert ∧ logVerb > 0 ^ badIp nonè BlockIp 
 post: pscan = 0 con probabilita 0.5, limited_ips = limited_ips ∪ {badIP}
 
 UNLIMIT FLOW RATE
-pre: pscan < T1 ^ firewall ^ ¬quarantined ∧ active ∧ badIp è flowlimit_ips  ^ logverb > 0 
+pre: pscan < T1 ^ firewall ∧ active ∧ badIp è flowlimit_ips  ^ logverb > 0 
 post: badip rimosso limited_ips
 
 REDIRECT TO HONEYPOT
@@ -173,12 +173,12 @@ post: manuallySolved ^ tutti attacchi a 0 ^ ¬quarantined ^ active
 
 SYSTEM REBOOT
 pre: ¬manuallySolved ^ active ^ (pvsftpd = 1 ∨ psmbd = 1 ∨ pphpcgid = 1 ∨ pdistccd = 1 ∨ prmi = 1 ∨ pircd = 1 ) ^ firewall ^ 
-quarantined ^ alert ^ backup
+quarantined ^ alert
 post: rebooted ^  (pscan = 0 ^ pvsftpd = 0 ∨ psmbd = 0 ∨ pphpcgid = 0 ∨ pdistccd = 0 ∨ prmi = 0 ∨ pircd = 0) con probabilita 0.3 di interrompere un attacco
 
 SYSTEM SHUTDOWN
 pre: ¬manuallySolved ^ active ^ (pvsftpd = 1 ∨ psmbd = 1 ∨ pphpcgid = 1 ∨ pdistccd = 1 ∨ prmi = 1 ∨ pircd = 1 ) ^ firewall ^ 
-quarantined  ^ alert ^ backup 
+quarantined  ^ alert 
 post:  ¬active ^ evershutdown ^ (pscan = 0 ^ pvsftpd = 0 ∨ psmbd = 0 ∨ pphpcgid = 0 ∨ pdistccd = 0 ∨ prmi = 0 ∨ pircd = 0) con probabilita 0.3 di interrompere un attacco
 
 SYSTEM START

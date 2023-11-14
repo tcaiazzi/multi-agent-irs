@@ -23,6 +23,11 @@ curva_partita = {
     "difensore":[],
 }
 
+lastMosse = {
+    'attaccante': -1,
+    'difensore': -1,
+}
+
 
 # Pre condizioni codificate nell'action mask
 def preCondizioni(agent,spazio,legal_moves):
@@ -48,33 +53,33 @@ def preCondizioni(agent,spazio,legal_moves):
         if ((spazio['difensore'][14] >= T1 or spazio['difensore'][15] >= T1 or spazio['difensore'][16] >= T1 or 
             spazio['difensore'][17] >= T1 or spazio['difensore'][18] >= T1 or spazio['difensore'][19] >= T1 or 
             spazio['difensore'][20] >= T1) 
-            and spazio['difensore'][0] == 0 and spazio['difensore'][7] == 0 and spazio['difensore'][6] == 1 and spazio['difensore'][5] > 0):
+            and spazio['difensore'][0] == 0 and spazio['difensore'][6] == 1 and spazio['difensore'][5] > 0):
             legal_moves[1] = 1
         else:
             legal_moves[1] = 0
         # BlockSourceIp
-        if (spazio['difensore'][14] >= T2 and spazio['difensore'][0] == 1 and spazio['difensore'][7] == 0 and
+        if (spazio['difensore'][14] >= T2 and spazio['difensore'][0] == 1 and
             spazio['difensore'][6] == 1 and spazio['difensore'][1] == 0 and spazio['difensore'][3] == 1 and
             spazio['difensore'][5] > 1) : 
             legal_moves[2] = 1
         else:
             legal_moves[2] = 0
         # UnblockSourceIp
-        if (spazio['difensore'][14] < T2 and spazio['difensore'][0] == 1 and spazio['difensore'][7] == 0 and
-            spazio['difensore'][6] == 1 and spazio['difensore'][1] == 1 and spazio['difensore'][2] == 1 and
+        if (spazio['difensore'][14] < T2 and spazio['difensore'][0] == 1  and
+            spazio['difensore'][6] == 1 and spazio['difensore'][1] == 1  and
             spazio['difensore'][5] > 1) :
             legal_moves[3] = 1
         else:
             legal_moves[3] = 0
         # FlowRateLimit
-        if (spazio['difensore'][14] >= T1 and spazio['difensore'][0] ==1 and spazio['difensore'][7] == 0 and
+        if (spazio['difensore'][14] >= T1 and spazio['difensore'][0] ==1 and spazio['difensore'][3] == 1 and
             spazio['difensore'][6] == 1 and spazio['difensore'][2] == 0 and spazio['difensore'][5] > 0 and
             spazio['difensore'][1] == 0) :
             legal_moves[4] = 1
         else:
             legal_moves[4] = 0
         # UnlimitFlowRate
-        if (spazio['difensore'][14] < T1 and spazio['difensore'][0] ==1 and spazio['difensore'][7] == 0 and
+        if (spazio['difensore'][14] < T1 and spazio['difensore'][0] ==1 and
             spazio['difensore'][6] == 1 and spazio['difensore'][2] == 1 and spazio['difensore'][5] > 0) :
             legal_moves[5] = 1
         else:
@@ -145,7 +150,7 @@ def preCondizioni(agent,spazio,legal_moves):
             (spazio['difensore'][15] == 1 or spazio['difensore'][16] == 1 or spazio['difensore'][17] == 1 or 
              spazio['difensore'][18] == 1 or spazio['difensore'][19] == 1 or spazio['difensore'][20] == 1) 
             and spazio['difensore'][0] == 1 and spazio['difensore'][7] == 1 
-            and spazio['difensore'][3] == 1 and spazio['difensore'][9] == 1) :
+            and spazio['difensore'][3] == 1 ) :
             legal_moves[13] = 1
         else:
             legal_moves[13] = 0
@@ -154,7 +159,7 @@ def preCondizioni(agent,spazio,legal_moves):
             (spazio['difensore'][15] == 1 or spazio['difensore'][16] == 1 or spazio['difensore'][17] == 1 or 
              spazio['difensore'][18] == 1 or spazio['difensore'][19] == 1 or spazio['difensore'][20] == 1) 
             and spazio['difensore'][0] == 1 and spazio['difensore'][7] == 1 
-            and spazio['difensore'][3] == 1 and spazio['difensore'][9] == 1) :
+            and spazio['difensore'][3] == 1 ) :
             legal_moves[14] = 1
         else:
             legal_moves[14] = 0
@@ -333,16 +338,19 @@ def postCondizioni(action,spazio,agent):
             spazio[agent][6] = 1
             spazio[agent][7] = 0
             spazio[agent][11] = 1
-            # Pxx da scalare con prob
-            # PROVA PER VEDERE SE CONVERGE
-            for j in range(14,21,1):
-                spazio[agent][j] = 0
+            spazio[agent][14] = 0
+            spazio[agent][15] = 0
+            spazio[agent][16] = 0
+            spazio[agent][17] = 0
+            spazio[agent][18] = 0
+            spazio[agent][19] = 0
+            spazio[agent][20] = 0
 
         # SystemReboot
         elif action == 13 :
             spazio[agent][8] = 1
             p = random.random()
-            if p < 0.5 :
+            if p < 0.3 :
                 # Scalare gli attacchi con una prob
                 spazio[agent][14] = 0
                 spazio[agent][15] = 0
@@ -358,7 +366,7 @@ def postCondizioni(action,spazio,agent):
             spazio[agent][6] = 0
             # Tutti gli attacchi a 0 con una prob
             p = random.random()
-            if p < 0.5 :
+            if p < 0.3 :
                 # Scalare gli attacchi con una prob
                 spazio[agent][14] = 0
                 spazio[agent][15] = 0
@@ -470,8 +478,8 @@ def terminationPartita(spazio):
     # come se gli altri fossero altri subsets states con minace in sicurezza)
     # DEVO FAR TERMINARE ANCHE QUANDO HA VINTO l'ATTACCANTE ovvero sistema totalmente compromesso
     # [1, 1, 1, 1, 1, 5, 1, 1, 0, 0, 1, 0, 1, 0, 1, 1, 1, 1, 1, 1, 1]
-    if (spazio['difensore'][14] < T1 and spazio['difensore'][15] < T1 and spazio['difensore'][16] < T1 and spazio['difensore'][17] < T1 and spazio['difensore'][18] < T1 and spazio['difensore'][19] < T1 and spazio['difensore'] [20] < T1): 
-        #and spazio['difensore'] [1] == 0 and spazio['difensore'][2] == 0 and spazio['difensore'][4] == 0 and spazio['difensore'][5] == 0 and spazio['difensore'][6] == 1 and spazio['difensore'][7] == 0):
+    if (spazio['difensore'][14] < T1 and spazio['difensore'][15] < T1 and spazio['difensore'][16] < T1 and spazio['difensore'][17] < T1 and spazio['difensore'][18] < T1 and spazio['difensore'][19] < T1 and spazio['difensore'] [20] < T1 
+        and spazio['difensore'] [1] == 0 and spazio['difensore'][2] == 0 and spazio['difensore'][4] == 0 and spazio['difensore'][5] == 0 and spazio['difensore'][6] == 1 and spazio['difensore'][7] == 0):
         val = True
     return val
 
