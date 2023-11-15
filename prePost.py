@@ -189,12 +189,14 @@ def preCondizioni(agent,spazio,legal_moves):
             legal_moves[17] = 0
         # noOp (altrimenti se nulla è selezionbile sceglie a caso)
         # se nessuna mossa è selezionabile allora noop
-        noOp = True
+        """ noOp = True
         for z in range(18):
             if (legal_moves[z] == 1):
                 noOp = False
-        if noOp:
-            legal_moves[18] = 1
+        if noOp: """
+        # Ora abbiamo deciso di renderla ammissibile ad ogni stato così che possa terminare anche 
+        # quando non ho piu mosse che mi portano sullo stato target (finale)
+        legal_moves[18] = 1
 
         
     else:
@@ -239,12 +241,14 @@ def preCondizioni(agent,spazio,legal_moves):
             legal_moves[6] = 0
         # noOp
         # se nessuna mossa è selezionabile allora noop
-        noOp = True
+        """ noOp = True
         for z in range(7):
             if (legal_moves[z] == 1):
                 noOp = False
-        if noOp:
-            legal_moves[7] = 1
+        if noOp: """
+        # Ora abbiamo deciso di renderla ammissibile ad ogni stato così che possa terminare anche 
+        # quando non ho piu mosse che mi portano sullo stato target (finale)
+        legal_moves[7] = 1
 
         # Non ci sono mosse per l'attaccante
         for i in range(8,19,1):
@@ -492,10 +496,10 @@ def terminationPartita(spazio):
 def generazioneSpazioRandom():
     # STATO CHE AVEVO SUPPOSTO IO DI PARTENZA
     spazio = [0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
-    """ for i in range(21):
+    for i in range(21):
         if i == 5:
             spazio[i] = random.randint(0,5)
         else:
-            spazio[i] = random.randint(0,1) """
+            spazio[i] = random.randint(0,1)
     return spazio
 

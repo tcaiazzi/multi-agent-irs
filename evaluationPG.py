@@ -6,10 +6,12 @@ from visualizzazione import visualizza_reward_mosse
 # 50 training iteration: meno di 2000 partite con 1450 (? mosse), il training è meno fit di impala
 # evaluation bene ma non benissimo, meglio impalaa, anche perchè con moto meno tempo
 # Sembra instabile e lento a convergere e lento
-#pathPG = '/home/matteo/ray_results/PG_2023-11-10_14-23-40/PG_rsp_5d2bd_00000_0_2023-11-10_14-23-40/checkpoint_000000'
-# 20 training iteration
-#pathPG = '/home/matteo/ray_results/PG_2023-11-13_15-27-23/PG_rsp_c341d_00000_0_2023-11-13_15-27-24/checkpoint_000000'
-pathPG = '/home/matteo/ray_results/PG_2023-11-15_09-14-41/PG_rsp_06f46_00000_0_2023-11-15_09-14-41/checkpoint_000000'
+
+# train su stati random
+#pathPG = '/home/matteo/ray_results/PG_2023-11-15_09-14-41/PG_rsp_06f46_00000_0_2023-11-15_09-14-41/checkpoint_000000'
+
+# train su stato start
+pathPG = '/home/matteo/ray_results/PG_2023-11-15_09-31-31/PG_rsp_60e3a_00000_0_2023-11-15_09-31-31/checkpoint_000000'
 ############################################ PER VEDERLO GIOCARE #####################################
 # Così va ma senza polisi sceglie random, ma va la logica della reward e dello stopping
 
