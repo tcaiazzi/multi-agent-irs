@@ -9,7 +9,7 @@ from visualizzazione import visualizza_reward_mosse
 #pathPG = '/home/matteo/ray_results/PG_2023-11-10_14-23-40/PG_rsp_5d2bd_00000_0_2023-11-10_14-23-40/checkpoint_000000'
 # 20 training iteration
 #pathPG = '/home/matteo/ray_results/PG_2023-11-13_15-27-23/PG_rsp_c341d_00000_0_2023-11-13_15-27-24/checkpoint_000000'
-pathPG = '/home/matteo/ray_results/PG_2023-11-14_17-05-34/PG_rsp_a4eb0_00000_0_2023-11-14_17-05-35/checkpoint_000000'
+pathPG = '/home/matteo/ray_results/PG_2023-11-15_09-14-41/PG_rsp_06f46_00000_0_2023-11-15_09-14-41/checkpoint_000000'
 ############################################ PER VEDERLO GIOCARE #####################################
 # Così va ma senza polisi sceglie random, ma va la logica della reward e dello stopping
 

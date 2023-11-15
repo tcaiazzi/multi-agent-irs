@@ -492,10 +492,10 @@ def terminationPartita(spazio):
 def generazioneSpazioRandom():
     # STATO CHE AVEVO SUPPOSTO IO DI PARTENZA
     spazio = [0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
-    for i in range(21):
+    """ for i in range(21):
         if i == 5:
             spazio[i] = random.randint(0,5)
         else:
-            spazio[i] = random.randint(0,1)
+            spazio[i] = random.randint(0,1) """
     return spazio
 

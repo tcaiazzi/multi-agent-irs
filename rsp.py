@@ -243,6 +243,8 @@ class raw_env(AECEnv):
         self.spazio = {}
         self.spazio[self.possible_agents[0]] = generazioneSpazioRandom()
         self.spazio[self.possible_agents[1]] = generazioneSpazioRandom()
+        lastMosse['attaccante'] = -1
+        lastMosse['difensore'] = -1
     
         self.agents = self.possible_agents[:]
 
