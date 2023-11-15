@@ -345,6 +345,7 @@ class raw_env(AECEnv):
                     agent: True for agent in self.agents
                 }
             # se non puo arrestarlo neanche quello provo a vedere il num di mosse
+            # con noOp sempre selezionabili mi dovrebbe uscire con la condizione nell'if
             else:
                 self.terminations = {
                     agent: self.num_moves >= self.NUM_ITERS for agent in self.agents

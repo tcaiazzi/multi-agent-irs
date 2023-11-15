@@ -11,7 +11,7 @@ from visualizzazione import visualizza_reward_mosse
 #pathPG = '/home/matteo/ray_results/PG_2023-11-15_09-14-41/PG_rsp_06f46_00000_0_2023-11-15_09-14-41/checkpoint_000000'
 
 # train su stato start
-pathPG = '/home/matteo/ray_results/PG_2023-11-15_09-31-31/PG_rsp_60e3a_00000_0_2023-11-15_09-31-31/checkpoint_000000'
+pathPG = '/home/matteo/ray_results/PG_2023-11-15_11-51-53/PG_rsp_fccc4_00000_0_2023-11-15_11-51-53/checkpoint_000000'
 ############################################ PER VEDERLO GIOCARE #####################################
 # Così va ma senza polisi sceglie random, ma va la logica della reward e dello stopping
 

@@ -4,9 +4,9 @@ from visualizzazione import visualizza_reward_mosse
 
 
 # 20 training iteration
-pathDQN = '/home/matteo/ray_results/DQN_2023-11-10_12-40-26/DQN_rsp_f0eb6_00000_0_2023-11-10_12-40-26/checkpoint_000000'
+#pathDQN = '/home/matteo/ray_results/DQN_2023-11-10_12-40-26/DQN_rsp_f0eb6_00000_0_2023-11-10_12-40-26/checkpoint_000000'
 # 1 iteration
-#pathDQN = '/home/matteo/ray_results/DQN_2023-11-10_13-31-51/DQN_rsp_2008b_00000_0_2023-11-10_13-31-51/checkpoint_000000'
+pathDQN = '/home/matteo/ray_results/DQN_2023-11-15_12-17-58/DQN_rsp_a1c60_00000_0_2023-11-15_12-17-58/checkpoint_000000'
 
 
 # Algoritmi
