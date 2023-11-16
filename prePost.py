@@ -91,6 +91,7 @@ def postCondizioni(action,spazio,agent):
     mossaValida = True
     if agent == 'difensore':
         print(mosseDifensore[action])
+
         # GenerateAlert
         if action == 0 :
             spazio[agent][3] = 1
@@ -233,6 +234,7 @@ def postCondizioni(action,spazio,agent):
         if action == 0 :
             #spazio['difensore'][14] = 1
             #attaccante.PscanAzione.postCondizione(spazio)
+            attaccante.azioniAsincroneRun.append(action)
             Thread(target=attaccante.PscanAzione.postCondizione,args=(spazio,)).start()
             print('AVVIATO PSCAN...')
             Timer = -1
