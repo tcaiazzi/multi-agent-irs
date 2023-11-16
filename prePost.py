@@ -8,7 +8,6 @@ from Difensore import Difensore
 attaccante = Attaccante()
 difensore = Difensore()
 
-
 T1 = 0.33
 T2 = 0.66
 
@@ -37,7 +36,7 @@ lastMosse = {
 
 
 # Pre condizioni codificate nell'action mask
-def preCondizioni(agent,spazio,legal_moves):
+def preCondizioni(agent,spazio,legal_moves,Timer):
     if agent == 'difensore':
         # STATO
         # [ firewall([True/False])(0), blockedip([])(1), flowlimit_ips([])(2), alert([True/False])(3), honeypot_ips([])(4),
@@ -49,14 +48,14 @@ def preCondizioni(agent,spazio,legal_moves):
         # pscan([0-1])(14), pvsftpd([0-1])(15), psmbd([0-1])(16), pphpcgi([0-1])(17), pircd([0-1])(18), pdistccd([0-1])(19), prmi([0-1])(20),]
 
         # pre condizioni del difensore
-        difensore.preCondizioni(spazio,legal_moves)
+        difensore.preCondizioni(spazio,legal_moves,Timer)
 
         
     else:
         # pre condizioni dell'attaccante
         # In tutte ho inserito che se il software viene aggiornato neanche più il pscan si può fare 
         # altrimenti non ce la farebbe mai ad uscire perche deve decrementare i log
-        attaccante.preCondizioni(spazio,legal_moves)
+        attaccante.preCondizioni(spazio,legal_moves,Timer)
         
 
     if agent == 'difensore':
@@ -76,6 +75,7 @@ def preCondizioni(agent,spazio,legal_moves):
 
 # APPLICA L'AZIONE ALLo SPAZIO 'LOGICA'
 def postCondizioni(action,spazio,agent):
+    Timer = 0
     # Post COndizioni
     # STATO
     # [ firewall([True/False])(0), blockedip([])(1), flowlimit_ips([])(2), alert([True/False])(3), honeypot_ips([])(4),
@@ -92,19 +92,24 @@ def postCondizioni(action,spazio,agent):
         # GenerateAlert
         if action == 0 :
             spazio[agent][3] = 1
+            Timer = 1
         # FirewallActivation
         elif action == 1 :
             spazio[agent][0] = 1
+            Timer = 1
         # BlockSourceIp
         elif action == 2 :
             spazio[agent][1] = 1
             spazio[agent][14] = 0
+            Timer = 1
         # UnblockSourceIp
         elif action == 3 :
             spazio[agent][1] = 0
+            Timer = 1
         # FlowRateLimit
         elif action == 4 :
             spazio[agent][2] = 1
+            Timer = 1
             # prob 0.5
             p = random.random()
             if p < 0.5 :
@@ -112,10 +117,12 @@ def postCondizioni(action,spazio,agent):
         # UnlimitFlowRate
         elif action == 5 :
             spazio[agent][2] = 0
+            Timer = 1
         # RedirectToHoneypot
         elif action == 6 :
             spazio[agent][14] = 0
             spazio[agent][4] = 1
+            Timer = 1
             # Pxxx da scalare con prob 0.5
             # Pxx da scalare con prob
             # PROVA PER VEDERE SE CONVERGE
@@ -128,16 +135,20 @@ def postCondizioni(action,spazio,agent):
         # UnHoneypot
         elif action == 7 :
             spazio[agent][4] = 0
+            Timer = 1
         # IncreaseLog
         elif action == 8 :
-            spazio[agent][5] += 1
+            spazio[agent][5] = 1
+            Timer = 1
         # DecreaseLog
         elif action == 9 :
             spazio[agent][5] -= 1
+            Timer = 1
         # QuarantineHost
         elif action == 10 :
             spazio[agent][12] = 1
             spazio[agent][7] = 1
+            Timer = 1
             # Pxx da scalare con prob
             # PROVA PER VEDERE SE CONVERGE
             """ p = random.random()
@@ -149,6 +160,7 @@ def postCondizioni(action,spazio,agent):
         # UnQuarantineHost
         elif action == 11 :
             spazio[agent][7] = 0
+            Timer = 1
         # ManualResolution
         elif action == 12 :
             spazio[agent][6] = 1
@@ -161,10 +173,11 @@ def postCondizioni(action,spazio,agent):
             spazio[agent][18] = 0
             spazio[agent][19] = 0
             spazio[agent][20] = 0
-
+            Timer = 1
         # SystemReboot
         elif action == 13 :
             spazio[agent][8] = 1
+            Timer = 1
             p = random.random()
             if p < 0.3 :
                 # Scalare gli attacchi con una prob
@@ -180,6 +193,7 @@ def postCondizioni(action,spazio,agent):
         elif action == 14 :
             spazio[agent][13] = 1
             spazio[agent][6] = 0
+            Timer = 1
             # Tutti gli attacchi a 0 con una prob
             p = random.random()
             if p < 0.3 :
@@ -195,9 +209,11 @@ def postCondizioni(action,spazio,agent):
         elif action == 15 :
             spazio[agent][6] = 1
             spazio[agent][8] = 1
+            Timer = 1
         # BackupHost
         elif action == 16 :
             spazio[agent][9] = 1
+            Timer = 1
         # SoftwareUpdate
         elif action == 17 :
             spazio[agent][10] = 1
@@ -208,38 +224,45 @@ def postCondizioni(action,spazio,agent):
             spazio[agent][18] = 0
             spazio[agent][19] = 0
             spazio[agent][20] = 0
-
+            Timer = 1
     
     elif agent == 'attaccante':
         # Pscan
         if action == 0 :
             #spazio['difensore'][14] = 1
             attaccante.PscanAzione.postCondizione(spazio)
+            Timer = -1
         # Pvsftpd
         elif action == 1 :
             #spazio['difensore'][15] = 1
             attaccante.PvsftpdAzione.postCondizione(spazio)
+            Timer = -1
         # Psmbd
         elif action == 2 :
             #spazio['difensore'][16] = 1
             attaccante.PsmbdAzione.postCondizione(spazio)
+            Timer = -1
         # Pphpcgi
         elif action == 3 :
             #spazio['difensore'][17] = 1
             attaccante.PphpcgiAzione.postCondizione(spazio)
+            Timer = -1
         # Pircd
         elif action == 4 :
             #spazio['difensore'][18] = 1
             attaccante.PircdAzione.postCondizione(spazio)
+            Timer = -1
         # Pdistccd
         elif action == 5 :
             #spazio['difensore'][19] = 1
             attaccante.PdistccdAzione.postCondizione(spazio)
+            Timer = -1
         # Prmi
         elif action == 6 :
             #spazio['difensore'][20] = 1
             attaccante.PrmiAzione.postCondizione(spazio)
-    return mossaValida
+            Timer = -1
+    return mossaValida,Timer
 
 
 

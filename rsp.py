@@ -80,6 +80,7 @@ class raw_env(AECEnv):
 
         # Questa è la truncation cosi esce per non girare all'infinito
         self.NUM_ITERS = 1000
+        self.Timer = 0
 
         # Mappa che in base all'azione eseguita mi da costo, impatto, ecc dell'azione
 
@@ -105,8 +106,6 @@ class raw_env(AECEnv):
         # per ora non lo sto usando lo spazio dell'attaccante
         #self.spazio[self.possible_agents[0]] = [False]
         # Mi serve solo per rimuovere un wrap per usare il dizionario per l'action mask MA NON LO STO USANDO
-
-
 
         self.spazio[self.possible_agents[0]] = generazioneSpazioRandom()
         # spazio del difensore monitorato anche dall'attaccante per l'observation dopo un'action
@@ -209,7 +208,7 @@ class raw_env(AECEnv):
         #[Pscan(0), Pvsftpd(1), Psmbd(2), Pphpcgi(3), Pircd(4), Pdistccd(5), Prmi(6), noOp(7)]
         legal_moves = np.zeros(19,'int8')
 
-        preCondizioni(agent,self.spazio,legal_moves)
+        preCondizioni(agent,self.spazio,legal_moves,self.Timer)
 
         print('\t')
         print('Observe agent:',agent)
@@ -267,6 +266,7 @@ class raw_env(AECEnv):
         #self.observations = {agent: 3 for agent in self.agents}
 
         self.num_moves = 0
+        self.Timer = 0
         """
         Our agent_selector utility allows easy cyclic stepping through the agents list.
         """
@@ -303,6 +303,7 @@ class raw_env(AECEnv):
         agent = self.agent_selection
         #print('Agente in azione:',agent)
         print('Mossa da eseguire:',action)
+        print('Timer Prima:',self.Timer)
 
         # the agent which stepped last had its _cumulative_rewards accounted for
         # (because it was returned by last()), so the _cumulative_rewards for this
@@ -311,7 +312,7 @@ class raw_env(AECEnv):
         ######################## PRE(con action mask solo post)/POST condizioni #####################################################
 
         #print('Prima della mossa:',self.spazio)
-        mossaValida = postCondizioni(action,self.spazio,self.agent_selection)
+        mossaValida,t = postCondizioni(action,self.spazio,self.agent_selection)
         print('Dopo la mossa:',self.spazio['difensore'])
 
         ############################################## REWARD ###########################################
@@ -354,6 +355,7 @@ class raw_env(AECEnv):
        
         # selects the next agent.
         self.agent_selection = self._agent_selector.next()
+        self.Timer = self.Timer + t
         
         # SALVE TUTTE LE REWARD CUMULATIVE DI TUTTE LE PARTITE
         #curva_partita['attaccante'].append((self.num_moves,self._cumulative_rewards['attaccante']))
@@ -365,6 +367,7 @@ class raw_env(AECEnv):
 
         # PERCHÈ L'AVEVANO MESSA?? SE LA METTO AD OGNI ROUND MI SI AZZERA
         #self._cumulative_rewards[agent] = 0
+        print('Timer Dopo:',self.Timer)
         print('Num Mosse:',self.num_moves)
         print('Truncation:',self.truncations)
         print('Termination:',self.terminations)
