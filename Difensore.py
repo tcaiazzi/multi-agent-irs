@@ -1,37 +1,37 @@
-T1 = 0.33
-T2 = 0.66
+from Agente import Agente
 
-class Difensore ():
+
+class Difensore(Agente):
     def __init__(self):
-        pass
-    
+        super().__init__()
+
     def preCondizioni(self,spazio,legal_moves):
         # Generate alert
-        if ((spazio['difensore'][14] >= T1 or spazio['difensore'][15] >= T1 or spazio['difensore'][16] >= T1 or
-            spazio['difensore'][17] >= T1 or spazio['difensore'][18] >= T1 or spazio['difensore'][19] >= T1 or 
-            spazio['difensore'][20] >= T1) and spazio['difensore'][3] == 0 and spazio['difensore'][6] == 1):
+        if ((spazio['difensore'][14] >= self.T1 or spazio['difensore'][15] >= self.T1 or spazio['difensore'][16] >= self.T1 or
+            spazio['difensore'][17] >= self.T1 or spazio['difensore'][18] >= self.T1 or spazio['difensore'][19] >= self.T1 or 
+            spazio['difensore'][20] >= self.T1) and spazio['difensore'][3] == 0 and spazio['difensore'][6] == 1):
             legal_moves[0] = 1
         else:
             legal_moves[0] = 0
         # FirewallActivation
         # preso dal paper
-        if ((spazio['difensore'][14] >= T1 or spazio['difensore'][15] >= T1 or spazio['difensore'][16] >= T1 or 
-            spazio['difensore'][17] >= T1 or spazio['difensore'][18] >= T1 or spazio['difensore'][19] >= T1 or 
-            spazio['difensore'][20] >= T1) 
+        if ((spazio['difensore'][14] >= self.T1 or spazio['difensore'][15] >= self.T1 or spazio['difensore'][16] >= self.T1 or 
+            spazio['difensore'][17] >= self.T1 or spazio['difensore'][18] >= self.T1 or spazio['difensore'][19] >= self.T1 or 
+            spazio['difensore'][20] >= self.T1) 
             and spazio['difensore'][0] == 0 and spazio['difensore'][6] == 1 and spazio['difensore'][7] == 0 and spazio['difensore'][5] > 0):
             legal_moves[1] = 1
         else:
             legal_moves[1] = 0
         # BlockSourceIp
         # preso dal paper
-        if (spazio['difensore'][14] >= T2 and spazio['difensore'][0] == 1 and
+        if (spazio['difensore'][14] >= self.T2 and spazio['difensore'][0] == 1 and
             spazio['difensore'][6] == 1 and spazio['difensore'][1] == 0 and spazio['difensore'][3] == 1 and
             spazio['difensore'][5] > 1 and spazio['difensore'][7] == 0) : 
             legal_moves[2] = 1
         else:
             legal_moves[2] = 0
         # UnblockSourceIp
-        if (spazio['difensore'][14] < T2 and spazio['difensore'][0] == 1  and
+        if (spazio['difensore'][14] < self.T2 and spazio['difensore'][0] == 1  and
             spazio['difensore'][6] == 1 and spazio['difensore'][1] == 1  and
             spazio['difensore'][5] > 1) :
             legal_moves[3] = 1
@@ -39,55 +39,55 @@ class Difensore ():
             legal_moves[3] = 0
         # FlowRateLimit
         # preso dal paper
-        if (spazio['difensore'][14] >= T1 and spazio['difensore'][0] ==1 and spazio['difensore'][3] == 1 and
+        if (spazio['difensore'][14] >= self.T1 and spazio['difensore'][0] ==1 and spazio['difensore'][3] == 1 and
             spazio['difensore'][6] == 1 and spazio['difensore'][2] == 0 and spazio['difensore'][5] > 0 and
             spazio['difensore'][1] == 0 and spazio['difensore'][7] == 0) :
             legal_moves[4] = 1
         else:
             legal_moves[4] = 0
         # UnlimitFlowRate
-        if (spazio['difensore'][14] < T1 and spazio['difensore'][0] ==1 and
+        if (spazio['difensore'][14] < self.T1 and spazio['difensore'][0] ==1 and
             spazio['difensore'][6] == 1 and spazio['difensore'][2] == 1 and spazio['difensore'][5] > 0) :
             legal_moves[5] = 1
         else:
             legal_moves[5] = 0
         # RedirectToHoneypot
         if (spazio['difensore'][4] == 0 and
-            (spazio['difensore'][15] >= T1 or spazio['difensore'][16] >= T1 or spazio['difensore'][17] >= T1 or 
-             spazio['difensore'][18] >= T1 or spazio['difensore'][19] >= T1 or spazio['difensore'][20] >= T1) 
+            (spazio['difensore'][15] >= self.T1 or spazio['difensore'][16] >= self.T1 or spazio['difensore'][17] >= self.T1 or 
+             spazio['difensore'][18] >= self.T1 or spazio['difensore'][19] >= self.T1 or spazio['difensore'][20] >= self.T1) 
             and spazio['difensore'][0] == 1 and  spazio['difensore'][7] == 0 and spazio['difensore'][6] == 1) :
             legal_moves[6] = 1
         else:
             legal_moves[6] = 0
         # UnHoneypot
         if (spazio['difensore'][4] == 1 and 
-            (spazio['difensore'][15] < T1 or spazio['difensore'][16] < T1 or spazio['difensore'][17] < T1 or 
-             spazio['difensore'][18] < T1 or spazio['difensore'][19] < T1 or spazio['difensore'][20] < T1) 
+            (spazio['difensore'][15] < self.T1 or spazio['difensore'][16] < self.T1 or spazio['difensore'][17] < self.T1 or 
+             spazio['difensore'][18] < self.T1 or spazio['difensore'][19] < self.T1 or spazio['difensore'][20] < self.T1) 
             and spazio['difensore'][0] == 1 and spazio['difensore'][7] == 0 and spazio['difensore'][6] == 1) :
             legal_moves[7] = 1
         else:
             legal_moves[7] = 0
         # IncreaseLog
         if (spazio['difensore'][5] < 5 and 
-            (spazio['difensore'][14] >= T1 or spazio['difensore'][15] >= T1 or spazio['difensore'][16] >= T1 or 
-             spazio['difensore'][17] >= T1 or spazio['difensore'][18] >= T1 or spazio['difensore'][19] >= T1 or 
-             spazio['difensore'][20] >= T1) and spazio['difensore'][6] == 1) : 
+            (spazio['difensore'][14] >= self.T1 or spazio['difensore'][15] >= self.T1 or spazio['difensore'][16] >= self.T1 or 
+             spazio['difensore'][17] >= self.T1 or spazio['difensore'][18] >= self.T1 or spazio['difensore'][19] >= self.T1 or 
+             spazio['difensore'][20] >= self.T1) and spazio['difensore'][6] == 1) : 
             legal_moves[8] = 1
         else:
             legal_moves[8] = 0
         # DecreaseLog
         if (spazio['difensore'][5] > 0 and 
-            (spazio['difensore'][14] < T2 or spazio['difensore'][15] < T2 or spazio['difensore'][16] < T2 or 
-             spazio['difensore'][17] < T2 or spazio['difensore'][18] < T2 or spazio['difensore'][19] < T2 or 
-             spazio['difensore'][20] < T2) and spazio['difensore'][6] == 1) : 
+            (spazio['difensore'][14] < self.T2 or spazio['difensore'][15] < self.T2 or spazio['difensore'][16] < self.T2 or 
+             spazio['difensore'][17] < self.T2 or spazio['difensore'][18] < self.T2 or spazio['difensore'][19] < self.T2 or 
+             spazio['difensore'][20] < self.T2) and spazio['difensore'][6] == 1) : 
             legal_moves[9] = 1
         else:
             legal_moves[9] = 0
         # QuarantineHost
         if (spazio['difensore'][7] == 0 and 
-            (spazio['difensore'][14] > T2 or spazio['difensore'][15] > T2 or spazio['difensore'][16] > T2 or 
-             spazio['difensore'][17] > T2 or spazio['difensore'][18] > T2 or spazio['difensore'][19] > T2 or 
-             spazio['difensore'][20] > T2) 
+            (spazio['difensore'][14] > self.T2 or spazio['difensore'][15] > self.T2 or spazio['difensore'][16] > self.T2 or 
+             spazio['difensore'][17] > self.T2 or spazio['difensore'][18] > self.T2 or spazio['difensore'][19] > self.T2 or 
+             spazio['difensore'][20] > self.T2) 
             and spazio['difensore'][0] == 1 and spazio['difensore'][3] == 1 and spazio['difensore'][5] >= 3 
             and spazio['difensore'][6] == 1) :
             legal_moves[10] = 1
@@ -95,9 +95,9 @@ class Difensore ():
             legal_moves[10] = 0    
         # UnQuarantineHost    
         if (spazio['difensore'][7] == 1 and 
-            (spazio['difensore'][14] < T2 or spazio['difensore'][15] < T2 or spazio['difensore'][16] < T2 or 
-             spazio['difensore'][17] < T2 or spazio['difensore'][18] < T2 or spazio['difensore'][19] < T2 or 
-             spazio['difensore'][20] < T2) 
+            (spazio['difensore'][14] < self.T2 or spazio['difensore'][15] < self.T2 or spazio['difensore'][16] < self.T2 or 
+             spazio['difensore'][17] < self.T2 or spazio['difensore'][18] < self.T2 or spazio['difensore'][19] < self.T2 or 
+             spazio['difensore'][20] < self.T2) 
             and spazio['difensore'][0] == 1 and spazio['difensore'][5] > 3 and spazio['difensore'][6] == 1) :
             legal_moves[11] = 1
         else:
@@ -138,16 +138,16 @@ class Difensore ():
         # BackupHost
         if (spazio['difensore'][6] == 1 and spazio['difensore'][9] == 0 and spazio['difensore'][7] == 0 and
             spazio['difensore'][3] == 1 and spazio['difensore'][5] > 1 and
-            (spazio['difensore'][15] > T1 or spazio['difensore'][16] > T1 or spazio['difensore'][17] > T1 or 
-             spazio['difensore'][18] > T1 or spazio['difensore'][19] > T1 or spazio['difensore'][20] > T1)):
+            (spazio['difensore'][15] > self.T1 or spazio['difensore'][16] > self.T1 or spazio['difensore'][17] > self.T1 or 
+             spazio['difensore'][18] > self.T1 or spazio['difensore'][19] > self.T1 or spazio['difensore'][20] > self.T1)):
             legal_moves[16] = 1
         else:
             legal_moves[16] = 0
         # SoftwareUpdate
         # detto dal prof: deve aver fatto backup
         if (spazio['difensore'][6] == 1 and spazio['difensore'][10] == 0 and spazio['difensore'][9] == 1 and 
-            (spazio['difensore'][15] > T1 or spazio['difensore'][16] > T1 or spazio['difensore'][17] > T1 or 
-             spazio['difensore'][18] > T1 or spazio['difensore'][19] > T1 or spazio['difensore'][20] > T1)) :
+            (spazio['difensore'][15] > self.T1 or spazio['difensore'][16] > self.T1 or spazio['difensore'][17] > self.T1 or 
+             spazio['difensore'][18] > self.T1 or spazio['difensore'][19] > self.T1 or spazio['difensore'][20] > self.T1)) :
             legal_moves[17] = 1
         else:
             legal_moves[17] = 0
