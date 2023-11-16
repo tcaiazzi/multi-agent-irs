@@ -5,6 +5,8 @@ import random
 from Attaccante import Attaccante
 from Difensore import Difensore
 
+from threading import Thread
+
 attaccante = Attaccante()
 difensore = Difensore()
 
@@ -230,7 +232,9 @@ def postCondizioni(action,spazio,agent):
         # Pscan
         if action == 0 :
             #spazio['difensore'][14] = 1
-            attaccante.PscanAzione.postCondizione(spazio)
+            #attaccante.PscanAzione.postCondizione(spazio)
+            Thread(target=attaccante.PscanAzione.postCondizione,args=(spazio,)).start()
+            print('AVVIATO PSCAN...')
             Timer = -1
         # Pvsftpd
         elif action == 1 :
