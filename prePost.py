@@ -2,6 +2,23 @@ from matplotlib import pyplot as plt
 import numpy as np
 import random
 
+from azioni.Pscan import Pscan
+from Pvsftpd import Pvsftpd
+from Psmbd import Psmbd
+from Pphpcgi import Pphpcgi
+from Pircd import Pircd
+from Pdistccd import Pdistccd
+from Prmi import Prmi
+
+PscanAzione = Pscan()
+PvsftpdAzione = Pvsftpd()
+PsmbdAzione = Psmbd()
+PphpcgiAzione = Pphpcgi()
+PircdAzione = Pircd()
+PdistccdAzione = Pdistccd()
+PrmiAzione = Prmi()
+
+
 T1 = 0.33
 T2 = 0.66
 
@@ -408,26 +425,32 @@ def postCondizioni(action,spazio,agent):
     elif agent == 'attaccante':
         # Pscan
         if action == 0 :
-            spazio['difensore'][14] = 1
+            #spazio['difensore'][14] = 1
+            PscanAzione.postCondizione(spazio)
         # Pvsftpd
         elif action == 1 :
-            spazio['difensore'][15] = 1
+            #spazio['difensore'][15] = 1
+            PvsftpdAzione.postCondizione(spazio)
         # Psmbd
         elif action == 2 :
-            spazio['difensore'][16] = 1
+            #spazio['difensore'][16] = 1
+            PsmbdAzione.postCondizione(spazio)
         # Pphpcgi
         elif action == 3 :
-            spazio['difensore'][17] = 1
+            #spazio['difensore'][17] = 1
+            PphpcgiAzione.postCondizione(spazio)
         # Pircd
         elif action == 4 :
-            spazio['difensore'][18] = 1
+            #spazio['difensore'][18] = 1
+            PircdAzione.postCondizione(spazio)
         # Pdistccd
         elif action == 5 :
-            spazio['difensore'][19] = 1
+            #spazio['difensore'][19] = 1
+            PdistccdAzione.postCondizione(spazio)
         # Prmi
         elif action == 6 :
-            spazio['difensore'][20] = 1
-       
+            #spazio['difensore'][20] = 1
+            PrmiAzione.postCondizione(spazio)
     return mossaValida
 
 
