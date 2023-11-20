@@ -1,10 +1,10 @@
-#from azioneSincrona import azioneSincrona
+from azioneSincrona import azioneSincrona
 from azioneAsincrona import azioneAsincrona
 import time
 import random
 
-class ShutDown(azioneAsincrona):
-    
+class ShutDown(azioneSincrona):
+
     def preCondizione(self,spazio,legal_moves,T1,T2,Timer):
         if (spazio['difensore'][11] == 0 and spazio['difensore'][6] == 1 and 
             (spazio['difensore'][14] == 1 or spazio['difensore'][15] == 1 or spazio['difensore'][16] == 1 or spazio['difensore'][17] == 1 or 

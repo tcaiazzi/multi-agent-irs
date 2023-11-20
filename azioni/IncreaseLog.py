@@ -1,8 +1,8 @@
-#from azioneSincrona import azioneSincrona
+from azioneSincrona import azioneSincrona
 from azioneAsincrona import azioneAsincrona
 import time
 
-class IncreaseLog(azioneAsincrona):
+class IncreaseLog(azioneSincrona):
 
     def preCondizione(self,spazio,legal_moves,T1,T2,Timer):
         if (spazio['difensore'][5] < 5 and 

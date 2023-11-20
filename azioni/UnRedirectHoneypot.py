@@ -1,8 +1,8 @@
-#from azioneSincrona import azioneSincrona
+from azioneSincrona import azioneSincrona
 from azioneAsincrona import azioneAsincrona
 import time
 
-class UnRedirectHoneypot(azioneAsincrona):
+class UnRedirectHoneypot(azioneSincrona):
 
     def preCondizione(self,spazio,legal_moves,T1,T2,Timer):
         if (spazio['difensore'][4] == 1 and 

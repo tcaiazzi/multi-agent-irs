@@ -1,9 +1,9 @@
-#from azioneSincrona import azioneSincrona
+from azioneSincrona import azioneSincrona
 from azioneAsincrona import azioneAsincrona
 import time
 
-class ManualResolution(azioneAsincrona):
-    
+class ManualResolution(azioneSincrona):
+
     def preCondizione(self,spazio,legal_moves,T1,T2,Timer):
         if (spazio['difensore'][11] == 0 and 
             (spazio['difensore'][15] == 1 or spazio['difensore'][16] == 1 or spazio['difensore'][17] == 1 or 

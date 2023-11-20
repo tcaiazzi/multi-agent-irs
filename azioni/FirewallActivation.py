@@ -1,8 +1,8 @@
-#from azioneSincrona import azioneSincrona
+from azioneSincrona import azioneSincrona
 from azioneAsincrona import azioneAsincrona
 import time
 
-class FirewallActivation(azioneAsincrona):
+class FirewallActivation(azioneSincrona):
 
     def preCondizione(self,spazio,legal_moves,T1,T2,Timer):
         if ((spazio['difensore'][14] >= T1 or spazio['difensore'][15] >= T1 or spazio['difensore'][16] >= T1 or 

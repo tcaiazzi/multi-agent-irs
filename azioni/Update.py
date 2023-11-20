@@ -1,8 +1,8 @@
-#from azioneSincrona import azioneSincrona
+from azioneSincrona import azioneSincrona
 from azioneAsincrona import azioneAsincrona
 import time
 
-class Update(azioneAsincrona):
+class Update(azioneSincrona):
 
     def preCondizione(self,spazio,legal_moves,T1,T2,Timer):
         if (spazio['difensore'][6] == 1 and spazio['difensore'][10] == 0 and spazio['difensore'][9] == 1 and Timer <=0 and 

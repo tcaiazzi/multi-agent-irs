@@ -1,8 +1,8 @@
-#from azioneSincrona import azioneSincrona
+from azioneSincrona import azioneSincrona
 from azioneAsincrona import azioneAsincrona
 import time
 
-class BlockIp(azioneAsincrona):
+class BlockIp(azioneSincrona):
 
     def preCondizione(self,spazio,legal_moves,T1,T2,Timer):
         if (spazio['difensore'][14] >= T2 and spazio['difensore'][0] == 1 and
