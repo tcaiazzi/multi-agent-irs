@@ -4,8 +4,17 @@ import time
 import random
 
 class ShutDown(azioneAsincrona):
-    def preCondizione():
-        pass
+    
+    def preCondizione(self,spazio,legal_moves,T1,T2,Timer):
+        if (spazio['difensore'][11] == 0 and spazio['difensore'][6] == 1 and 
+            (spazio['difensore'][14] == 1 or spazio['difensore'][15] == 1 or spazio['difensore'][16] == 1 or spazio['difensore'][17] == 1 or 
+             spazio['difensore'][18] == 1 or spazio['difensore'][19] == 1 or spazio['difensore'][20] == 1) 
+            and spazio['difensore'][0] == 1 and spazio['difensore'][7] == 1 
+            and spazio['difensore'][3] == 1 and Timer <=0) :
+            legal_moves[14] = 1
+        else:
+            legal_moves[14] = 0
+
     def postCondizione(self,spazio,agent):
         spazio[agent][13] = 1
         spazio[agent][6] = 0

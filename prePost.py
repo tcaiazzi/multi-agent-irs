@@ -39,8 +39,7 @@ lastMosse = {
 
 # Pre condizioni codificate nell'action mask
 def preCondizioni(agent,spazio,legal_moves,Timer):
-    if agent == 'difensore':
-        # STATO
+    # STATO
         # [ firewall([True/False])(0), blockedip([])(1), flowlimit_ips([])(2), alert([True/False])(3), honeypot_ips([])(4),
         # log_verb([0-5])(5),
         # active([True/False])(6), quarantined([True/False])(7), rebooted([True/False])(8), backup([True/False])(9),
@@ -49,10 +48,10 @@ def preCondizioni(agent,spazio,legal_moves,Timer):
         # +
         # pscan([0-1])(14), pvsftpd([0-1])(15), psmbd([0-1])(16), pphpcgi([0-1])(17), pircd([0-1])(18), pdistccd([0-1])(19), prmi([0-1])(20),]
 
+    if agent == 'difensore':
         # pre condizioni del difensore
         difensore.preCondizioni(spazio,legal_moves,Timer)
 
-        
     else:
         # pre condizioni dell'attaccante
         # In tutte ho inserito che se il software viene aggiornato neanche più il pscan si può fare 
@@ -76,8 +75,7 @@ def preCondizioni(agent,spazio,legal_moves,Timer):
 
 
 # APPLICA L'AZIONE ALLo SPAZIO 'LOGICA'
-def postCondizioni(action,spazio,agent):
-    Timer = 0
+def postCondizioni(action,spazio,agent,Timer):
     # Post COndizioni
     # STATO
     # [ firewall([True/False])(0), blockedip([])(1), flowlimit_ips([])(2), alert([True/False])(3), honeypot_ips([])(4),
@@ -89,80 +87,94 @@ def postCondizioni(action,spazio,agent):
     # pscan([0-1])(14), pvsftpd([0-1])(15), psmbd([0-1])(16), pphpcgi([0-1])(17), pircd([0-1])(18), pdistccd([0-1])(19), prmi([0-1])(20),]
 
     mossaValida = True
+
     if agent == 'difensore':
         print(mosseDifensore[action])
 
-        # GenerateAlert
+        Timer = difensore.postCondizioni(action,spazio,agent,Timer)
+        """ # GenerateAlert
         if action == 0 :
-            spazio[agent][3] = 1
+            #spazio[agent][3] = 1
+            difensore.GenerateAlertAzione.postCondizione(spazio,agent)
             Timer = 1
         # FirewallActivation
         elif action == 1 :
-            spazio[agent][0] = 1
+            #spazio[agent][0] = 1
+            difensore.FirewallActivationAzione.postCondizione(spazio,agent)
             Timer = 1
         # BlockSourceIp
         elif action == 2 :
             spazio[agent][1] = 1
-            spazio[agent][14] = 0
+            spazio[agent][14] = 0 
+            difensore.BlockIpAzione.postCondizione(spazio,agent)
             Timer = 1
         # UnblockSourceIp
         elif action == 3 :
-            spazio[agent][1] = 0
+            #spazio[agent][1] = 0
+            difensore.UnBlockIpAzione.postCondizione(spazio,agent)
             Timer = 1
         # FlowRateLimit
         elif action == 4 :
-            spazio[agent][2] = 1
+            #spazio[agent][2] = 1
+            difensore.LimitFlowRateAzione.postCondizione(spazio,agent)
             Timer = 1
             # prob 0.5
             p = random.random()
             if p < 0.5 :
-                spazio[agent][14] = 0
+                spazio[agent][14] = 0 
         # UnlimitFlowRate
         elif action == 5 :
-            spazio[agent][2] = 0
+            difensore.UnLimitFlowRateAzione.postCondizione(spazio,agent)
+            #spazio[agent][2] = 0
             Timer = 1
         # RedirectToHoneypot
         elif action == 6 :
             spazio[agent][14] = 0
-            spazio[agent][4] = 1
+            spazio[agent][4] = 1 
+            difensore.RedirectHoneypotAzione.postCondizione(spazio,agent)
             Timer = 1
             # Pxxx da scalare con prob 0.5
             # Pxx da scalare con prob
             # PROVA PER VEDERE SE CONVERGE
-            """ p = random.random()
+            p = random.random()
                 if p < 0.5 :
                 spazio[agent][14] = 0
                 for j in range(15,21,1):
                     if spazio[agent][j] > T2 :
-                        spazio[agent][j] = p """
+                        spazio[agent][j] = p
         # UnHoneypot
         elif action == 7 :
-            spazio[agent][4] = 0
+            #spazio[agent][4] = 0
+            difensore.UnRedirectHoneypotAzione.postCondizione(spazio,agent)
             Timer = 1
         # IncreaseLog
         elif action == 8 :
-            spazio[agent][5] += 1
+            #spazio[agent][5] += 1
+            difensore.IncreaseLogAzione.postCondizione(spazio,agent)
             Timer = 1
         # DecreaseLog
         elif action == 9 :
-            spazio[agent][5] -= 1
+            #spazio[agent][5] -= 1
+            difensore.DecreaseLogAzione.postCondizione(spazio,agent)
             Timer = 1
         # QuarantineHost
         elif action == 10 :
             spazio[agent][12] = 1
             spazio[agent][7] = 1
+            difensore.QuarantineAzione.postCondizione(spazio,agent)
             Timer = 1
             # Pxx da scalare con prob
             # PROVA PER VEDERE SE CONVERGE
-            """ p = random.random()
+            p = random.random()
             if p < 0.5 :
                 spazio[agent][14] = 0
                 for j in range(15,21,1):
                     if spazio[agent][j] > T2 :
-                        spazio[agent][j] = p """
+                        spazio[agent][j] = p 
         # UnQuarantineHost
         elif action == 11 :
-            spazio[agent][7] = 0
+            #spazio[agent][7] = 0
+            difensore.UnQuarantineAzione.postCondizione(spazio,agent)
             Timer = 1
         # ManualResolution
         elif action == 12 :
@@ -175,12 +187,14 @@ def postCondizioni(action,spazio,agent):
             spazio[agent][17] = 0
             spazio[agent][18] = 0
             spazio[agent][19] = 0
-            spazio[agent][20] = 0
+            spazio[agent][20] = 0 
+            difensore.ManualResolutionAzione.postCondizione(spazio,agent)
             Timer = 1
         # SystemReboot
         elif action == 13 :
-            spazio[agent][8] = 1
+            #spazio[agent][8] = 1
             Timer = 1
+            difensore.RebootAzione.postCondizione(spazio,agent)
             p = random.random()
             if p < 0.3 :
                 # Scalare gli attacchi con una prob
@@ -190,12 +204,13 @@ def postCondizioni(action,spazio,agent):
                 spazio[agent][17] = 0
                 spazio[agent][18] = 0
                 spazio[agent][19] = 0
-                spazio[agent][20] = 0
+                spazio[agent][20] = 0 
 
         # SystemShutdown
         elif action == 14 :
             spazio[agent][13] = 1
-            spazio[agent][6] = 0
+            spazio[agent][6] = 0 
+            difensore.ShutDownAzione.postCondizione(spazio,agent)
             Timer = 1
             # Tutti gli attacchi a 0 con una prob
             p = random.random()
@@ -212,10 +227,12 @@ def postCondizioni(action,spazio,agent):
         elif action == 15 :
             spazio[agent][6] = 1
             spazio[agent][8] = 1
+            difensore.StartAzione.postCondizione(spazio,agent)
             Timer = 1
         # BackupHost
         elif action == 16 :
-            spazio[agent][9] = 1
+            #spazio[agent][9] = 1
+            difensore.BackupAzione.postCondizione(spazio,agent)
             Timer = 1
         # SoftwareUpdate
         elif action == 17 :
@@ -226,11 +243,13 @@ def postCondizioni(action,spazio,agent):
             spazio[agent][17] = 0
             spazio[agent][18] = 0
             spazio[agent][19] = 0
-            spazio[agent][20] = 0
-            Timer = 1
+            spazio[agent][20] = 0 
+            difensore.UpdateAzione.postCondizione(spazio,agent)
+            Timer = 1 """
     
     elif agent == 'attaccante':
-        # Pscan
+        Timer = attaccante.postCondizioni(action,spazio,'difensore',Timer)
+        """ # Pscan
         if action == 0 :
             #spazio['difensore'][14] = 1
             #attaccante.PscanAzione.postCondizione(spazio)
@@ -267,8 +286,8 @@ def postCondizioni(action,spazio,agent):
         elif action == 6 :
             #spazio['difensore'][20] = 1
             attaccante.PrmiAzione.postCondizione(spazio,'difensore')
-            Timer = -1
-    return mossaValida,Timer
+            Timer = -1 """
+    return Timer
 
 
 

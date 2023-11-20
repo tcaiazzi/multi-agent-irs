@@ -312,19 +312,19 @@ class raw_env(AECEnv):
         ######################## PRE(con action mask solo post)/POST condizioni #####################################################
 
         #print('Prima della mossa:',self.spazio)
-        mossaValida,t = postCondizioni(action,self.spazio,self.agent_selection)
+        timer = postCondizioni(action,self.spazio,self.agent_selection,self.Timer)
         print('Dopo la mossa:',self.spazio['difensore'])
 
         ############################################## REWARD ###########################################
 
         # SI INFLUENZANO LE REWARD A VICENDA
-        print('Mossa valida:',mossaValida)
-        if mossaValida:
-            rw = reward(agent,self.spazio,action)
-            if agent == 'difensore':
-                self.rewards[agent] += rw
-            else:
-                self.rewards[agent] -= rw
+        """ print('Mossa valida:',mossaValida)
+        if mossaValida: """
+        rw = reward(agent,self.spazio,action)
+        if agent == 'difensore':
+            self.rewards[agent] += rw
+        else:
+            self.rewards[agent] -= rw
         
         ############################# CHECK ARRESTO (se sono nello stato sicuro) #########################
         
@@ -355,7 +355,7 @@ class raw_env(AECEnv):
        
         # selects the next agent.
         self.agent_selection = self._agent_selector.next()
-        self.Timer = self.Timer + t
+        self.Timer = timer
         
         # SALVE TUTTE LE REWARD CUMULATIVE DI TUTTE LE PARTITE
         #curva_partita['attaccante'].append((self.num_moves,self._cumulative_rewards['attaccante']))

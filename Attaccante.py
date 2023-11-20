@@ -8,6 +8,8 @@ from azioni.Pircd import Pircd
 from azioni.Pdistccd import Pdistccd
 from azioni.Prmi import Prmi
 
+from threading import Thread
+
 
 class Attaccante(Agente):
     def __init__(self):
@@ -71,3 +73,46 @@ class Attaccante(Agente):
         # Non ci sono mosse per l'attaccante
         for i in range(8,19,1):
             legal_moves[i] = 0
+
+    def postCondizioni(self,action,spazio,agent,Timer):
+
+        # Pscan
+        if action == 0 :
+            #spazio['difensore'][14] = 1
+            #self.PscanAzione.postCondizione(spazio)
+            self.azioniAsincroneRun.append(action)
+            Thread(target=self.PscanAzione.postCondizione,args=(spazio,agent,)).start()
+            print('AVVIATO PSCAN...')
+            Timer -= 1
+        # Pvsftpd
+        elif action == 1 :
+            #spazio[agent][15] = 1
+            self.PvsftpdAzione.postCondizione(spazio,agent)
+            Timer -= 1
+        # Psmbd
+        elif action == 2 :
+            #spazio[agent][16] = 1
+            self.PsmbdAzione.postCondizione(spazio,agent)
+            Timer -= 1
+        # Pphpcgi
+        elif action == 3 :
+            #spazio[agent][17] = 1
+            self.PphpcgiAzione.postCondizione(spazio,agent)
+            Timer -= 1
+        # Pircd
+        elif action == 4 :
+            #spazio[agent][18] = 1
+            self.PircdAzione.postCondizione(spazio,agent)
+            Timer -= 1
+        # Pdistccd
+        elif action == 5 :
+            #spazio[agent][19] = 1
+            self.PdistccdAzione.postCondizione(spazio,agent)
+            Timer -= 1
+        # Prmi
+        elif action == 6 :
+            #spazio[agent][20] = 1
+            self.PrmiAzione.postCondizione(spazio,agent)
+            Timer -= 1
+            
+        return Timer
