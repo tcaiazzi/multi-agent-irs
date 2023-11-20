@@ -141,7 +141,7 @@ def postCondizioni(action,spazio,agent):
             Timer = 1
         # IncreaseLog
         elif action == 8 :
-            spazio[agent][5] = 1
+            spazio[agent][5] += 1
             Timer = 1
         # DecreaseLog
         elif action == 9 :
@@ -235,38 +235,38 @@ def postCondizioni(action,spazio,agent):
             #spazio['difensore'][14] = 1
             #attaccante.PscanAzione.postCondizione(spazio)
             attaccante.azioniAsincroneRun.append(action)
-            Thread(target=attaccante.PscanAzione.postCondizione,args=(spazio,)).start()
+            Thread(target=attaccante.PscanAzione.postCondizione,args=(spazio,'difensore',)).start()
             print('AVVIATO PSCAN...')
             Timer = -1
         # Pvsftpd
         elif action == 1 :
             #spazio['difensore'][15] = 1
-            attaccante.PvsftpdAzione.postCondizione(spazio)
+            attaccante.PvsftpdAzione.postCondizione(spazio,'difensore')
             Timer = -1
         # Psmbd
         elif action == 2 :
             #spazio['difensore'][16] = 1
-            attaccante.PsmbdAzione.postCondizione(spazio)
+            attaccante.PsmbdAzione.postCondizione(spazio,'difensore')
             Timer = -1
         # Pphpcgi
         elif action == 3 :
             #spazio['difensore'][17] = 1
-            attaccante.PphpcgiAzione.postCondizione(spazio)
+            attaccante.PphpcgiAzione.postCondizione(spazio,'difensore')
             Timer = -1
         # Pircd
         elif action == 4 :
             #spazio['difensore'][18] = 1
-            attaccante.PircdAzione.postCondizione(spazio)
+            attaccante.PircdAzione.postCondizione(spazio,'difensore')
             Timer = -1
         # Pdistccd
         elif action == 5 :
             #spazio['difensore'][19] = 1
-            attaccante.PdistccdAzione.postCondizione(spazio)
+            attaccante.PdistccdAzione.postCondizione(spazio,'difensore')
             Timer = -1
         # Prmi
         elif action == 6 :
             #spazio['difensore'][20] = 1
-            attaccante.PrmiAzione.postCondizione(spazio)
+            attaccante.PrmiAzione.postCondizione(spazio,'difensore')
             Timer = -1
     return mossaValida,Timer
 

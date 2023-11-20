@@ -23,40 +23,49 @@ class Attaccante(Agente):
 
     # Se l'attaccante trova il Timer <=0 non puo eseguire e per ora facciamo che ogni azione vale 1
     def preCondizioni(self,spazio,legal_moves,Timer):
-        if spazio['difensore'][14] < self.T1 and spazio['difensore'][6] == 1 and spazio['difensore'][10] == 0 and Timer >=0:
-            legal_moves[0] = 1
+        # Pscan
+        self.PscanAzione.preCondizione(spazio,legal_moves,self.T1,self.T2,Timer)
+        """ if spazio['difensore'][14] < self.T1 and spazio['difensore'][6] == 1 and spazio['difensore'][10] == 0 and Timer >=0:
+            legal_moves[0] = 1 
         else:
             legal_moves[0] = 0
+        """
         # Pvsftpd
-        if spazio['difensore'][15] < self.T1 and spazio['difensore'][14] > self.T2 and spazio['difensore'][6] == 1 and spazio['difensore'][10] == 0 and Timer >=0: 
+        self.PvsftpdAzione.preCondizione(spazio,legal_moves,self.T1,self.T2,Timer)
+        """ if spazio['difensore'][15] < self.T1 and spazio['difensore'][14] > self.T2 and spazio['difensore'][6] == 1 and spazio['difensore'][10] == 0 and Timer >=0: 
             legal_moves[1] = 1
         else:
-            legal_moves[1] = 0
+            legal_moves[1] = 0 """
         # Psmbd
-        if spazio['difensore'][16] < self.T1 and spazio['difensore'][14] > self.T2 and spazio['difensore'][6] == 1 and spazio['difensore'][10] == 0 and Timer >=0:
+        self.PsmbdAzione.preCondizione(spazio,legal_moves,self.T1,self.T2,Timer)
+        """ if spazio['difensore'][16] < self.T1 and spazio['difensore'][14] > self.T2 and spazio['difensore'][6] == 1 and spazio['difensore'][10] == 0 and Timer >=0:
             legal_moves[2] = 1
         else:
-            legal_moves[2] = 0
+            legal_moves[2] = 0 """
         # Pphpcgi
-        if spazio['difensore'][17] < self.T1 and spazio['difensore'][14] > self.T2 and spazio['difensore'][6] == 1 and spazio['difensore'][10] == 0 and Timer >=0:
+        self.PphpcgiAzione.preCondizione(spazio,legal_moves,self.T1,self.T2,Timer)
+        """ if spazio['difensore'][17] < self.T1 and spazio['difensore'][14] > self.T2 and spazio['difensore'][6] == 1 and spazio['difensore'][10] == 0 and Timer >=0:
             legal_moves[3] = 1
         else:
-            legal_moves[3] = 0
+            legal_moves[3] = 0 """
         # Pircd
-        if spazio['difensore'][18] < self.T1 and spazio['difensore'][14] > self.T2 and spazio['difensore'][6] == 1 and spazio['difensore'][10] == 0 and Timer >=0:
+        self.PircdAzione.preCondizione(spazio,legal_moves,self.T1,self.T2,Timer)
+        """ if spazio['difensore'][18] < self.T1 and spazio['difensore'][14] > self.T2 and spazio['difensore'][6] == 1 and spazio['difensore'][10] == 0 and Timer >=0:
             legal_moves[4] = 1
         else:
-            legal_moves[4] = 0
+            legal_moves[4] = 0 """
         # Pdistccd
-        if spazio['difensore'][19] < self.T1 and spazio['difensore'][14] > self.T2 and spazio['difensore'][6] == 1 and spazio['difensore'][10] == 0 and Timer >=0:
+        self.PdistccdAzione.preCondizione(spazio,legal_moves,self.T1,self.T2,Timer)
+        """ if spazio['difensore'][19] < self.T1 and spazio['difensore'][14] > self.T2 and spazio['difensore'][6] == 1 and spazio['difensore'][10] == 0 and Timer >=0:
             legal_moves[5] = 1
         else:
-            legal_moves[5] = 0
+            legal_moves[5] = 0 """
         # Prmi
-        if spazio['difensore'][20] < self.T1 and spazio['difensore'][14] > self.T2 and spazio['difensore'][6] == 1 and spazio['difensore'][10] == 0 and Timer >=0:
+        self.PrmiAzione.preCondizione(spazio,legal_moves,self.T1,self.T2,Timer)
+        """ if spazio['difensore'][20] < self.T1 and spazio['difensore'][14] > self.T2 and spazio['difensore'][6] == 1 and spazio['difensore'][10] == 0 and Timer >=0:
             legal_moves[6] = 1
         else:
-            legal_moves[6] = 0
+            legal_moves[6] = 0 """
         legal_moves[7] = 1
 
         # Non ci sono mosse per l'attaccante

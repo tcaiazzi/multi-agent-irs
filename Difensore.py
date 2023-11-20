@@ -1,9 +1,45 @@
 from Agente import Agente
+from azioni.GenerateAlert import GenerateAlert 
+from azioni.FirewallActivation import FirewallActivation
+from azioni.BlockIp import BlockIp 
+from azioni.UnBlockIp import UnBlockIp
+from azioni.LimitFlowRate import LimitFlowRate
+from azioni.UnLimitFlowRate import UnLimitFlowRate
+from azioni.RedirectHoneypot import RedirectHoneypot
+from azioni.UnRedirectHoneypot import UnRedirectHoneypot
+from azioni.IncreaseLog import IncreaseLog
+from azioni.DecreaseLog import DecreaseLog
+from azioni.Quarantine import Quarantine
+from azioni.UnQuarantine import UnQuarantine
+from azioni.ManualResolution import ManualResolution
+from azioni.Reboot import Reboot
+from azioni.ShutDown import ShutDown
+from azioni.Start import Start
+from azioni.Backup import Backup
+from azioni.Update import Update
 
 
 class Difensore(Agente):
     def __init__(self):
         super().__init__()
+        self.GenerateAlert = GenerateAlert()
+        self.FirewallActivation = FirewallActivation()
+        self.BlockIp = BlockIp()
+        self.UnBlockIp = UnBlockIp()
+        self.LimitFlowRate = LimitFlowRate()
+        self.UnLimitFlowRate = UnLimitFlowRate()
+        self.RedirectHoneypot = RedirectHoneypot()
+        self.UnRedirectHoneypot = UnRedirectHoneypot()
+        self.IncreaseLog = IncreaseLog()
+        self.DecreaseLog = DecreaseLog()
+        self.Quarantine = Quarantine()
+        self.UnQuarantine = UnQuarantine()
+        self.ManualResolution = ManualResolution()
+        self.Reboot = Reboot()
+        self.ShutDown = ShutDown()
+        self.Start = Start()
+        self.Backup = Backup()
+        self.Update = Update()
 
     # Il difensore invece può eseguire una mossa solo nel caso incui il Timer è <=0 ed ogni mossa vale 1
     def preCondizioni(self,spazio,legal_moves,Timer):

@@ -3,10 +3,10 @@ import time
 
 class azioneAsincrona():
     @abstractmethod
-    def preCondizioni(self):
+    def preCondizione(self,spazio,legal_moves,T1,T2,Timer):
         pass
     @abstractmethod
-    def postCondizioni(self):
+    def postCondizione(self,spazio,agent):
         pass
     def dormi(self,tempo):
         time.sleep(tempo)
