@@ -160,6 +160,7 @@ def terminationPartita(spazio):
         val = True
     return val
 
+# Randomicità dello stato
 def generazioneSpazioRandom():
     # STATO CHE AVEVO SUPPOSTO IO DI PARTENZA
     spazio = [0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
