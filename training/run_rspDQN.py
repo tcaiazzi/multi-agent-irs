@@ -1,3 +1,10 @@
+# se lancio dalla cartella principale
+sys.path.append('./')
+
+from  visualizzazione import visualizza_reward_mosse
+
+from algoritmiTraining import DQN
+
 import rsp
 import ray
 import time
@@ -55,7 +62,7 @@ torch.cuda.empty_cache()
 # COndizioni di stopping degli algoritmi 
 stop = {
         # epoche/passi dopo le quali il training si arresta
-        "training_iteration": 5,
+        "training_iteration": 10,
 
         #"timesteps_total":2,
 
@@ -75,30 +82,26 @@ ray.init()
 
 
 ################################################# RAY #######################################
-##################################################################################################
-################################################  PPO  ###########################################
-##################################################################################################
-# Proximal Policy Optimization e fa uso del PG con l'aggiunta di clipped objective function 
-# (penalizzando grandicambiamenti nella policy)
-# PG avanzato piu veloce
-# multiple SGD 
+#############################################################################################
+###############################################  DQN  #######################################
+#############################################################################################
 
-config = PPO().config
-""" # PER IL CUSTOM_MODEL
-config.rl_module( _enable_rl_module_api=False)
-config.training(_enable_learner_api=False) """
+config = DQN().config
 
-config['evaluation_interval'] = 1
-config['create_env_on_driver'] = True 
+# Mi risolve i problemi di mismatch con la rete, non so perche, ma per l'action mask
+config['hiddens'] = []
+config['dueling'] = False
+
 # per l'evaluation
 config['evaluation_interval'] = 1
 
 algo = config.build()
 
 results = tune.Tuner(
-        "PPO", 
-        param_space=config, 
-        run_config=air.RunConfig(stop=stop, verbose=1)
-    ).fit()  
+    "DQN",
+    run_config = train.RunConfig(stop=stop,verbose=1),
+    param_space = config,
+).fit()
 
-visualizza_reward_mosse()
+visualizza_reward_mosse() 
+

@@ -1,23 +1,28 @@
-from algoritmiTraining import DQN, ApexDQN,Impala,PG,PPO
+# se lancio dalla cartella principale
+import sys 
+
+sys.path.append('./')
+
+from  visualizzazione import visualizza_reward_mosse
+
+from algoritmiTraining import Impala
+
 from ray.rllib.algorithms.algorithm import Algorithm
-from visualizzazione import visualizza_reward_mosse
 
 
-# 50 training iteration: meno di 2000 partite con 1450 (? mosse), il training è meno fit di impala
-# evaluation bene ma non benissimo, meglio impalaa, anche perchè con moto meno tempo
-# Sembra instabile e lento a convergere e lento
+# 10 training operation: circa 1500 partite con un totale di 7600 mosse circa, molto bene (anche meno ma ci ha messo poco
+# ad addestrarsi, i valori anche nel training molto bene)
+# sembra instabile ma veloce a convergere ed è veloce
+#pathImpala = '/home/matteo/ray_results/IMPALA_2023-11-10_14-12-54/IMPALA_rsp_dbbe5_00000_0_2023-11-10_14-12-54/checkpoint_000000'
+# 20 training iteration
+pathImpala = '/home/matteo/ray_results/IMPALA_2023-11-13_15-21-42/IMPALA_rsp_f7fb3_00000_0_2023-11-13_15-21-43/checkpoint_000000'
 
-# train su stati random
-#pathPG = '/home/matteo/ray_results/PG_2023-11-15_09-14-41/PG_rsp_06f46_00000_0_2023-11-15_09-14-41/checkpoint_000000'
-
-# train su stato start
-pathPG = '/home/matteo/ray_results/PG_2023-11-16_15-10-52/PG_rsp_f3820_00000_0_2023-11-16_15-10-52/checkpoint_000000'
 ############################################ PER VEDERLO GIOCARE #####################################
 # Così va ma senza polisi sceglie random, ma va la logica della reward e dello stopping
 
 
 # Algoritmi
-config = PG().config
+config = Impala().config
 
 # Mi risolve i problemi di mismatch con la rete, non so perche, ma per l'action mask
 config['hiddens'] = []
@@ -28,7 +33,7 @@ config['evaluation_interval'] = 1
 
 algo = config.build()
 
-algo.restore(pathPG)
+algo.restore(pathImpala)
 
 algo.evaluate()
 

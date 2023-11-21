@@ -1,3 +1,10 @@
+# se lancio dalla cartella principale
+sys.path.append('./')
+
+from  visualizzazione import visualizza_reward_mosse
+
+from algoritmiTraining import PPO
+
 import rsp
 import ray
 import time
@@ -55,7 +62,7 @@ torch.cuda.empty_cache()
 # COndizioni di stopping degli algoritmi 
 stop = {
         # epoche/passi dopo le quali il training si arresta
-        "training_iteration": 2,
+        "training_iteration": 5,
 
         #"timesteps_total":2,
 
@@ -75,44 +82,30 @@ ray.init()
 
 
 ################################################# RAY #######################################
-############################################## APEX-DQN #####################################
-#############################################################################################
-# è un DQN evoluto, ovvero DQN su architettura APE-x (una gpu che apprende e più worker cpu che collezionano esperienza)
-""" 
-# Fa dei controlli ad ogni episodi, così ad esempio si ferma la partita quando la cuulative reward del difensore super i 100
-class MyCallbacks(DefaultCallbacks):
-    def on_episode_end(self, worker, base_env, policies, episode, **kwargs):
-        # Controlla il valore della cumulative reward
-        if episode.agent_rewards['difensore'] > 100:
-            return True  # Interrompi il training """
+##################################################################################################
+################################################  PPO  ###########################################
+##################################################################################################
+# Proximal Policy Optimization e fa uso del PG con l'aggiunta di clipped objective function 
+# (penalizzando grandicambiamenti nella policy)
+# PG avanzato piu veloce
+# multiple SGD 
 
-# Sempre che stia funzionando lo stopping a tempo
-""" class TimeStopper(Stopper):
-    def __init__(self):
-        self._start = time.time()
-        self._deadline = 60  # Stop all trials after 2 seconds
+config = PPO().config
+""" # PER IL CUSTOM_MODEL
+config.rl_module( _enable_rl_module_api=False)
+config.training(_enable_learner_api=False) """
 
-    def __call__(self, trial_id, result):
-        return False
-
-    def stop_all(self):
-        return time.time() - self._start > self._deadline """
-    
-config = ApexDQN().config
-
-# Mi risolve i problemi di mismatch con la rete
-config['hiddens'] = []
-config['dueling'] = False
+config['evaluation_interval'] = 1
+config['create_env_on_driver'] = True 
 # per l'evaluation
 config['evaluation_interval'] = 1
 
 algo = config.build()
 
 results = tune.Tuner(
-    "APEX",
-    run_config = train.RunConfig(stop=stop,verbose=1),
-    param_space = config,
-).fit()
+        "PPO", 
+        param_space=config, 
+        run_config=air.RunConfig(stop=stop, verbose=1)
+    ).fit()  
 
 visualizza_reward_mosse()
-

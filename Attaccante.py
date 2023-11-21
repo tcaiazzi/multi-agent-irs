@@ -105,3 +105,5 @@ class Attaccante(Agente):
             # Timer
             spazio[agent][21] -= 1
         
+        print('Mosse Asincrone in Running dopo la mossa:',self.mosseAsincroneRunning)
+        

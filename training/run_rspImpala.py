@@ -1,3 +1,10 @@
+# se lancio dalla cartella principale
+sys.path.append('./')
+
+from  visualizzazione import visualizza_reward_mosse
+
+from algoritmiTraining import Impala
+
 import rsp
 import ray
 import time

@@ -1,4 +1,12 @@
 import sys
+# se lancio dalla cartella principale
+sys.path.append(r'./')
+
+from  visualizzazione import visualizza_reward_mosse
+
+from algoritmiTraining import PG 
+
+
 import rsp
 
 import ray
@@ -34,9 +42,7 @@ from pettingzoo.test import api_test
 from pettingzoo.test import performance_benchmark
 
 
-from visualizzazione import visualizza_reward_mosse
 
-from algoritmiTraining import DQN,ApexDQN,Impala,PG,PPO
 
 
 # SERVE PER AVERE LO SPAZIO DELLE AZIONI DI DIMENSIONI DIVERSE
@@ -58,7 +64,7 @@ torch.cuda.empty_cache()
 # COndizioni di stopping degli algoritmi 
 stop = {
         # epoche/passi dopo le quali il training si arresta
-        "training_iteration": 50,
+        "training_iteration": 25,
 
         #"timesteps_total":2,
 

@@ -1,6 +1,12 @@
-from algoritmiTraining import DQN, ApexDQN,Impala,PG,PPO
+# se lancio dalla cartella principale
+import sys
+sys.path.append('./')
+
+from  visualizzazione import visualizza_reward_mosse
+
+from algoritmiTraining import ApexDQN
+
 from ray.rllib.algorithms.algorithm import Algorithm
-from visualizzazione import visualizza_reward_mosse
 
 
 

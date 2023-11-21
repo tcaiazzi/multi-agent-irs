@@ -17,7 +17,7 @@ class Backup(azioneAsincrona):
             legal_moves[16] = 0
 
     def postCondizione(self,spazio,agent,mosseAsincroneRunning,action):
-        self.attendi(1)
+        self.attendi(0.01)
         spazio[agent][9] = 1
         mosseAsincroneRunning.remove(action)
         print('Mosse Asincrone in Running dopo ATtesa e applicazione della mossa:',mosseAsincroneRunning)

@@ -1,3 +1,12 @@
+import sys
+
+# se lancio dalla cartella principale
+sys.path.append('./')
+
+from  visualizzazione import visualizza_reward_mosse
+
+from algoritmiTraining import ApexDQN
+
 import rsp
 import ray
 import time
@@ -55,7 +64,7 @@ torch.cuda.empty_cache()
 # COndizioni di stopping degli algoritmi 
 stop = {
         # epoche/passi dopo le quali il training si arresta
-        "training_iteration": 10,
+        "training_iteration": 2,
 
         #"timesteps_total":2,
 
@@ -75,26 +84,44 @@ ray.init()
 
 
 ################################################# RAY #######################################
+############################################## APEX-DQN #####################################
 #############################################################################################
-###############################################  DQN  #######################################
-#############################################################################################
+# è un DQN evoluto, ovvero DQN su architettura APE-x (una gpu che apprende e più worker cpu che collezionano esperienza)
+""" 
+# Fa dei controlli ad ogni episodi, così ad esempio si ferma la partita quando la cuulative reward del difensore super i 100
+class MyCallbacks(DefaultCallbacks):
+    def on_episode_end(self, worker, base_env, policies, episode, **kwargs):
+        # Controlla il valore della cumulative reward
+        if episode.agent_rewards['difensore'] > 100:
+            return True  # Interrompi il training """
 
-config = DQN().config
+# Sempre che stia funzionando lo stopping a tempo
+""" class TimeStopper(Stopper):
+    def __init__(self):
+        self._start = time.time()
+        self._deadline = 60  # Stop all trials after 2 seconds
 
-# Mi risolve i problemi di mismatch con la rete, non so perche, ma per l'action mask
+    def __call__(self, trial_id, result):
+        return False
+
+    def stop_all(self):
+        return time.time() - self._start > self._deadline """
+    
+config = ApexDQN().config
+
+# Mi risolve i problemi di mismatch con la rete
 config['hiddens'] = []
 config['dueling'] = False
-
 # per l'evaluation
 config['evaluation_interval'] = 1
 
 algo = config.build()
 
 results = tune.Tuner(
-    "DQN",
+    "APEX",
     run_config = train.RunConfig(stop=stop,verbose=1),
     param_space = config,
 ).fit()
 
-visualizza_reward_mosse() 
+visualizza_reward_mosse()
 

@@ -1,16 +1,32 @@
-from algoritmiTraining import DQN, ApexDQN,Impala,PG,PPO
+# se lancio dalla cartella principale
+import sys 
+
+sys.path.append('./')
+
+from  visualizzazione import visualizza_reward_mosse
+
+
+from algoritmiTraining import PPO
+
 from ray.rllib.algorithms.algorithm import Algorithm
-from visualizzazione import visualizza_reward_mosse
 
 
+
+# per 20 mi sembra che ci stia mettendo anche piu tempo di PG dopo prendi i tempi
+# Sembra partire meglio fin da subito, ovvero sembra piu stabile il grafico ma converge piu lentamente
+# in realta con 200 partite ha fatto sia la convergena e con piu stabilità rispetto agli altri
+# pero piu lento in realta pero nell'evaluation fa 6 mosse e non 4 mmmh
+#pathPPO =  '/home/matteo/ray_results/PPO_2023-11-10_14-32-44/PPO_rsp_a15d1_00000_0_2023-11-10_14-32-44/checkpoint_000000'
 # 20 training iteration
-#pathDQN = '/home/matteo/ray_results/DQN_2023-11-10_12-40-26/DQN_rsp_f0eb6_00000_0_2023-11-10_12-40-26/checkpoint_000000'
-# 1 iteration
-pathDQN = '/home/matteo/ray_results/DQN_2023-11-15_12-17-58/DQN_rsp_a1c60_00000_0_2023-11-15_12-17-58/checkpoint_000000'
+#pathPPO = '/home/matteo/ray_results/PPO_2023-11-13_15-29-22/PPO_rsp_09b75_00000_0_2023-11-13_15-29-22/checkpoint_000000'
+#pathPPO = '/home/matteo/ray_results/PPO_2023-11-14_12-11-47/PPO_rsp_9a365_00000_0_2023-11-14_12-11-47/checkpoint_000000'
+pathPPO = '/home/matteo/ray_results/PPO_2023-11-14_12-54-55/PPO_rsp_a0853_00000_0_2023-11-14_12-54-55/checkpoint_000000'
+############################################ PER VEDERLO GIOCARE #####################################
+# Così va ma senza polisi sceglie random, ma va la logica della reward e dello stopping
 
 
 # Algoritmi
-config = DQN().config
+config = PPO().config
 
 # Mi risolve i problemi di mismatch con la rete, non so perche, ma per l'action mask
 config['hiddens'] = []
@@ -21,7 +37,7 @@ config['evaluation_interval'] = 1
 
 algo = config.build()
 
-algo.restore(pathDQN)
+algo.restore(pathPPO)
 
 algo.evaluate()
 
