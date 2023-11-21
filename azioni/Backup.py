@@ -4,9 +4,11 @@ import time
 
 class Backup(azioneAsincrona):
 
-    def preCondizione(self,spazio,legal_moves,T1,T2,Timer,mosseAsincroneRunning):
+    def preCondizione(self,spazio,legal_moves,T1,T2,mosseAsincroneRunning):
         if (spazio['difensore'][6] == 1 and spazio['difensore'][9] == 0 and spazio['difensore'][7] == 0 and
-            spazio['difensore'][3] == 1 and spazio['difensore'][5] > 1 and Timer <=0 and
+            spazio['difensore'][3] == 1 and spazio['difensore'][5] > 1 and 
+            #Timer
+            spazio['difensore'][21] <=0 and
             (spazio['difensore'][15] > T1 or spazio['difensore'][16] > T1 or spazio['difensore'][17] > T1 or 
              spazio['difensore'][18] > T1 or spazio['difensore'][19] > T1 or spazio['difensore'][20] > T1)
              and 16 not in mosseAsincroneRunning):

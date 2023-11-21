@@ -27,37 +27,38 @@ class Attaccante(Agente):
     
 
     # Se l'attaccante trova il Timer <=0 non puo eseguire e per ora facciamo che ogni azione vale 1
-    def preCondizioni(self,spazio,legal_moves,Timer):
+    def preCondizioni(self,spazio,legal_moves):
         # Pscan
-        self.PscanAzione.preCondizione(spazio,legal_moves,self.T1,self.T2,Timer,self.mosseAsincroneRunning)
+        self.PscanAzione.preCondizione(spazio,legal_moves,self.T1,self.T2,self.mosseAsincroneRunning)
        
         # Pvsftpd
-        self.PvsftpdAzione.preCondizione(spazio,legal_moves,self.T1,self.T2,Timer)
+        self.PvsftpdAzione.preCondizione(spazio,legal_moves,self.T1,self.T2,'difensore')
         
         # Psmbd
-        self.PsmbdAzione.preCondizione(spazio,legal_moves,self.T1,self.T2,Timer)
+        self.PsmbdAzione.preCondizione(spazio,legal_moves,self.T1,self.T2,'difensore')
         
         # Pphpcgi
-        self.PphpcgiAzione.preCondizione(spazio,legal_moves,self.T1,self.T2,Timer)
+        self.PphpcgiAzione.preCondizione(spazio,legal_moves,self.T1,self.T2,'difensore')
         
         # Pircd
-        self.PircdAzione.preCondizione(spazio,legal_moves,self.T1,self.T2,Timer)
+        self.PircdAzione.preCondizione(spazio,legal_moves,self.T1,self.T2,'difensore')
         
         # Pdistccd
-        self.PdistccdAzione.preCondizione(spazio,legal_moves,self.T1,self.T2,Timer)
+        self.PdistccdAzione.preCondizione(spazio,legal_moves,self.T1,self.T2,'difensore')
         
         # Prmi
-        self.PrmiAzione.preCondizione(spazio,legal_moves,self.T1,self.T2,Timer)
+        self.PrmiAzione.preCondizione(spazio,legal_moves,self.T1,self.T2,'difensore')
 
         # noOp
-        self.noOp.preCondizione(spazio,legal_moves,self.T1,self.T2,Timer,self.__class__.__name__)
+        self.noOp.preCondizione(spazio,legal_moves,self.T1,self.T2,self.__class__.__name__)
         #legal_moves[7] = 1
 
         # Non ci sono mosse per l'attaccante
         for i in range(8,19,1):
             legal_moves[i] = 0
 
-    def postCondizioni(self,action,spazio,agent,Timer):
+
+    def postCondizioni(self,action,spazio,agent):
         print('Mosse Asincrone in Running prima della mossa:',self.mosseAsincroneRunning)
 
         # Pscan
@@ -65,36 +66,42 @@ class Attaccante(Agente):
             self.mosseAsincroneRunning.append(action)
             Thread(target=self.PscanAzione.postCondizione,args=(spazio,agent,self.mosseAsincroneRunning,action)).start()
             print('AVVIATO PSCAN...')
-            Timer -= 1
+            # Timer
+            spazio[agent][21] -= 1
         
         # Pvsftpd
         elif action == 1 :
             self.PvsftpdAzione.postCondizione(spazio,agent)
-            Timer -= 1
+            # Timer
+            spazio[agent][21] -= 1
         
         # Psmbd
         elif action == 2 :
             self.PsmbdAzione.postCondizione(spazio,agent)
-            Timer -= 1
+            # Timer
+            spazio[agent][21] -= 1
         
         # Pphpcgi
         elif action == 3 :
             self.PphpcgiAzione.postCondizione(spazio,agent)
-            Timer -= 1
+            # Timer
+            spazio[agent][21] -= 1
         
         # Pircd
         elif action == 4 :
             self.PircdAzione.postCondizione(spazio,agent)
-            Timer -= 1
+            # Timer
+            spazio[agent][21] -= 1
         
         # Pdistccd
         elif action == 5 :
             self.PdistccdAzione.postCondizione(spazio,agent)
-            Timer -= 1
+            # Timer
+            spazio[agent][21] -= 1
         
         # Prmi
         elif action == 6 :
             self.PrmiAzione.postCondizione(spazio,agent)
-            Timer -= 1
-            
-        return Timer
+            # Timer
+            spazio[agent][21] -= 1
+        

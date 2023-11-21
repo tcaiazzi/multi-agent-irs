@@ -4,7 +4,7 @@ from azioneAsincrona import azioneAsincrona
 
 class noOp(azioneSincrona):
 
-    def preCondizione(self,spazio,legal_moves,T1,T2,Timer,agent):
+    def preCondizione(self,spazio,legal_moves,T1,T2,agent):
         if agent == 'Difensore':
             legal_moves[18] = 1
         else:

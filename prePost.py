@@ -38,7 +38,7 @@ lastMosse = {
 
 
 # Pre condizioni codificate nell'action mask
-def preCondizioni(agent,spazio,legal_moves,Timer):
+def preCondizioni(agent,spazio,legal_moves):
     # STATO
         # [ firewall([True/False])(0), blockedip([])(1), flowlimit_ips([])(2), alert([True/False])(3), honeypot_ips([])(4),
         # log_verb([0-5])(5),
@@ -50,13 +50,13 @@ def preCondizioni(agent,spazio,legal_moves,Timer):
 
     if agent == 'difensore':
         # pre condizioni del difensore
-        difensore.preCondizioni(spazio,legal_moves,Timer)
+        difensore.preCondizioni(spazio,legal_moves)
 
     else:
         # pre condizioni dell'attaccante
         # In tutte ho inserito che se il software viene aggiornato neanche più il pscan si può fare 
         # altrimenti non ce la farebbe mai ad uscire perche deve decrementare i log
-        attaccante.preCondizioni(spazio,legal_moves,Timer)
+        attaccante.preCondizioni(spazio,legal_moves)
         
 
     if agent == 'difensore':
@@ -75,7 +75,7 @@ def preCondizioni(agent,spazio,legal_moves,Timer):
 
 
 # APPLICA L'AZIONE ALLo SPAZIO 'LOGICA'
-def postCondizioni(action,spazio,agent,Timer):
+def postCondizioni(action,spazio,agent):
     # Post COndizioni
     # STATO
     # [ firewall([True/False])(0), blockedip([])(1), flowlimit_ips([])(2), alert([True/False])(3), honeypot_ips([])(4),
@@ -90,10 +90,10 @@ def postCondizioni(action,spazio,agent,Timer):
 
     if agent == 'difensore':
         print(mosseDifensore[action])
-        Timer = difensore.postCondizioni(action,spazio,agent,Timer)
+        Timer = difensore.postCondizioni(action,spazio,agent)
         
     elif agent == 'attaccante':
-        Timer = attaccante.postCondizioni(action,spazio,'difensore',Timer)
+        Timer = attaccante.postCondizioni(action,spazio,'difensore')
         
     return Timer
 
@@ -162,7 +162,7 @@ def terminationPartita(spazio):
 
 def generazioneSpazioRandom():
     # STATO CHE AVEVO SUPPOSTO IO DI PARTENZA
-    spazio = [0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+    spazio = [0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
     """ for i in range(21):
         if i == 5:
             spazio[i] = random.randint(0,5)

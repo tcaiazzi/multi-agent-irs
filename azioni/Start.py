@@ -4,8 +4,8 @@ import time
 
 class Start(azioneSincrona):
 
-    def preCondizione(self,spazio,legal_moves,T1,T2,Timer):
-        if spazio['difensore'][6] == 0 :
+    def preCondizione(self,spazio,legal_moves,T1,T2,agent):
+        if spazio[agent][6] == 0 :
             legal_moves[15] = 1
         else:
             legal_moves[15] = 0
