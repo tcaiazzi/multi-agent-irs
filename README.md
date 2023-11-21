@@ -1,7 +1,8 @@
 # IRS: Intrusion Response System
 NOTA: Multithread non ancora utilizzato/sfruttato
 
-lanciare python3 run_rsp.py (lui usa algoritmiTraining per l'implementazione dei modelli e visualizzazione per vedere i grafici di training )
+python3 ./training/run_rspXXX.py 
+(lui usa algoritmiTraining per l'implementazione dei modelli e visualizzazione per vedere i grafici di training )
 	invoca rsp.py che si avvale di prePost per il training
 	
 	|run_rspDQN--->
@@ -15,7 +16,8 @@ lanciare python3 run_rsp.py (lui usa algoritmiTraining per l'implementazione dei
 		|visualizzzazione--->
 
 
-lanciare python3 evaluationModel.py (lui usa algoritmi di training per ricaricare il checkpoint treinato)
+python3 ./evaluate/evaluationXXX.py 
+(lui usa algoritmi di training per ricaricare il checkpoint treinato)
 	invoca visualizzazione per vedere come si comporta il modello
 	
 	|evaluationModel--->

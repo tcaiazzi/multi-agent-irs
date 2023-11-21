@@ -2,6 +2,7 @@ from abc import abstractmethod
 import time
 
 class azioneAsincrona():
+    
     @abstractmethod
     def preCondizione(self,spazio,legal_moves,T1,T2,mosseAsincroneRunning):
         pass
@@ -10,5 +11,6 @@ class azioneAsincrona():
     @abstractmethod
     def postCondizione(self,spazio,agent,mosseAsincroneRunning,action):
         pass
+
     def attendi(self,tempo):
         time.sleep(tempo)
