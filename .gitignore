@@ -45,10 +45,12 @@
 # Kernel Module Compile Results
 *.mod*
 *.cmd
-start (copia).sh
+paper
 *.txt
 .tmp_versions/
 modules.order
 Module.symvers
 Mkfile.old
 dkms.conf
+
+paper (copia)/*
