@@ -139,9 +139,9 @@ def reward(agent,spazio,action):
             # perchese influisce l'attaccante comunque il difensore se scheglie nop non la peggiora
         }
     }
-    wt = 0.32
+    wt = 0.16
     wc = 0.34
-    wi = 0.34
+    wi = 0.50
     tMax = 100
     cMax = 100
     calcolo = (-wt*(REWARD_MAP[agent][action][0]/tMax)-wc*(REWARD_MAP[agent][action][1]/cMax)-wi*REWARD_MAP[agent][action][2])

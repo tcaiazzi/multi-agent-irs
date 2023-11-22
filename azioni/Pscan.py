@@ -14,7 +14,7 @@ class Pscan(azioneAsincrona):
             legal_moves[0] = 0
 
     def postCondizione(self,spazio,agent,mosseAsincroneRunning,action):
-        self.attendi(0.001)
+        self.attendi(0.005)
         spazio[agent][14] = 1
         mosseAsincroneRunning.remove(action)
         print('Mosse Asincrone in Running dopo ATtesa e applicazione della mossa:',mosseAsincroneRunning)
