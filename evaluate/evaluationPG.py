@@ -18,7 +18,7 @@ from ray.rllib.algorithms.algorithm import Algorithm
 #pathPG = '/home/matteo/ray_results/PG_2023-11-15_09-14-41/PG_rsp_06f46_00000_0_2023-11-15_09-14-41/checkpoint_000000'
 
 # train su stato start
-pathPG = '/home/matteo/ray_results/PG_2023-11-21_15-19-09/PG_rsp_efa7e_00000_0_2023-11-21_15-19-09/checkpoint_000000'
+pathPG = sys.argv[1]
 ############################################ PER VEDERLO GIOCARE #####################################
 # Così va ma senza polisi sceglie random, ma va la logica della reward e dello stopping
 

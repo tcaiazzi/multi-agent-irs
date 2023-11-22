@@ -1,4 +1,5 @@
 # se lancio dalla cartella principale
+import sys
 sys.path.append('./')
 
 from  visualizzazione import visualizza_reward_mosse
@@ -60,10 +61,12 @@ from supersuit.multiagent_wrappers import pad_action_space_v0,pad_observations_v
 torch, nn = try_import_torch()
 torch.cuda.empty_cache()
 
+trainingIteration =  int(sys.argv[1])
+
 # COndizioni di stopping degli algoritmi 
 stop = {
         # epoche/passi dopo le quali il training si arresta
-        "training_iteration": 2,
+        "training_iteration": trainingIteration,
 
         #"timesteps_total":2,
 

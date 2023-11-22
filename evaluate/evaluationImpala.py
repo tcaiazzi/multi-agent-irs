@@ -15,7 +15,7 @@ from ray.rllib.algorithms.algorithm import Algorithm
 # sembra instabile ma veloce a convergere ed è veloce
 #pathImpala = '/home/matteo/ray_results/IMPALA_2023-11-10_14-12-54/IMPALA_rsp_dbbe5_00000_0_2023-11-10_14-12-54/checkpoint_000000'
 # 20 training iteration
-pathImpala = '/home/matteo/ray_results/IMPALA_2023-11-13_15-21-42/IMPALA_rsp_f7fb3_00000_0_2023-11-13_15-21-43/checkpoint_000000'
+pathImpala = sys.argv[1]
 
 ############################################ PER VEDERLO GIOCARE #####################################
 # Così va ma senza polisi sceglie random, ma va la logica della reward e dello stopping

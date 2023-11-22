@@ -20,7 +20,7 @@ from ray.rllib.algorithms.algorithm import Algorithm
 # 20 training iteration
 #pathPPO = '/home/matteo/ray_results/PPO_2023-11-13_15-29-22/PPO_rsp_09b75_00000_0_2023-11-13_15-29-22/checkpoint_000000'
 #pathPPO = '/home/matteo/ray_results/PPO_2023-11-14_12-11-47/PPO_rsp_9a365_00000_0_2023-11-14_12-11-47/checkpoint_000000'
-pathPPO = '/home/matteo/ray_results/PPO_2023-11-14_12-54-55/PPO_rsp_a0853_00000_0_2023-11-14_12-54-55/checkpoint_000000'
+pathPPO = sys.argv[1]
 ############################################ PER VEDERLO GIOCARE #####################################
 # Così va ma senza polisi sceglie random, ma va la logica della reward e dello stopping
 

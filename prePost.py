@@ -133,7 +133,10 @@ def reward(agent,spazio,action):
             15 : (30,6,0),
             16 : (3600,10,0.1),
             17 : (600,300,0.1),
-            18 : (0,0,0)
+            18 : (1000,100,100)
+            # voglio scoraggiare il difensore a non fare nulla così che faccia qualcosa per salvaguardare
+            # in realta basterebbe che il l'attaccante influisca ed il difensore ottenga una reward positiva (?)
+            # perchese influisce l'attaccante comunque il difensore se scheglie nop non la peggiora
         }
     }
     wt = 0.32

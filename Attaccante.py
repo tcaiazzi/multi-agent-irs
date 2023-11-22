@@ -105,5 +105,9 @@ class Attaccante(Agente):
             # Timer
             spazio[agent][21] -= 1
         
+        # Noop solo per il timer
+        elif action == 7 :
+            spazio[agent][21] -= 1
+        
         print('Mosse Asincrone in Running dopo la mossa:',self.mosseAsincroneRunning)
         

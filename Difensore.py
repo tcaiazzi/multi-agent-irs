@@ -228,3 +228,8 @@ class Difensore(Agente):
             self.UpdateAzione.postCondizione(spazio,agent)
             # Timer
             spazio[agent][21] += 1
+
+        # Noop solo per il timer
+        elif action == 18 :
+            spazio[agent][21] += 1
+

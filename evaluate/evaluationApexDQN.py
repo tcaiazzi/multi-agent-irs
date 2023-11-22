@@ -13,7 +13,7 @@ from ray.rllib.algorithms.algorithm import Algorithm
 # sarebbe dovuto risultare piu veloce ma sul mio non sembra, se dqn riesco a spingermi liberamente a 20 training it.
 # con apex ci mette dippiu, 30minuti per 10 trainin iteration e 100 partite(?)
 # evaluation bassa
-pathApexDQN = '/home/matteo/ray_results/APEX_2023-11-10_14-45-17/APEX_rsp_622c0_00000_0_2023-11-10_14-45-17/checkpoint_000000'
+pathApexDQN = sys.argv[1]
 
 config = ApexDQN().config
 
