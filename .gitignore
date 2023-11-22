@@ -45,7 +45,7 @@
 # Kernel Module Compile Results
 *.mod*
 *.cmd
-
+*/__pycache__/*
 *.txt
 .tmp_versions/
 modules.order
