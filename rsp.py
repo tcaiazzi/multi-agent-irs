@@ -13,6 +13,8 @@ from prePost import postCondizioni,reward,terminationPartita,reward_mosse,curva_
 import sys
 import os
 
+# metto una copia delle legal moves così che lastmossa è nop solo se era l'unica disponibile
+
 """ path = sys.argv[0][:-3]
 print('SYS:',path) """
 
@@ -80,6 +82,7 @@ class raw_env(AECEnv):
 
         # Questa è la truncation cosi esce per non girare all'infinito
         self.NUM_ITERS = 1000
+        self.lm = []
         #self.Timer = 0
 
         # Mappa che in base all'azione eseguita mi da costo, impatto, ecc dell'azione
@@ -210,6 +213,7 @@ class raw_env(AECEnv):
         legal_moves = np.zeros(19,'int8')
 
         preCondizioni(agent,self.spazio,legal_moves)
+        self.lm = np.copy(legal_moves)
 
         print('\t')
         print('Observe agent:',agent)
@@ -329,7 +333,23 @@ class raw_env(AECEnv):
         
         ############################# CHECK ARRESTO (se sono nello stato sicuro) #########################
         
-        lastMosse[agent] = action
+        # COSA STO FACENDO
+        # NOOP-NOOP MI TERMINA
+        # MASOLO NEL CASO FOSSERO LE ULTIME DUE MOSSE RIMASTE
+        # VOGLIO VEDERE SE MIGLIORA IL TRAINING
+        print('LegalMoves in lm:',self.lm)
+        k = [not(i) for i in self.lm]
+        print('k nottato:',k)
+
+        if agent == 'attaccante':
+            print(k[:7])
+            if all(k[:7]):
+                lastMosse[agent] = action
+        else:
+            print(k[:18])
+            if all(k[:18]):
+                lastMosse[agent] = action
+
 
         # NON POSSONO AVERE VALORI DISCORDI GLI AGENTI delle terminations e troncation
         self.num_moves += 1
@@ -342,6 +362,7 @@ class raw_env(AECEnv):
         if not(val):
             # prova a fermarlo il fatto che le ultime due mosse se sono nop e nop (att e diff) allora basta 
             # non possono fare piu niente
+        
             if lastMosse['difensore'] == 18 and lastMosse['attaccante'] == 7:
                 self.terminations = {
                     agent: True for agent in self.agents
