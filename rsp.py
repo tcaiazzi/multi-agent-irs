@@ -7,7 +7,7 @@ from gymnasium.spaces import Discrete,Box,Dict
 from pettingzoo import AECEnv
 from pettingzoo.utils import agent_selector, wrappers
 
-from prePost import postCondizioni,reward,terminationPartita,reward_mosse,curva_partita,preCondizioni,lastMosse,generazioneSpazioRandom
+from prePost import postCondizioni,reward,terminationPartita,reward_mosse,curva_partita,preCondizioni,generazioneSpazioRandom
 
 
 import sys
@@ -82,7 +82,16 @@ class raw_env(AECEnv):
 
         # Questa è la truncation cosi esce per non girare all'infinito
         self.NUM_ITERS = 1000
-        self.lm = []
+        self.lm = {
+            'attaccante':{
+                'nmosse':-1,
+                'mosse':[]
+            },
+            'difensore':{
+                'nmosse':-1,
+                'mosse':[]
+            }
+        }
         #self.Timer = 0
 
         # Mappa che in base all'azione eseguita mi da costo, impatto, ecc dell'azione
@@ -213,7 +222,8 @@ class raw_env(AECEnv):
         legal_moves = np.zeros(19,'int8')
 
         preCondizioni(agent,self.spazio,legal_moves)
-        self.lm = np.copy(legal_moves)
+        self.lm[agent]['mosse'] = np.copy(legal_moves)
+        #self.lm[agent]['nmosse'] = self.num_moves
 
         print('\t')
         print('Observe agent:',agent)
@@ -247,8 +257,16 @@ class raw_env(AECEnv):
         self.spazio = {}
         self.spazio[self.possible_agents[0]] = generazioneSpazioRandom()
         self.spazio[self.possible_agents[1]] = generazioneSpazioRandom()
-        lastMosse['attaccante'] = -1
-        lastMosse['difensore'] = -1
+        self.lm = {
+            'attaccante':{
+                'nmosse':-1,
+                'mosse':[]
+            },
+            'difensore':{
+                'nmosse':-1,
+                'mosse':[]
+            }
+        }
     
         self.agents = self.possible_agents[:]
 
@@ -337,23 +355,25 @@ class raw_env(AECEnv):
         # NOOP-NOOP MI TERMINA
         # MASOLO NEL CASO FOSSERO LE ULTIME DUE MOSSE RIMASTE
         # VOGLIO VEDERE SE MIGLIORA IL TRAINING
-        print('LegalMoves in lm:',self.lm)
-        k = [not(i) for i in self.lm]
-        print('k nottato:',k)
+        # aggiungo la sequenialità delle noop-noop mel'ero dimenticataa
 
         if agent == 'attaccante':
-            print(k[:7])
-            if all(k[:7]):
-                lastMosse[agent] = action
+            # solo noop puo fare se true
+            att = [not(i) for i in self.lm['attaccante']['mosse']]
+            print('att:',att)
+            if all(att[:7]):
+                print('ENTRATOatt')
+                self.lm[agent]['nmosse'] = self.num_moves
         else:
-            print(k[:18])
-            if all(k[:18]):
-                lastMosse[agent] = action
+            # solo noop puo fare se true
+            diff = [not(i) for i in self.lm['difensore']['mosse']]
+            print('diff:',diff)
+            if all(diff[:18]):
+                print('ENTRATOdiff')
+                self.lm[agent]['nmosse'] = self.num_moves
 
 
         # NON POSSONO AVERE VALORI DISCORDI GLI AGENTI delle terminations e troncation
-        self.num_moves += 1
-        
         val = terminationPartita(self.spazio)
         # se la condizione di aresto generale lo ferma bene altrimenti...
         self.terminations = {
@@ -362,8 +382,13 @@ class raw_env(AECEnv):
         if not(val):
             # prova a fermarlo il fatto che le ultime due mosse se sono nop e nop (att e diff) allora basta 
             # non possono fare piu niente
-        
-            if lastMosse['difensore'] == 18 and lastMosse['attaccante'] == 7:
+            # La differenza la uso per verificare che i due non possano più fare niente INSIEME
+            # altrimenti attaccante noOp assoluto al punto 10 poi attaccante fa una mosse e sblocca qualche attacco
+            # attaccante agisce perche difensore non aveva il nop assoluto e quando cel'ha magari al 50 l'altro era al 10 
+            # ed esce
+            differenza = self.lm['attaccante']['nmosse']-self.lm['difensore']['nmosse']
+            print('DIFFERENZA tempo noOp-noOp:',differenza)
+            if differenza == 1 or differenza == -1:
                 self.terminations = {
                     agent: True for agent in self.agents
                 }
@@ -375,17 +400,14 @@ class raw_env(AECEnv):
                 }
         ##################################################################################################
        
-        # selects the next agent.
-        self.agent_selection = self._agent_selector.next()
-        #self.Timer = timer
         
+        #self.Timer = timer
         # SALVE TUTTE LE REWARD CUMULATIVE DI TUTTE LE PARTITE
         #curva_partita['attaccante'].append((self.num_moves,self._cumulative_rewards['attaccante']))
         #curva_partita['difensore'].append((self.num_moves,self._cumulative_rewards['difensore']))
 
 
         self._accumulate_rewards()
-        self.rewards[agent] = 0
 
         # PERCHÈ L'AVEVANO MESSA?? SE LA METTO AD OGNI ROUND MI SI AZZERA
         #self._cumulative_rewards[agent] = 0
@@ -395,6 +417,11 @@ class raw_env(AECEnv):
         print('Termination:',self.terminations)
         print('Rewards:', self.rewards)
         print('reward cumulative:',self._cumulative_rewards)
+
+        # selects the next agent.
+        self.agent_selection = self._agent_selector.next()
+        self.num_moves += 1
+        self.rewards[agent] = 0
         
         if self.render_mode == "human":
             self.render()

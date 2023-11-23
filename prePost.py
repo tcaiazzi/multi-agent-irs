@@ -31,10 +31,10 @@ curva_partita = {
     "difensore":[],
 }
 
-lastMosse = {
+""" lastMosse = {
     'attaccante': -1,
     'difensore': -1,
-}
+} """
 
 
 # Pre condizioni codificate nell'action mask
