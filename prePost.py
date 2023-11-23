@@ -157,9 +157,11 @@ def terminationPartita(spazio):
     check = 0
     # clean system state + esclusione degli altri parametri (lascio solo il check degli attacchi sotto T1 
     # come se gli altri fossero altri subsets states con minace in sicurezza)
+    # stato terminale attaccante con tutti attacchi on
     # Consigliata dal professore
-    if (spazio['difensore'][14] < T1 and spazio['difensore'][15] < T1 and spazio['difensore'][16] < T1 and spazio['difensore'][17] < T1 and spazio['difensore'][18] < T1 and spazio['difensore'][19] < T1 and spazio['difensore'] [20] < T1 
-        and spazio['difensore'] [1] == 0 and spazio['difensore'][2] == 0 and spazio['difensore'][4] == 0 and spazio['difensore'][5] == 0 and spazio['difensore'][6] == 1 and spazio['difensore'][7] == 0):
+    if ((spazio['difensore'][14] < T1 and spazio['difensore'][15] < T1 and spazio['difensore'][16] < T1 and spazio['difensore'][17] < T1 and spazio['difensore'][18] < T1 and spazio['difensore'][19] < T1 and spazio['difensore'] [20] < T1 
+        and spazio['difensore'] [1] == 0 and spazio['difensore'][2] == 0 and spazio['difensore'][4] == 0 and spazio['difensore'][5] == 0 and spazio['difensore'][6] == 1 and spazio['difensore'][7] == 0) or 
+        (spazio['difensore'][14] == 1 and spazio['difensore'][15] == 1 and spazio['difensore'][16] == 1 and spazio['difensore'][17] == 1 and spazio['difensore'][18] == 1 and spazio['difensore'][19] == 1 and spazio['difensore'] [20] == 1)):
         val = True
     return val
 
