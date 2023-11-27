@@ -129,7 +129,10 @@ class ApexDQN:
             }
     )
 )
-          
+
+
+# Strano l'attaccante si addestra a scegliere nop e poi difensore -log e finisce, non vorrei che minimizzasse 
+# Però se così fosse il difensore non terminerebbe subito
 class Impala():
      def __init__(self):
           self.config = (
@@ -150,13 +153,16 @@ class Impala():
     )
 )
           
-
+# Con 100 training iteration ho visto che le partite terminano con il difensore che in una media di 50 mosse vince
+# PER ora tra PPO con 50 e Impala con 40 lui con 100 è il migliore (piu o meno il tempo di addstramento è stato lo stesso,
+# se non quantop meno accettabile da attendere, perciò sono stati scelti questi valori di training non per 
+# performance uguali)
 class PG():
      def __init__(self):
           self.config = (
       PGConfig()
       .environment(env_name,disable_env_checking=True)
-      .resources(num_gpus=0)
+      .resources(num_gpus=1)
       .framework("torch")
       .multi_agent(
         policies={
@@ -171,6 +177,9 @@ class PG():
     )
 )  
           
+
+
+# Con 50 epoche alcune le vince altre le perde, PG mi sembrava vincesse sempre (potrei sbagliare) pero partite piu brevi
 class PPO():
      def __init__(self):
           self.config = (
