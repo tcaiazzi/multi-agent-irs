@@ -46,6 +46,7 @@
 *.mod*
 *.cmd
 paper
+__pycache__
 *.txt
 .tmp_versions/
 modules.order
