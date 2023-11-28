@@ -82,6 +82,12 @@ class raw_env(AECEnv):
 
         # Questa è la truncation cosi esce per non girare all'infinito
         self.NUM_ITERS = 1000
+
+        # Lo utilizzo affinche termini quando entrambi i due agenti, in maniera conseutiva hanno a disposizione
+        # solo mosse noop selezionabili:
+        # nmosse è il numero di mossa della partita in cui hanno solo noop
+        # in mosse salvo l'actionmask per la verifica
+        # nmosse lo uso per la sequenzialità dei noop-noop
         self.lm = {
             'attaccante':{
                 'nmosse':-1,
@@ -92,18 +98,9 @@ class raw_env(AECEnv):
                 'mosse':[]
             }
         }
-        #self.Timer = 0
-
-        # Mappa che in base all'azione eseguita mi da costo, impatto, ecc dell'azione
 
         self.possible_agents = ["attaccante","difensore"]
 
-        # PER LA LOGICA
-        """ self.spazio = {
-            # quando tutti e 3 1 invalicabili
-            agent: [1,1,1]
-            for agent in self.possible_agents
-        } """
         self.spazio = {}
         
         # STATO
@@ -223,7 +220,6 @@ class raw_env(AECEnv):
 
         preCondizioni(agent,self.spazio,legal_moves)
         self.lm[agent]['mosse'] = np.copy(legal_moves)
-        #self.lm[agent]['nmosse'] = self.num_moves
 
         print('\t')
         print('Observe agent:',agent)
@@ -289,7 +285,6 @@ class raw_env(AECEnv):
         #self.observations = {agent: 3 for agent in self.agents}
 
         self.num_moves = 0
-        #self.Timer = 0
         """
         Our agent_selector utility allows easy cyclic stepping through the agents list.
         """
@@ -328,10 +323,6 @@ class raw_env(AECEnv):
         print('Mossa da eseguire:',action)
         print('Timer Prima:',self.spazio['difensore'][21])
 
-        # the agent which stepped last had its _cumulative_rewards accounted for
-        # (because it was returned by last()), so the _cumulative_rewards for this
-        # agent should start again at 0
-
         ######################## PRE(con action mask solo post)/POST condizioni #####################################################
 
         #print('Prima della mossa:',self.spazio)
@@ -360,16 +351,16 @@ class raw_env(AECEnv):
         if agent == 'attaccante':
             # solo noop puo fare se true
             att = [not(i) for i in self.lm['attaccante']['mosse']]
-            print('att:',att)
+            #print('att:',att)
             if all(att[:7]):
-                print('ENTRATOatt')
+                #print('ENTRATOatt')
                 self.lm[agent]['nmosse'] = self.num_moves
         else:
             # solo noop puo fare se true
             diff = [not(i) for i in self.lm['difensore']['mosse']]
-            print('diff:',diff)
+            #print('diff:',diff)
             if all(diff[:18]):
-                print('ENTRATOdiff')
+                #print('ENTRATOdiff')
                 self.lm[agent]['nmosse'] = self.num_moves
 
 
@@ -398,19 +389,15 @@ class raw_env(AECEnv):
                 self.terminations = {
                     agent: self.num_moves >= self.NUM_ITERS for agent in self.agents
                 }
+
         ##################################################################################################
-       
         
-        #self.Timer = timer
         # SALVE TUTTE LE REWARD CUMULATIVE DI TUTTE LE PARTITE
         #curva_partita['attaccante'].append((self.num_moves,self._cumulative_rewards['attaccante']))
         #curva_partita['difensore'].append((self.num_moves,self._cumulative_rewards['difensore']))
 
-
         self._accumulate_rewards()
 
-        # PERCHÈ L'AVEVANO MESSA?? SE LA METTO AD OGNI ROUND MI SI AZZERA
-        #self._cumulative_rewards[agent] = 0
         print('Timer Dopo:',self.spazio['difensore'][21])
         print('Num Mosse:',self.num_moves)
         print('Truncation:',self.truncations)
