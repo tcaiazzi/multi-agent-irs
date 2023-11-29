@@ -10,6 +10,8 @@ from threading import Thread
 attaccante = Attaccante()
 difensore = Difensore()
 
+T1 = 0.33
+T2 = 0.66
 
 mosseDifensore = ['Generate alert','FirewallActivation','BlockSourceIp','UnblockSourceIp','FlowRateLimit','UnlimitFlowRate',
                   'RedirectToHoneypot','UnRedirectToHoneypot','IncreaseLog','DecreaseLog','QuarantineHost','UnQuarantineHost',
