@@ -107,7 +107,7 @@ class Difensore(Agente):
         self.IncreaseLogAzione.preCondizione(spazio,legal_moves,self.T1,self.T2,'difensore',self.mosseAsincroneRunning)
         
         # DecreaseLog
-        self.DecreaseLogAzione.preCondizione(spazio,legal_moves,self.T1,self.T2,'difensore',self.mosseAsincroneRunning)
+        self.DecreaseLogAzione.preCondizione(spazio,legal_moves,self.T1,self.T2,'difensore')
         
         # QuarantineHost
         self.QuarantineAzione.preCondizione(spazio,legal_moves,self.T1,self.T2,'difensore')
@@ -199,15 +199,15 @@ class Difensore(Agente):
             self.mosseAsincroneRunning.append(action)
             Thread(target=self.IncreaseLogAzione.postCondizione,args=(spazio,agent,self.mosseAsincroneRunning,action)).start()
             # Timer
-            #spazio[agent][21] += 1
+            spazio[agent][21] += 1
         
         # DecreaseLog
         elif action == 9 :
-            self.mosseAsincroneRunning.append(action)
-            Thread(target=self.DecreaseLogAzione.postCondizione,args=(spazio,agent,self.mosseAsincroneRunning,action)).start()
+            #self.mosseAsincroneRunning.append(action)
+            #Thread(target=self.DecreaseLogAzione.postCondizione,args=(spazio,agent,self.mosseAsincroneRunning,action)).start()
             # Timer
-            #self.DecreaseLogAzione.postCondizione(spazio,agent)
-            #spazio[agent][21] += 1
+            self.DecreaseLogAzione.postCondizione(spazio,agent)
+            spazio[agent][21] += 1
         
         # QuarantineHost
         elif action == 10 :
@@ -251,7 +251,7 @@ class Difensore(Agente):
             Thread(target=self.BackupAzione.postCondizione,args=(spazio,agent,self.mosseAsincroneRunning,action)).start()
             print('AVVIO BACKUP')
             # Timer
-            #spazio[agent][21] += 1
+            spazio[agent][21] += 1
 
         # SoftwareUpdate
         elif action == 17 :
