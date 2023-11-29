@@ -47,32 +47,6 @@ class Difensore(Agente):
         self.UpdateAzione = Update()
         self.noOp = noOp()
 
-        self.REWARD_MAP = {
-            0 : (1,1,0),
-            1 : (2,1,0),
-            2 : (1,3,0.3),
-            3 : (1,3,0),
-            4 : (3,1,0.2),
-            5 : (3,1,0),
-            6 : (3,3,0.1),
-            7 : (3,3,0),
-            8 : (2,1,0.05),
-            9 : (1,1,0),
-            10 : (5,5,1),
-            11 : (5,5,0),
-            12 : (3600,200,0),
-            13 : (60,6,0.7),
-            14 : (30,6,1),
-            15 : (30,6,0),
-            16 : (3600,10,0.1),
-            17 : (600,300,0.1),
-            18 : (1000,100,100)
-            # voglio scoraggiare il difensore a non fare nulla così che faccia qualcosa per salvaguardare
-            # in realta basterebbe che il l'attaccante influisca ed il difensore ottenga una reward positiva (?)
-            # perchese influisce l'attaccante comunque il difensore se scheglie nop non la peggiora
-        }
-
-
     # Il difensore invece può eseguire una mossa solo nel caso incui il Timer è <=0 ed ogni mossa vale 1
     def preCondizioni(self,spazio,legal_moves):
         
@@ -107,7 +81,7 @@ class Difensore(Agente):
         self.IncreaseLogAzione.preCondizione(spazio,legal_moves,self.T1,self.T2,'difensore',self.mosseAsincroneRunning)
         
         # DecreaseLog
-        self.DecreaseLogAzione.preCondizione(spazio,legal_moves,self.T1,self.T2,'difensore')
+        self.DecreaseLogAzione.preCondizione(spazio,legal_moves,self.T1,self.T2,'difensore',self.mosseAsincroneRunning)
         
         # QuarantineHost
         self.QuarantineAzione.preCondizione(spazio,legal_moves,self.T1,self.T2,'difensore')
@@ -203,10 +177,9 @@ class Difensore(Agente):
         
         # DecreaseLog
         elif action == 9 :
-            #self.mosseAsincroneRunning.append(action)
-            #Thread(target=self.DecreaseLogAzione.postCondizione,args=(spazio,agent,self.mosseAsincroneRunning,action)).start()
+            self.mosseAsincroneRunning.append(action)
+            Thread(target=self.DecreaseLogAzione.postCondizione,args=(spazio,agent,self.mosseAsincroneRunning,action)).start()
             # Timer
-            self.DecreaseLogAzione.postCondizione(spazio,agent)
             spazio[agent][21] += 1
         
         # QuarantineHost
@@ -265,8 +238,3 @@ class Difensore(Agente):
 
         print('Mosse Asincrone in Running dopo la mossa:',self.mosseAsincroneRunning)
 
-    
-    def reward(self, action):
-        calcolo = (-self.wt*(self.REWARD_MAP[action][0]/self.tMax)-self.wc*(self.REWARD_MAP[action][1]/self.cMax)-self.wi*self.REWARD_MAP[action][2])
-        print('Reward:',calcolo)
-        return calcolo

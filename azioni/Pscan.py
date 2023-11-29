@@ -9,13 +9,13 @@ class Pscan(azioneAsincrona):
             # Timer 
             spazio[agent][21] >=0
             and 0 not in mosseAsincroneRunning):
-
             legal_moves[0] = 1
         else:
             legal_moves[0] = 0
 
     def postCondizione(self,spazio,agent,mosseAsincroneRunning,action):
-        self.sleep(0.001)
+        self.attendi(0.001)
         spazio[agent][14] = 1
         mosseAsincroneRunning.remove(action)
-
+        print('Mosse Asincrone in Running dopo ATtesa e applicazione della mossa:',mosseAsincroneRunning)
+        print('PSCAN TERMINATO ORA')

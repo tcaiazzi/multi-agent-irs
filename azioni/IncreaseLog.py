@@ -11,12 +11,11 @@ class IncreaseLog(azioneAsincrona):
              spazio[agent][20] >= T1) and spazio[agent][6] == 1 and 
              # Timer 
              spazio[agent][21] <=0 and 8 not in mosseAsincroneRunning) : 
-            
             legal_moves[8] = 1
+            mosseAsincroneRunning.append(8)
         else:
             legal_moves[8] = 0
 
-    def postCondizione(self,spazio,agent,mosseAsincroneRunning,action):
-        self.sleep(0.0001)
-        mosseAsincroneRunning.remove(action)
+    def postCondizione(self,spazio,agent):
+        self.attendi(0.0001)
         spazio[agent][5] += 1
