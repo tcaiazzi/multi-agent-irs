@@ -49,6 +49,7 @@ class Difensore(Agente):
 
     # Il difensore invece può eseguire una mossa solo nel caso incui il Timer è <=0 ed ogni mossa vale 1
     def preCondizioni(self,spazio,legal_moves):
+        
         # Generate alert
         self.GenerateAlertAzione.preCondizione(spazio,legal_moves,self.T1,self.T2,'difensore')
         
@@ -77,10 +78,10 @@ class Difensore(Agente):
         self.UnRedirectHoneypotAzione.preCondizione(spazio,legal_moves,self.T1,self.T2,'difensore')
         
         # IncreaseLog
-        self.IncreaseLogAzione.preCondizione(spazio,legal_moves,self.T1,self.T2,'difensore')
+        self.IncreaseLogAzione.preCondizione(spazio,legal_moves,self.T1,self.T2,'difensore',self.mosseAsincroneRunning)
         
         # DecreaseLog
-        self.DecreaseLogAzione.preCondizione(spazio,legal_moves,self.T1,self.T2,'difensore')
+        self.DecreaseLogAzione.preCondizione(spazio,legal_moves,self.T1,self.T2,'difensore',self.mosseAsincroneRunning)
         
         # QuarantineHost
         self.QuarantineAzione.preCondizione(spazio,legal_moves,self.T1,self.T2,'difensore')
@@ -101,7 +102,7 @@ class Difensore(Agente):
         self.StartAzione.preCondizione(spazio,legal_moves,self.T1,self.T2,'difensore')
         
         # BackupHost
-        self.BackupAzione.preCondizione(spazio,legal_moves,self.T1,self.T2,self.mosseAsincroneRunning)
+        self.BackupAzione.preCondizione(spazio,legal_moves,self.T1,self.T2,'difensore',self.mosseAsincroneRunning)
         
         # SoftwareUpdate
         # detto dal prof: deve aver fatto backup
@@ -169,13 +170,15 @@ class Difensore(Agente):
         
         # IncreaseLog
         elif action == 8 :
-            self.IncreaseLogAzione.postCondizione(spazio,agent)
+            self.mosseAsincroneRunning.append(action)
+            Thread(target=self.IncreaseLogAzione.postCondizione,args=(spazio,agent,self.mosseAsincroneRunning,action)).start()
             # Timer
             spazio[agent][21] += 1
         
         # DecreaseLog
         elif action == 9 :
-            self.DecreaseLogAzione.postCondizione(spazio,agent)
+            self.mosseAsincroneRunning.append(action)
+            Thread(target=self.DecreaseLogAzione.postCondizione,args=(spazio,agent,self.mosseAsincroneRunning,action)).start()
             # Timer
             spazio[agent][21] += 1
         
