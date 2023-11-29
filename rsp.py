@@ -7,7 +7,7 @@ from gymnasium.spaces import Discrete,Box,Dict
 from pettingzoo import AECEnv
 from pettingzoo.utils import agent_selector, wrappers
 
-from prePost import postCondizioni,reward,terminationPartita,reward_mosse,curva_partita,preCondizioni,generazioneSpazioRandom
+from prePost import postCondizioni,reward,terminationPartita,reward_mosse,curva_partita,preCondizioni,generazioneSpazioRandom,resetAgenti
 
 
 import sys
@@ -249,6 +249,8 @@ class raw_env(AECEnv):
 
     def reset(self, seed=None, options=None):
         
+        resetAgenti()
+
         # PER LA LOGICA
         self.spazio = {}
         self.spazio[self.possible_agents[0]] = generazioneSpazioRandom()
@@ -335,10 +337,7 @@ class raw_env(AECEnv):
         """ print('Mossa valida:',mossaValida)
         if mossaValida: """
         rw = reward(agent,self.spazio,action)
-        if agent == 'difensore':
-            self.rewards[agent] += rw
-        else:
-            self.rewards[agent] -= rw
+        self.rewards[agent] += rw
         
         ############################# CHECK ARRESTO (se sono nello stato sicuro) #########################
         
@@ -365,12 +364,12 @@ class raw_env(AECEnv):
 
 
         # NON POSSONO AVERE VALORI DISCORDI GLI AGENTI delle terminations e troncation
-        val = terminationPartita(self.spazio)
+        val = terminationPartita(self.spazio,self.lm,self.num_moves,self.NUM_ITERS)
         # se la condizione di aresto generale lo ferma bene altrimenti...
         self.terminations = {
             agent: val for agent in self.agents
         }
-        if not(val):
+        """ if not(val):
             # prova a fermarlo il fatto che le ultime due mosse se sono nop e nop (att e diff) allora basta 
             # non possono fare piu niente
             # La differenza la uso per verificare che i due non possano più fare niente INSIEME
@@ -388,7 +387,7 @@ class raw_env(AECEnv):
             else:
                 self.terminations = {
                     agent: self.num_moves >= self.NUM_ITERS for agent in self.agents
-                }
+                } """
 
         ##################################################################################################
         

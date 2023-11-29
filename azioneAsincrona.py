@@ -12,5 +12,5 @@ class azioneAsincrona():
     def postCondizione(self,spazio,agent,mosseAsincroneRunning,action):
         pass
 
-    def attendi(self,tempo):
+    def sleep(self,tempo):
         time.sleep(tempo)

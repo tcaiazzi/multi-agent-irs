@@ -24,6 +24,17 @@ class Attaccante(Agente):
         self.PrmiAzione = Prmi()
         self.noOp = noOp()
 
+        self.REWARD_MAP = {
+            0 : (1,1,1),
+            1 : (1,1,1),
+            2 : (1,1,1),
+            3 : (1,1,1),
+            4 : (1,1,1),
+            5 : (1,1,1),
+            6 : (1,1,1),
+            7 : (0,0,0)
+        }
+
     
 
     # Se l'attaccante trova il Timer <=0 non puo eseguire e per ora facciamo che ogni azione vale 1
@@ -111,3 +122,8 @@ class Attaccante(Agente):
         
         print('Mosse Asincrone in Running dopo la mossa:',self.mosseAsincroneRunning)
         
+    
+    def reward(self, action):
+        calcolo = -(-self.wt*(self.REWARD_MAP[action][0]/self.tMax)-self.wc*(self.REWARD_MAP[action][1]/self.cMax)-self.wi*self.REWARD_MAP[action][2])
+        print('Reward:',calcolo)
+        return calcolo

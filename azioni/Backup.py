@@ -17,7 +17,7 @@ class Backup(azioneAsincrona):
             legal_moves[16] = 0
 
     def postCondizione(self,spazio,agent,mosseAsincroneRunning,action):
-        self.attendi(0.001)
+        self.sleep(0.001)
         spazio[agent][9] = 1
         mosseAsincroneRunning.remove(action)
         print('BACKUP TERMINATO ORA')
