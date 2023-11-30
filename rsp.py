@@ -334,11 +334,11 @@ class raw_env(AECEnv):
         # SI INFLUENZANO LE REWARD A VICENDA
         """ print('Mossa valida:',mossaValida)
         if mossaValida: """
-        rw = reward(agent,self.spazio,action)
-        if agent == 'difensore':
-            self.rewards[agent] += rw
-        else:
-            self.rewards[agent] -= rw
+        rw = reward(agent,action)
+        #if agent == 'difensore':
+        self.rewards[agent] += rw
+        """ else:
+            self.rewards[agent] -= rw """
         
         ############################# CHECK ARRESTO (se sono nello stato sicuro) #########################
         
