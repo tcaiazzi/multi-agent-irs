@@ -15,9 +15,6 @@ import os
 
 # metto una copia delle legal moves così che lastmossa è nop solo se era l'unica disponibile
 
-""" path = sys.argv[0][:-3]
-print('SYS:',path) """
-
 # 7 attacchi (pscan,pvsftpd,psmbd,pphpcgi,pircd,pdistccd,prmi) hanno una probabilità con tui il difensore lo valuta
 # 0 < T1 < T2 < 1 e p < T1 rumore, T1 < p < T2 possibile attacco (prevenzione), p > T2 attacco by IDS (contromisure),
 # p=1 attacco noto e strategia da attuare
