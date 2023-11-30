@@ -16,6 +16,7 @@ class IncreaseLog(azioneAsincrona):
         else:
             legal_moves[8] = 0
 
-    def postCondizione(self,spazio,agent):
+    def postCondizione(self,spazio,agent,mosseAsincroneRunning,action):
         self.attendi(0.0001)
+        mosseAsincroneRunning.remove(action)
         spazio[agent][5] += 1

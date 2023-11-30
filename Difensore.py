@@ -149,7 +149,7 @@ class Difensore(Agente):
         if action == 0 :
             self.GenerateAlertAzione.postCondizione(spazio,agent)
             # Timer
-            spazio[agent][21] += 5
+            spazio[agent][21] += 55
         
         # FirewallActivation
         elif action == 1 :
