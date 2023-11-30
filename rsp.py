@@ -365,12 +365,12 @@ class raw_env(AECEnv):
 
 
         # NON POSSONO AVERE VALORI DISCORDI GLI AGENTI delle terminations e troncation
-        val = terminationPartita(self.spazio)
+        val = terminationPartita(self.spazio,self.lm,self.num_moves,self.NUM_ITERS)
         # se la condizione di aresto generale lo ferma bene altrimenti...
         self.terminations = {
             agent: val for agent in self.agents
         }
-        if not(val):
+        """ if not(val):
             # prova a fermarlo il fatto che le ultime due mosse se sono nop e nop (att e diff) allora basta 
             # non possono fare piu niente
             # La differenza la uso per verificare che i due non possano più fare niente INSIEME
@@ -388,7 +388,7 @@ class raw_env(AECEnv):
             else:
                 self.terminations = {
                     agent: self.num_moves >= self.NUM_ITERS for agent in self.agents
-                }
+                } """
 
         ##################################################################################################
         

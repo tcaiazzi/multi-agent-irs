@@ -114,9 +114,9 @@ def reward(agent,action):
 
 
 # CONTROLLA LO STATE PER TERMINAR EO MENO
-def terminationPartita(spazio):
+def terminationPartita(spazio,lm,num_moves,NUM_ITERS):
     val = False
-    check = 0
+    
     # clean system state + esclusione degli altri parametri (lascio solo il check degli attacchi sotto T1 
     # come se gli altri fossero altri subsets states con minace in sicurezza)
     # stato terminale attaccante con tutti attacchi on
@@ -125,6 +125,21 @@ def terminationPartita(spazio):
         and spazio['difensore'] [1] == 0 and spazio['difensore'][2] == 0 and spazio['difensore'][4] == 0 and spazio['difensore'][5] == 0 and spazio['difensore'][6] == 1 and spazio['difensore'][7] == 0) or 
         (spazio['difensore'][14] == 1 and spazio['difensore'][15] == 1 and spazio['difensore'][16] == 1 and spazio['difensore'][17] == 1 and spazio['difensore'][18] == 1 and spazio['difensore'][19] == 1 and spazio['difensore'] [20] == 1)):
         val = True
+    else:
+            # prova a fermarlo il fatto che le ultime due mosse se sono nop e nop (att e diff) allora basta 
+            # non possono fare piu niente
+            # La differenza la uso per verificare che i due non possano più fare niente INSIEME
+            # altrimenti attaccante noOp assoluto al punto 10 poi attaccante fa una mosse e sblocca qualche attacco
+            # attaccante agisce perche difensore non aveva il nop assoluto e quando cel'ha magari al 50 l'altro era al 10 
+            # ed esce
+            differenza = lm['attaccante']['nmosse']-lm['difensore']['nmosse']
+            print('DIFFERENZA tempo noOp-noOp:',differenza)
+            if differenza == 1 or differenza == -1:
+                val = True
+            # se non puo arrestarlo neanche quello provo a vedere il num di mosse
+            # con noOp sempre selezionabili mi dovrebbe uscire con la condizione nell'if
+            else:
+                val = num_moves >= NUM_ITERS
     return val
 
 # Randomicità dello stato
