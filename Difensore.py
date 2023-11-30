@@ -149,54 +149,55 @@ class Difensore(Agente):
         if action == 0 :
             self.GenerateAlertAzione.postCondizione(spazio,agent)
             # Timer
-            spazio[agent][21] += 1
+            spazio[agent][21] += 5
         
         # FirewallActivation
         elif action == 1 :
             self.FirewallActivationAzione.postCondizione(spazio,agent)
             # Timer
-            spazio[agent][21] += 1
+            spazio[agent][21] += 20
         
         # BlockSourceIp
         elif action == 2 :
             self.BlockIpAzione.postCondizione(spazio,agent)
             # Timer
-            spazio[agent][21] += 1
+            spazio[agent][21] += 35
         
         # UnblockSourceIp
         elif action == 3 :
             self.UnBlockIpAzione.postCondizione(spazio,agent)
             # Timer
-            spazio[agent][21] += 1
+            spazio[agent][21] += 35
         
         # FlowRateLimit
         elif action == 4 :
             self.LimitFlowRateAzione.postCondizione(spazio,agent)
             # Timer
-            spazio[agent][21] += 1
+            spazio[agent][21] += 25
         
         # UnlimitFlowRate
         elif action == 5 :
             self.UnLimitFlowRateAzione.postCondizione(spazio,agent)
             # Timer
-            spazio[agent][21] += 1
+            spazio[agent][21] += 25
         
         # RedirectToHoneypot
         elif action == 6 :
             self.RedirectHoneypotAzione.postCondizione(spazio,agent)
             # Timer
-            spazio[agent][21] += 1
+            spazio[agent][21] += 40
         
         # UnHoneypot
         elif action == 7 :
             self.UnRedirectHoneypotAzione.postCondizione(spazio,agent)
             # Timer
-            spazio[agent][21] += 1
+            spazio[agent][21] += 40
         
         # IncreaseLog
         elif action == 8 :
             self.mosseAsincroneRunning.append(action)
             Thread(target=self.IncreaseLogAzione.postCondizione,args=(spazio,agent,self.mosseAsincroneRunning,action)).start()
+            print('AVVIATO +LOG')
             # Timer
             #spazio[agent][21] += 1
         
@@ -204,6 +205,7 @@ class Difensore(Agente):
         elif action == 9 :
             self.mosseAsincroneRunning.append(action)
             Thread(target=self.DecreaseLogAzione.postCondizione,args=(spazio,agent,self.mosseAsincroneRunning,action)).start()
+            print('AVVIATO -LOG')
             # Timer
             #spazio[agent][21] += 1
         
@@ -211,37 +213,37 @@ class Difensore(Agente):
         elif action == 10 :
             self.QuarantineAzione.postCondizione(spazio,agent)
             # Timer
-            spazio[agent][21] += 1
+            spazio[agent][21] += 70
         
         # UnQuarantineHost
         elif action == 11 :
             self.UnQuarantineAzione.postCondizione(spazio,agent)
             # Timer
-            spazio[agent][21] += 1
+            spazio[agent][21] += 70
         
         # ManualResolution
         elif action == 12 :
             self.ManualResolutionAzione.postCondizione(spazio,agent)
             # Timer
-            spazio[agent][21] += 1
+            spazio[agent][21] += 45
         
         # SystemReboot
         elif action == 13 :
             # Timer
-            spazio[agent][21] += 1
+            spazio[agent][21] += 30
             self.RebootAzione.postCondizione(spazio,agent)
         
         # SystemShutdown
         elif action == 14 :
             self.ShutDownAzione.postCondizione(spazio,agent)
             # Timer
-            spazio[agent][21] += 1
+            spazio[agent][21] += 15
         
         # SystemStart
         elif action == 15 :
             self.StartAzione.postCondizione(spazio,agent)
             # Timer
-            spazio[agent][21] += 1
+            spazio[agent][21] += 15
         
         # BackupHost
         elif action == 16 :
@@ -255,7 +257,7 @@ class Difensore(Agente):
         elif action == 17 :
             self.UpdateAzione.postCondizione(spazio,agent)
             # Timer
-            spazio[agent][21] += 1
+            spazio[agent][21] += 40
 
         # Noop solo per il timer
         elif action == 18 :

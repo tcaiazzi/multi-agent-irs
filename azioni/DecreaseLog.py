@@ -11,7 +11,7 @@ class DecreaseLog(azioneAsincrona):
              spazio[agent][20] < T2) and spazio[agent][6] == 1 and 
              # Timer 
              spazio[agent][21] <= 0 and 9 not in mosseAsincroneRunning) : 
-            mosseAsincroneRunning.append(9)
+
             legal_moves[9] = 1
         else:
             legal_moves[9] = 0

@@ -84,37 +84,37 @@ class Attaccante(Agente):
         elif action == 1 :
             self.PvsftpdAzione.postCondizione(spazio,agent)
             # Timer
-            spazio[agent][21] -= 1
+            spazio[agent][21] -= 60
         
         # Psmbd
         elif action == 2 :
             self.PsmbdAzione.postCondizione(spazio,agent)
             # Timer
-            spazio[agent][21] -= 1
+            spazio[agent][21] -= 40
         
         # Pphpcgi
         elif action == 3 :
             self.PphpcgiAzione.postCondizione(spazio,agent)
             # Timer
-            spazio[agent][21] -= 1
+            spazio[agent][21] -= 70
         
         # Pircd
         elif action == 4 :
             self.PircdAzione.postCondizione(spazio,agent)
             # Timer
-            spazio[agent][21] -= 1
+            spazio[agent][21] -= 30
         
         # Pdistccd
         elif action == 5 :
             self.PdistccdAzione.postCondizione(spazio,agent)
             # Timer
-            spazio[agent][21] -= 1
+            spazio[agent][21] -= 20
         
         # Prmi
         elif action == 6 :
             self.PrmiAzione.postCondizione(spazio,agent)
             # Timer
-            spazio[agent][21] -= 1
+            spazio[agent][21] -= 45
         
         # Noop solo per il timer
         elif action == 7 :
