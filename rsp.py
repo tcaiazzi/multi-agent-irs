@@ -370,25 +370,6 @@ class raw_env(AECEnv):
         self.terminations = {
             agent: val for agent in self.agents
         }
-        """ if not(val):
-            # prova a fermarlo il fatto che le ultime due mosse se sono nop e nop (att e diff) allora basta 
-            # non possono fare piu niente
-            # La differenza la uso per verificare che i due non possano più fare niente INSIEME
-            # altrimenti attaccante noOp assoluto al punto 10 poi attaccante fa una mosse e sblocca qualche attacco
-            # attaccante agisce perche difensore non aveva il nop assoluto e quando cel'ha magari al 50 l'altro era al 10 
-            # ed esce
-            differenza = self.lm['attaccante']['nmosse']-self.lm['difensore']['nmosse']
-            print('DIFFERENZA tempo noOp-noOp:',differenza)
-            if differenza == 1 or differenza == -1:
-                self.terminations = {
-                    agent: True for agent in self.agents
-                }
-            # se non puo arrestarlo neanche quello provo a vedere il num di mosse
-            # con noOp sempre selezionabili mi dovrebbe uscire con la condizione nell'if
-            else:
-                self.terminations = {
-                    agent: self.num_moves >= self.NUM_ITERS for agent in self.agents
-                } """
 
         ##################################################################################################
         

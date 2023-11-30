@@ -116,7 +116,7 @@ def reward(agent,action):
 # CONTROLLA LO STATE PER TERMINAR EO MENO
 def terminationPartita(spazio,lm,num_moves,NUM_ITERS):
     val = False
-    
+
     # clean system state + esclusione degli altri parametri (lascio solo il check degli attacchi sotto T1 
     # come se gli altri fossero altri subsets states con minace in sicurezza)
     # stato terminale attaccante con tutti attacchi on
@@ -141,6 +141,7 @@ def terminationPartita(spazio,lm,num_moves,NUM_ITERS):
             else:
                 val = num_moves >= NUM_ITERS
     return val
+
 
 # Randomicità dello stato
 def generazioneSpazioRandom():
