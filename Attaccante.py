@@ -78,7 +78,7 @@ class Attaccante(Agente):
             Thread(target=self.PscanAzione.postCondizione,args=(spazio,agent,self.mosseAsincroneRunning,action)).start()
             print('AVVIATO PSCAN...')
             # Timer
-            spazio[agent][21] -= 1
+            #spazio[agent][21] -= 1
         
         # Pvsftpd
         elif action == 1 :
