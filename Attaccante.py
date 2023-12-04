@@ -40,7 +40,7 @@ class Attaccante(Agente):
     # Se l'attaccante trova il Timer <=0 non puo eseguire e per ora facciamo che ogni azione vale 1
     def preCondizioni(self,spazio,legal_moves):
         # Pscan
-        self.PscanAzione.preCondizione(spazio,legal_moves,self.T1,self.T2,'difensore',self.mosseAsincroneRunning)
+        self.PscanAzione.preCondizione(spazio,legal_moves,self.T1,self.T2,'difensore')
 
         # Pvsftpd
         self.PvsftpdAzione.preCondizione(spazio,legal_moves,self.T1,self.T2,'difensore')
@@ -73,11 +73,13 @@ class Attaccante(Agente):
 
         # Pscan
         if action == 0 :
-            self.mosseAsincroneRunning.append(action)
+            """ self.mosseAsincroneRunning.append(action)
             Thread(target=self.PscanAzione.postCondizione,args=(spazio,agent,self.mosseAsincroneRunning,action)).start()
             print('AVVIATO PSCAN...')
+             """
+            self.PscanAzione.postCondizione(spazio,agent)
             # Timer
-            #spazio[agent][21] -= 1
+            spazio[agent][21] -= 40
         
         # Pvsftpd
         elif action == 1 :
@@ -116,8 +118,8 @@ class Attaccante(Agente):
             spazio[agent][21] -= 45
         
         # Noop solo per il timer
-        elif action == 7 :
-            spazio[agent][21] -= 1
+        """ elif action == 7 :
+            spazio[agent][21] -= 1 """
         
         print('Mosse Asincrone in Running dopo la mossa:',self.mosseAsincroneRunning)
         

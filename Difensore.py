@@ -104,10 +104,10 @@ class Difensore(Agente):
         self.UnRedirectHoneypotAzione.preCondizione(spazio,legal_moves,self.T1,self.T2,'difensore')
         
         # IncreaseLog
-        self.IncreaseLogAzione.preCondizione(spazio,legal_moves,self.T1,self.T2,'difensore',self.mosseAsincroneRunning)
+        self.IncreaseLogAzione.preCondizione(spazio,legal_moves,self.T1,self.T2,'difensore')
         
         # DecreaseLog
-        self.DecreaseLogAzione.preCondizione(spazio,legal_moves,self.T1,self.T2,'difensore',self.mosseAsincroneRunning)
+        self.DecreaseLogAzione.preCondizione(spazio,legal_moves,self.T1,self.T2,'difensore')
         
         # QuarantineHost
         self.QuarantineAzione.preCondizione(spazio,legal_moves,self.T1,self.T2,'difensore')
@@ -195,19 +195,23 @@ class Difensore(Agente):
         
         # IncreaseLog
         elif action == 8 :
-            self.mosseAsincroneRunning.append(action)
+            """ self.mosseAsincroneRunning.append(action)
             Thread(target=self.IncreaseLogAzione.postCondizione,args=(spazio,agent,self.mosseAsincroneRunning,action)).start()
             print('AVVIATO +LOG')
+            """
+            self.IncreaseLogAzione.postCondizione(spazio,agent)
             # Timer
-            #spazio[agent][21] += 1
+            spazio[agent][21] += 5
         
         # DecreaseLog
         elif action == 9 :
-            self.mosseAsincroneRunning.append(action)
+            """ self.mosseAsincroneRunning.append(action)
             Thread(target=self.DecreaseLogAzione.postCondizione,args=(spazio,agent,self.mosseAsincroneRunning,action)).start()
             print('AVVIATO -LOG')
+             """
+            self.DecreaseLogAzione.postCondizione(spazio,agent)
             # Timer
-            #spazio[agent][21] += 1
+            spazio[agent][21] += 1
         
         # QuarantineHost
         elif action == 10 :
@@ -260,8 +264,8 @@ class Difensore(Agente):
             spazio[agent][21] += 50
 
         # Noop solo per il timer
-        elif action == 18 :
-            spazio[agent][21] += 1
+        """ elif action == 18 :
+            spazio[agent][21] += 1 """
 
         print('Mosse Asincrone in Running dopo la mossa:',self.mosseAsincroneRunning)
 
