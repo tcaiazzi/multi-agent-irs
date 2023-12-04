@@ -62,7 +62,6 @@ class Attaccante(Agente):
 
         # noOp
         self.noOp.preCondizione(spazio,legal_moves,self.T1,self.T2,self.__class__.__name__)
-        #legal_moves[7] = 1
 
         # Non ci sono mosse per l'attaccante
         for i in range(8,19,1):

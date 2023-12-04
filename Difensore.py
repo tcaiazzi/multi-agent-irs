@@ -66,10 +66,11 @@ class Difensore(Agente):
             15 : (30,6,0),
             16 : (3600,10,0.1),
             17 : (600,300,0.1),
-            18 : (1000,100,100)
+            18 : (3600,300,0.1)
             # voglio scoraggiare il difensore a non fare nulla così che faccia qualcosa per salvaguardare
-            # in realta basterebbe che il l'attaccante influisca ed il difensore ottenga una reward positiva (?)
-            # perchese influisce l'attaccante comunque il difensore se scheglie nop non la peggiora
+            # Con il professore abbiamo detto che deve essere in modulo la piu grande reward tra i due 
+            # ed io ho aggiunto un delta per evitare il calcolo preciso prendendo i coefficenti maggiori (x,y,z)
+            # sarebbe come a dire -inf
         }
 
     # Il difensore invece può eseguire una mossa solo nel caso incui il Timer è <=0 ed ogni mossa vale 1
@@ -137,7 +138,6 @@ class Difensore(Agente):
         # Ora abbiamo deciso di renderla ammissibile ad ogni stato così che possa terminare anche 
         # quando non ho piu mosse che mi portano sullo stato target (finale)
         self.noOp.preCondizione(spazio,legal_moves,self.T1,self.T2,self.__class__.__name__)
-        #legal_moves[18] = 1
 
 
 
@@ -257,7 +257,7 @@ class Difensore(Agente):
         elif action == 17 :
             self.UpdateAzione.postCondizione(spazio,agent)
             # Timer
-            spazio[agent][21] += 40
+            spazio[agent][21] += 50
 
         # Noop solo per il timer
         elif action == 18 :

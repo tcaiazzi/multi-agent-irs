@@ -17,5 +17,3 @@ class Pscan(azioneAsincrona):
         self.attendi(0.001)
         spazio[agent][14] = 1
         mosseAsincroneRunning.remove(action)
-        print('Mosse Asincrone in Running dopo ATtesa e applicazione della mossa:',mosseAsincroneRunning)
-        print('PSCAN TERMINATO ORA')
