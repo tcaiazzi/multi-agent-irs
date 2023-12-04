@@ -211,7 +211,7 @@ class Difensore(Agente):
              """
             self.DecreaseLogAzione.postCondizione(spazio,agent)
             # Timer
-            spazio[agent][21] += 1
+            spazio[agent][21] += 5
         
         # QuarantineHost
         elif action == 10 :
