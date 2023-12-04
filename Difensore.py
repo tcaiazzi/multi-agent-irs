@@ -145,53 +145,55 @@ class Difensore(Agente):
     def postCondizioni(self,action,spazio,agent):
         print('Mosse Asincrone in Running prima della mossa:',self.mosseAsincroneRunning)
 
+        t = 0
+
         # GenerateAlert
         if action == 0 :
             self.GenerateAlertAzione.postCondizione(spazio,agent)
             # Timer
-            spazio[agent][21] += 55
+            t = 55
         
         # FirewallActivation
         elif action == 1 :
             self.FirewallActivationAzione.postCondizione(spazio,agent)
             # Timer
-            spazio[agent][21] += 20
+            t = 20
         
         # BlockSourceIp
         elif action == 2 :
             self.BlockIpAzione.postCondizione(spazio,agent)
             # Timer
-            spazio[agent][21] += 35
+            t = 35
         
         # UnblockSourceIp
         elif action == 3 :
             self.UnBlockIpAzione.postCondizione(spazio,agent)
             # Timer
-            spazio[agent][21] += 35
+            t = 35
         
         # FlowRateLimit
         elif action == 4 :
             self.LimitFlowRateAzione.postCondizione(spazio,agent)
             # Timer
-            spazio[agent][21] += 25
+            t = 25
         
         # UnlimitFlowRate
         elif action == 5 :
             self.UnLimitFlowRateAzione.postCondizione(spazio,agent)
             # Timer
-            spazio[agent][21] += 25
+            t = 25
         
         # RedirectToHoneypot
         elif action == 6 :
             self.RedirectHoneypotAzione.postCondizione(spazio,agent)
             # Timer
-            spazio[agent][21] += 40
+            t = 40
         
         # UnHoneypot
         elif action == 7 :
             self.UnRedirectHoneypotAzione.postCondizione(spazio,agent)
             # Timer
-            spazio[agent][21] += 40
+            t = 40
         
         # IncreaseLog
         elif action == 8 :
@@ -201,7 +203,7 @@ class Difensore(Agente):
             """
             self.IncreaseLogAzione.postCondizione(spazio,agent)
             # Timer
-            spazio[agent][21] += 5
+            t = 5
         
         # DecreaseLog
         elif action == 9 :
@@ -211,43 +213,43 @@ class Difensore(Agente):
              """
             self.DecreaseLogAzione.postCondizione(spazio,agent)
             # Timer
-            spazio[agent][21] += 5
+            t = 5
         
         # QuarantineHost
         elif action == 10 :
             self.QuarantineAzione.postCondizione(spazio,agent)
             # Timer
-            spazio[agent][21] += 70
+            t = 70
         
         # UnQuarantineHost
         elif action == 11 :
             self.UnQuarantineAzione.postCondizione(spazio,agent)
             # Timer
-            spazio[agent][21] += 70
+            t = 70
         
         # ManualResolution
         elif action == 12 :
             self.ManualResolutionAzione.postCondizione(spazio,agent)
             # Timer
-            spazio[agent][21] += 45
+            t = 45
         
         # SystemReboot
         elif action == 13 :
             # Timer
-            spazio[agent][21] += 30
+            t = 30
             self.RebootAzione.postCondizione(spazio,agent)
         
         # SystemShutdown
         elif action == 14 :
             self.ShutDownAzione.postCondizione(spazio,agent)
             # Timer
-            spazio[agent][21] += 15
+            t = 15
         
         # SystemStart
         elif action == 15 :
             self.StartAzione.postCondizione(spazio,agent)
             # Timer
-            spazio[agent][21] += 15
+            t = 15
         
         # BackupHost
         elif action == 16 :
@@ -255,17 +257,19 @@ class Difensore(Agente):
             Thread(target=self.BackupAzione.postCondizione,args=(spazio,agent,self.mosseAsincroneRunning,action)).start()
             print('AVVIO BACKUP')
             # Timer
-            #spazio[agent][21] += 1
+            #t = 1
 
         # SoftwareUpdate
         elif action == 17 :
             self.UpdateAzione.postCondizione(spazio,agent)
             # Timer
-            spazio[agent][21] += 50
+            t = 50
 
         # Noop solo per il timer
         """ elif action == 18 :
-            spazio[agent][21] += 1 """
+            t = 1 """
+        
+        spazio[agent][21] += t
 
         print('Mosse Asincrone in Running dopo la mossa:',self.mosseAsincroneRunning)
 
@@ -274,3 +278,7 @@ class Difensore(Agente):
         #calcolo = REWARD_MAP[agent][action][0]+REWARD_MAP[agent][action][1]+REWARD_MAP[agent][action][2]
         print('Reward:',calcolo)
         return calcolo
+    
+    def reset(self):
+        self.mosseAsincroneRunning = []
+        

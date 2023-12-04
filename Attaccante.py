@@ -9,6 +9,8 @@ from azioni.Pdistccd import Pdistccd
 from azioni.Prmi import Prmi
 from azioni.noOp import noOp
 
+from agenteMossaAsincrona import agenteMossaAsincrona
+
 from threading import Thread
 
 
@@ -35,6 +37,8 @@ class Attaccante(Agente):
             7 : (0,0,0)
         }
 
+        # Per le mosse asincrone, per il calcolo del tempo del difensore
+        self.lastTimer = 0
     
 
     # Se l'attaccante trova il Timer <=0 non puo eseguire e per ora facciamo che ogni azione vale 1
@@ -43,7 +47,8 @@ class Attaccante(Agente):
         self.PscanAzione.preCondizione(spazio,legal_moves,self.T1,self.T2,'difensore')
 
         # Pvsftpd
-        self.PvsftpdAzione.preCondizione(spazio,legal_moves,self.T1,self.T2,'difensore')
+        if not(any(tupla[1] == 1 for tupla in self.mosseAsincroneRunning)):
+            self.PvsftpdAzione.preCondizione(spazio,legal_moves,self.T1,self.T2,'difensore')
         
         # Psmbd
         self.PsmbdAzione.preCondizione(spazio,legal_moves,self.T1,self.T2,'difensore')
@@ -71,6 +76,11 @@ class Attaccante(Agente):
     def postCondizioni(self,action,spazio,agent):
         print('Mosse Asincrone in Running prima della mossa:',self.mosseAsincroneRunning)
 
+        t = 0
+        agente = 0
+        # tempo mossa difensore
+        delta = abs(spazio[agent][21]-self.lastTimer)
+
         # Pscan
         if action == 0 :
             """ self.mosseAsincroneRunning.append(action)
@@ -79,48 +89,63 @@ class Attaccante(Agente):
              """
             self.PscanAzione.postCondizione(spazio,agent)
             # Timer
-            spazio[agent][21] -= 40
+            t = 40
         
         # Pvsftpd
         elif action == 1 :
-            self.PvsftpdAzione.postCondizione(spazio,agent)
+            agente = agenteMossaAsincrona(60,self.PvsftpdAzione,action,spazio,agent)
+            #self.PvsftpdAzione.postCondizione(spazio,agent)
             # Timer
-            spazio[agent][21] -= 60
+            #t = 60
         
         # Psmbd
         elif action == 2 :
             self.PsmbdAzione.postCondizione(spazio,agent)
             # Timer
-            spazio[agent][21] -= 40
+            t = 40
         
         # Pphpcgi
         elif action == 3 :
             self.PphpcgiAzione.postCondizione(spazio,agent)
             # Timer
-            spazio[agent][21] -= 70
+            t = 70
         
         # Pircd
         elif action == 4 :
             self.PircdAzione.postCondizione(spazio,agent)
             # Timer
-            spazio[agent][21] -= 30
+            t = 30
         
         # Pdistccd
         elif action == 5 :
             self.PdistccdAzione.postCondizione(spazio,agent)
             # Timer
-            spazio[agent][21] -= 20
+            t = 20
         
         # Prmi
         elif action == 6 :
             self.PrmiAzione.postCondizione(spazio,agent)
             # Timer
-            spazio[agent][21] -= 45
+            t = 45
         
         # Noop solo per il timer
         """ elif action == 7 :
-            spazio[agent][21] -= 1 """
+            t = 1 """
         
+        spazio[agent][21] -= t
+        
+
+        # Questo mi servirebbe a far scattare il tempo delle mosse asincrone
+        # calcolo anche il delta della mossa del difensore + dell'attaccante
+        for x,i in self.mosseAsincroneRunning:
+            x.stepSuccessivo(delta+t,self.mosseAsincroneRunning,(x,i))
+
+        # La metto qui perche altrimenti anche quelle appena create mi subiscono il delta del difensore
+        # del turno prima
+        if agente != 0:
+            self.mosseAsincroneRunning.append((agente,action))
+
+        self.lastTimer = spazio[agent][21]
         print('Mosse Asincrone in Running dopo la mossa:',self.mosseAsincroneRunning)
         
     def reward(self,action):
@@ -128,3 +153,7 @@ class Attaccante(Agente):
         #calcolo = REWARD_MAP[agent][action][0]+REWARD_MAP[agent][action][1]+REWARD_MAP[agent][action][2]
         print('Reward:',calcolo)
         return calcolo
+    
+    def reset(self):
+        self.mosseAsincroneRunning = []
+        

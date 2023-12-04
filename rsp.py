@@ -7,7 +7,7 @@ from gymnasium.spaces import Discrete,Box,Dict
 from pettingzoo import AECEnv
 from pettingzoo.utils import agent_selector, wrappers
 
-from prePost import postCondizioni,reward,terminationPartita,reward_mosse,curva_partita,preCondizioni,generazioneSpazioRandom
+from prePost import postCondizioni,reward,terminationPartita,reward_mosse,curva_partita,preCondizioni,generazioneSpazioRandom,reset
 
 
 import sys
@@ -245,7 +245,9 @@ class raw_env(AECEnv):
 
 
     def reset(self, seed=None, options=None):
-        
+        # prePost Reset per attaccante e difensore
+        reset()
+
         # PER LA LOGICA
         self.spazio = {}
         self.spazio[self.possible_agents[0]] = generazioneSpazioRandom()

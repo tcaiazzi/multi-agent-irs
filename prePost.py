@@ -154,3 +154,6 @@ def generazioneSpazioRandom():
             spazio[i] = random.randint(0,1) """
     return spazio
 
+def reset():
+    attaccante.reset()
+    difensore.reset()
