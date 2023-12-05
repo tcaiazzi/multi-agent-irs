@@ -11,8 +11,8 @@ class Reboot(azioneSincrona):
              spazio[agent][18] == 1 or spazio[agent][19] == 1 or spazio[agent][20] == 1) 
             and spazio[agent][0] == 1 and spazio[agent][7] == 1 
             and spazio[agent][3] == 1 and 
-            # Timer 
-            spazio[agent][21] <=0) :
+            # Timer or noop attaccante
+            (spazio[agent][21] <= 0 or spazio[agent][22] == 1)) :
             legal_moves[13] = 1
         else:
             legal_moves[13] = 0

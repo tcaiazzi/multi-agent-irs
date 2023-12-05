@@ -9,8 +9,8 @@ class LimitFlowRate(azioneSincrona):
         if (spazio[agent][14] >= T1 and spazio[agent][0] ==1 and spazio[agent][3] == 1 and
             spazio[agent][6] == 1 and spazio[agent][2] == 0 and spazio[agent][5] > 0 and
             spazio[agent][1] == 0 and spazio[agent][7] == 0 and 
-            # Timer 
-            spazio[agent][21] <=0) :
+            # Timer or noop attaccante
+            (spazio[agent][21] <= 0 or spazio[agent][22] == 1)) :
             legal_moves[4] = 1
         else:
             legal_moves[4] = 0

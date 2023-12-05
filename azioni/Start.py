@@ -5,7 +5,10 @@ import time
 class Start(azioneSincrona):
 
     def preCondizione(self,spazio,legal_moves,T1,T2,agent):
-        if spazio[agent][6] == 0 :
+        
+        if (spazio[agent][6] == 0 and 
+        # Timer or noop attaccante
+        (spazio[agent][21] <= 0 or spazio[agent][22] == 1)):
             legal_moves[15] = 1
         else:
             legal_moves[15] = 0

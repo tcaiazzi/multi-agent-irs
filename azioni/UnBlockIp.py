@@ -8,8 +8,8 @@ class UnBlockIp(azioneSincrona):
         if (spazio[agent][14] < T2 and spazio[agent][0] == 1  and
             spazio[agent][6] == 1 and spazio[agent][1] == 1  and
             spazio[agent][5] > 1 and 
-            # Timer 
-            spazio[agent][21] <=0) :
+            # Timer or noop attaccante
+            (spazio[agent][21] <= 0 or spazio[agent][22] == 1)) :
             legal_moves[3] = 1
         else:
             legal_moves[3] = 0

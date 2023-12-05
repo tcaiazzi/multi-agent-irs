@@ -11,8 +11,8 @@ class Quarantine(azioneSincrona):
              spazio[agent][20] > T2 ) 
             and spazio[agent][0] == 1 and spazio[agent][3] == 1 and spazio[agent][5] >= 3 
             and spazio[agent][6] == 1 and 
-            # Timer
-            spazio[agent][21] <=0) :
+            # Timer or noop attaccante
+            (spazio[agent][21] <= 0 or spazio[agent][22] == 1)) :
             legal_moves[10] = 1
         else:
             legal_moves[10] = 0  

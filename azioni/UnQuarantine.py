@@ -10,8 +10,8 @@ class UnQuarantine(azioneSincrona):
              spazio[agent][17] < T2 or spazio[agent][18] < T2 or spazio[agent][19] < T2 or 
              spazio[agent][20] < T2) 
             and spazio[agent][0] == 1 and spazio[agent][5] > 3 and spazio[agent][6] == 1 and 
-            # Timer
-            spazio[agent][21] <=0) :
+            # Timer or noop attaccante
+            (spazio[agent][21] <= 0 or spazio[agent][22] == 1)) :
             legal_moves[11] = 1
         else:
             legal_moves[11] = 0
