@@ -76,12 +76,14 @@ class Attaccante(Agente):
     def postCondizioni(self,action,spazio,agent):
         print('Mosse Asincrone in Running prima della mossa:',self.mosseAsincroneRunning)
 
+        #-----------------------------------------------------
         # tempo appicazione della mossa sincrona
         t = 0
         # nuovo agente asincrono
         agente = 0
         # tempo mossa difensore turno precedente
         delta = abs(spazio[agent][21]-self.lastTimer)
+        #-----------------------------------------------------
 
         # Pscan
         if action == 0 :
@@ -137,15 +139,7 @@ class Attaccante(Agente):
         spazio[agent][21] -= t
         
         #----------------------------------------------------------------------------
-        # Questo mi servirebbe a far scattare il tempo delle mosse asincrone
-        # calcolo anche il delta della mossa del difensore + dell'attaccante
-        for x,i in self.mosseAsincroneRunning:
-            x.stepSuccessivo(delta+t,self.mosseAsincroneRunning,(x,i))
-
-        # La metto qui perche altrimenti anche quelle appena create mi subiscono il delta del difensore
-        # del turno prima
-        if agente != 0:
-            self.mosseAsincroneRunning.append((agente,action))
+        self.aggiornaMosseAsincrone(delta+t,agente,action)
 
         self.lastTimer = spazio[agent][21]
         #----------------------------------------------------------------------------
