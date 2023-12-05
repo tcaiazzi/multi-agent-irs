@@ -49,19 +49,24 @@ class Attaccante(Agente):
             self.PvsftpdAzione.preCondizione(spazio,legal_moves,self.T1,self.T2,'difensore')
         
         # Psmbd
-        self.PsmbdAzione.preCondizione(spazio,legal_moves,self.T1,self.T2,'difensore')
+        if not(any(tupla[1] == 2 for tupla in self.mosseAsincroneRunning)):
+            self.PsmbdAzione.preCondizione(spazio,legal_moves,self.T1,self.T2,'difensore')
         
         # Pphpcgi
-        self.PphpcgiAzione.preCondizione(spazio,legal_moves,self.T1,self.T2,'difensore')
+        if not(any(tupla[1] == 3 for tupla in self.mosseAsincroneRunning)):
+            self.PphpcgiAzione.preCondizione(spazio,legal_moves,self.T1,self.T2,'difensore')
         
         # Pircd
-        self.PircdAzione.preCondizione(spazio,legal_moves,self.T1,self.T2,'difensore')
+        if not(any(tupla[1] == 4 for tupla in self.mosseAsincroneRunning)):
+            self.PircdAzione.preCondizione(spazio,legal_moves,self.T1,self.T2,'difensore')
         
         # Pdistccd
-        self.PdistccdAzione.preCondizione(spazio,legal_moves,self.T1,self.T2,'difensore')
+        if not(any(tupla[1] == 5 for tupla in self.mosseAsincroneRunning)):
+            self.PdistccdAzione.preCondizione(spazio,legal_moves,self.T1,self.T2,'difensore')
         
         # Prmi
-        self.PrmiAzione.preCondizione(spazio,legal_moves,self.T1,self.T2,'difensore')
+        if not(any(tupla[1] == 6 for tupla in self.mosseAsincroneRunning)):
+            self.PrmiAzione.preCondizione(spazio,legal_moves,self.T1,self.T2,'difensore')
 
         # noOp
         self.noOp.preCondizione(spazio,legal_moves,self.T1,self.T2,self.__class__.__name__)
@@ -104,33 +109,38 @@ class Attaccante(Agente):
         
         # Psmbd
         elif action == 2 :
-            self.PsmbdAzione.postCondizione(spazio,agent)
+            agente = agenteMossaAsincrona(40,self.PsmbdAzione,action,spazio,agent)
+            #self.PsmbdAzione.postCondizione(spazio,agent)
             # Timer
-            t = 40
+            #t = 40
         
         # Pphpcgi
         elif action == 3 :
-            self.PphpcgiAzione.postCondizione(spazio,agent)
+            agente = agenteMossaAsincrona(70,self.PphpcgiAzione,action,spazio,agent)
+            #self.PphpcgiAzione.postCondizione(spazio,agent)
             # Timer
-            t = 70
+            #t = 70
         
         # Pircd
         elif action == 4 :
-            self.PircdAzione.postCondizione(spazio,agent)
+            agente = agenteMossaAsincrona(30,self.PircdAzione,action,spazio,agent)
+            #self.PircdAzione.postCondizione(spazio,agent)
             # Timer
-            t = 30
+            #t = 30
         
         # Pdistccd
         elif action == 5 :
-            self.PdistccdAzione.postCondizione(spazio,agent)
+            agente = agenteMossaAsincrona(20,self.PdistccdAzione,action,spazio,agent)
+            #self.PdistccdAzione.postCondizione(spazio,agent)
             # Timer
-            t = 20
+            #t = 20
         
         # Prmi
         elif action == 6 :
-            self.PrmiAzione.postCondizione(spazio,agent)
+            agente = agenteMossaAsincrona(45,self.PrmiAzione,action,spazio,agent)
+            #self.PrmiAzione.postCondizione(spazio,agent)
             # Timer
-            t = 45
+            #t = 45
         
         # Noop solo per il timer
         elif action == 7 :

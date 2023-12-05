@@ -135,7 +135,7 @@ def terminationPartita(spazio,lm,num_moves,NUM_ITERS):
             differenza = lm['attaccante']['nmosse']-lm['difensore']['nmosse']
             print('DIFFERENZA tempo noOp-noOp:',differenza)
             if differenza == 1 or differenza == -1:
-                val = True
+                val = False
             # se non puo arrestarlo neanche quello provo a vedere il num di mosse
             # con noOp sempre selezionabili mi dovrebbe uscire con la condizione nell'if
             else:
