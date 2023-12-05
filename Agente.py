@@ -16,3 +16,6 @@ class Agente():
         #calcolo = REWARD_MAP[agent][action][0]+REWARD_MAP[agent][action][1]+REWARD_MAP[agent][action][2]
         print('Reward:',calcolo)
         return calcolo
+    
+    def reset(self):
+        self.mosseAsincroneRunning = []

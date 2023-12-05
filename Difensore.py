@@ -274,6 +274,5 @@ class Difensore(Agente):
         print('Mosse Asincrone in Running dopo la mossa:',self.mosseAsincroneRunning)
 
     
-    def reset(self):
-        self.mosseAsincroneRunning = []
+    
         
