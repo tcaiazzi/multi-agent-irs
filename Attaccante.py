@@ -133,8 +133,8 @@ class Attaccante(Agente):
             t = 45
         
         # Noop solo per il timer
-        """ elif action == 7 :
-            t = 1 """
+        elif action == 7 :
+            self.noOp.postCondizione(spazio,self.__class__.__name__)
         
         spazio[agent][21] -= t
         

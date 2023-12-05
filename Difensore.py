@@ -266,8 +266,8 @@ class Difensore(Agente):
             t = 50
 
         # Noop solo per il timer
-        """ elif action == 18 :
-            t = 1 """
+        elif action == 18 :
+            self.noOp.postCondizione(spazio,agent)
         
         spazio[agent][21] += t
 

@@ -107,7 +107,8 @@ class raw_env(AECEnv):
         # updated([True/False])(10),
         # manuallySolved([True/False])(11), everQuarantined([True/False])(12), everShutDown([True/False])(13),
         # +
-        # pscan([0-1])(14), pvsftpd([0-1])(15), psmbd([0-1])(16), pphpcgi([0-1])(17), pircd([0-1])(18), pdistccd([0-1])(19), prmi([0-1])(20),]
+        # pscan([0-1])(14), pvsftpd([0-1])(15), psmbd([0-1])(16), pphpcgi([0-1])(17), pircd([0-1])(18), pdistccd([0-1])(19), prmi([0-1])(20),
+        # timer(21),noop(22)]
 
         # per ora non lo sto usando lo spazio dell'attaccante
         #self.spazio[self.possible_agents[0]] = [False]

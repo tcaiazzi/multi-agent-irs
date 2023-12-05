@@ -145,8 +145,17 @@ def terminationPartita(spazio,lm,num_moves,NUM_ITERS):
 
 # Randomicità dello stato
 def generazioneSpazioRandom():
+    # STATO
+        # [ firewall([True/False])(0), blockedip([])(1), flowlimit_ips([])(2), alert([True/False])(3), honeypot_ips([])(4),
+        # log_verb([0-5])(5),
+        # active([True/False])(6), quarantined([True/False])(7), rebooted([True/False])(8), backup([True/False])(9),
+        # updated([True/False])(10),
+        # manuallySolved([True/False])(11), everQuarantined([True/False])(12), everShutDown([True/False])(13),
+        # +
+        # pscan([0-1])(14), pvsftpd([0-1])(15), psmbd([0-1])(16), pphpcgi([0-1])(17), pircd([0-1])(18), pdistccd([0-1])(19), prmi([0-1])(20),
+        # timer(21),noop(22)]
     # STATO CHE AVEVO SUPPOSTO IO DI PARTENZA
-    spazio = [0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+    spazio = [0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
     """ for i in range(21):
         if i == 5:
             spazio[i] = random.randint(0,5)

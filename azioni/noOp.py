@@ -24,4 +24,9 @@ class noOp(azioneSincrona):
                 legal_moves[7] = 0
 
     def postCondizione(self,spazio,agent):
-        pass
+        # segno che ha noop così che l'altro giocatore puo eseguire una mossa
+        # l'idea è di mettere tutte le mosse dell'attaccante tutte asincrone
+        if agent == 'difensore':
+            spazio[agent][22] = 2
+        else:
+            spazio['difensore'][22] = 1
