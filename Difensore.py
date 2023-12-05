@@ -20,6 +20,7 @@ from azioni.Update import Update
 from azioni.noOp import noOp
 
 from threading import Thread
+from agenteMossaAsincrona import agenteMossaAsincrona
 
 import random
 
@@ -128,7 +129,8 @@ class Difensore(Agente):
         self.StartAzione.preCondizione(spazio,legal_moves,self.T1,self.T2,'difensore')
         
         # BackupHost
-        self.BackupAzione.preCondizione(spazio,legal_moves,self.T1,self.T2,'difensore',self.mosseAsincroneRunning)
+        if not(any(tupla[1] == 16 for tupla in self.mosseAsincroneRunning)):
+            self.BackupAzione.preCondizione(spazio,legal_moves,self.T1,self.T2,'difensore',self.mosseAsincroneRunning)
         
         # SoftwareUpdate
         # detto dal prof: deve aver fatto backup
@@ -145,7 +147,16 @@ class Difensore(Agente):
     def postCondizioni(self,action,spazio,agent):
         print('Mosse Asincrone in Running prima della mossa:',self.mosseAsincroneRunning)
 
+        #-----------------------------------------------------
+        # tempo appicazione della mossa sincrona
         t = 0
+        # nuovo agente asincrono
+        agente = 0
+        # tempo mossa difensore turno precedente
+        delta = abs(spazio[agent][21]-self.lastTimer)
+        # azzero i nop
+        spazio[agent][22] = 0
+        #-----------------------------------------------------
 
         # GenerateAlert
         if action == 0 :
@@ -197,10 +208,6 @@ class Difensore(Agente):
         
         # IncreaseLog
         elif action == 8 :
-            """ self.mosseAsincroneRunning.append(action)
-            Thread(target=self.IncreaseLogAzione.postCondizione,args=(spazio,agent,self.mosseAsincroneRunning,action)).start()
-            print('AVVIATO +LOG')
-            """
             self.IncreaseLogAzione.postCondizione(spazio,agent)
             # Timer
             t = 5
@@ -253,8 +260,9 @@ class Difensore(Agente):
         
         # BackupHost
         elif action == 16 :
-            self.mosseAsincroneRunning.append(action)
-            Thread(target=self.BackupAzione.postCondizione,args=(spazio,agent,self.mosseAsincroneRunning,action)).start()
+            #self.mosseAsincroneRunning.append(action)
+            #Thread(target=self.BackupAzione.postCondizione,args=(spazio,agent,self.mosseAsincroneRunning,action)).start()
+            agente = agenteMossaAsincrona(50,self.BackupAzione,action,spazio,agent)
             print('AVVIO BACKUP')
             # Timer
             #t = 1
@@ -270,6 +278,12 @@ class Difensore(Agente):
             self.noOp.postCondizione(spazio,agent)
         
         spazio[agent][21] += t
+
+        #----------------------------------------------------------------------------
+        self.aggiornaMosseAsincrone(delta+t,agente,action)
+
+        self.lastTimer = spazio[agent][21]
+        #----------------------------------------------------------------------------
 
         print('Mosse Asincrone in Running dopo la mossa:',self.mosseAsincroneRunning)
 

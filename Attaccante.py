@@ -37,8 +37,6 @@ class Attaccante(Agente):
             7 : (0,0,0)
         }
 
-        # Per le mosse asincrone, per il calcolo del tempo del difensore
-        self.lastTimer = 0
     
 
     # Se l'attaccante trova il Timer <=0 non puo eseguire e per ora facciamo che ogni azione vale 1
@@ -83,6 +81,8 @@ class Attaccante(Agente):
         agente = 0
         # tempo mossa difensore turno precedente
         delta = abs(spazio[agent][21]-self.lastTimer)
+        # azzero i nop
+        spazio[agent][22] = 0
         #-----------------------------------------------------
 
         # Pscan
