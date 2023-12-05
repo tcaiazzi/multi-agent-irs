@@ -76,9 +76,11 @@ class Attaccante(Agente):
     def postCondizioni(self,action,spazio,agent):
         print('Mosse Asincrone in Running prima della mossa:',self.mosseAsincroneRunning)
 
+        # tempo appicazione della mossa sincrona
         t = 0
+        # nuovo agente asincrono
         agente = 0
-        # tempo mossa difensore
+        # tempo mossa difensore turno precedente
         delta = abs(spazio[agent][21]-self.lastTimer)
 
         # Pscan
@@ -134,7 +136,7 @@ class Attaccante(Agente):
         
         spazio[agent][21] -= t
         
-
+        #----------------------------------------------------------------------------
         # Questo mi servirebbe a far scattare il tempo delle mosse asincrone
         # calcolo anche il delta della mossa del difensore + dell'attaccante
         for x,i in self.mosseAsincroneRunning:
@@ -146,13 +148,12 @@ class Attaccante(Agente):
             self.mosseAsincroneRunning.append((agente,action))
 
         self.lastTimer = spazio[agent][21]
+        #----------------------------------------------------------------------------
+
         print('Mosse Asincrone in Running dopo la mossa:',self.mosseAsincroneRunning)
         
-    def reward(self,action):
-        calcolo = -(-self.wt*(self.REWARD_MAP[action][0]/self.tMax)-self.wc*(self.REWARD_MAP[action][1]/self.cMax)-self.wi*self.REWARD_MAP[action][2])
-        #calcolo = REWARD_MAP[agent][action][0]+REWARD_MAP[agent][action][1]+REWARD_MAP[agent][action][2]
-        print('Reward:',calcolo)
-        return calcolo
+
+    
     
     def reset(self):
         self.mosseAsincroneRunning = []

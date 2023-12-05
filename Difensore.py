@@ -273,11 +273,6 @@ class Difensore(Agente):
 
         print('Mosse Asincrone in Running dopo la mossa:',self.mosseAsincroneRunning)
 
-    def reward(self,action):
-        calcolo = (-self.wt*(self.REWARD_MAP[action][0]/self.tMax)-self.wc*(self.REWARD_MAP[action][1]/self.cMax)-self.wi*self.REWARD_MAP[action][2])
-        #calcolo = REWARD_MAP[agent][action][0]+REWARD_MAP[agent][action][1]+REWARD_MAP[agent][action][2]
-        print('Reward:',calcolo)
-        return calcolo
     
     def reset(self):
         self.mosseAsincroneRunning = []

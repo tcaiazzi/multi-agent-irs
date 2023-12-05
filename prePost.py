@@ -106,9 +106,9 @@ def reward(agent,action):
     # per la funzione di reward
     calcolo = 0
     if agent == 'attaccante':
-        calcolo = attaccante.reward(action)
+        calcolo = attaccante.reward(attaccante.REWARD_MAP[action])
     else:
-        calcolo = difensore.reward(action)
+        calcolo = -difensore.reward(difensore.REWARD_MAP[action])
     return calcolo
 
 

@@ -12,7 +12,7 @@ class agenteMossaAsincrona():
     # Se invece non l'applica torna false
     def stepSuccessivo(self,scalare,mosseAsincroneRunning,daRimuovere):
         print('STEPSUCCESSIVO tempo di attesa rimasto:',self.tempoAttesa)
-        print('STEPSUCCESSIVO delta:',scalare)
+        print('STEPSUCCESSIVO attesa-scalare:',self.tempoAttesa-scalare)
         val = False
         if (self.tempoAttesa-scalare) > 0:
             self.tempoAttesa -= scalare
