@@ -262,7 +262,7 @@ class Difensore(Agente):
         elif action == 16 :
             #self.mosseAsincroneRunning.append(action)
             #Thread(target=self.BackupAzione.postCondizione,args=(spazio,agent,self.mosseAsincroneRunning,action)).start()
-            agente = agenteMossaAsincrona(0.5,self.BackupAzione,action,spazio,agent)
+            agente = agenteMossaAsincrona(self.BackupAzione,action,spazio,agent)
             print('AVVIO BACKUP')
             # Timer
             #t = 0.1

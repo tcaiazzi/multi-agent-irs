@@ -1,8 +1,11 @@
-from azioneSincrona import azioneSincrona
+
 from azioneAsincrona import azioneAsincrona
 import time
 
 class Backup(azioneAsincrona):
+    def __init__(self):
+        self.tempoAttuazione = 0.5
+        self.tempoAttesa = 0.5
 
     def preCondizione(self,spazio,legal_moves,T1,T2,agent,mosseAsincroneRunning):
         if (spazio[agent][6] == 1 and spazio[agent][9] == 0 and spazio[agent][7] == 0 and
