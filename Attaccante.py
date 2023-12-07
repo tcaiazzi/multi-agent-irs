@@ -98,46 +98,46 @@ class Attaccante(Agente):
              """
             self.PscanAzione.postCondizione(spazio,agent)
             # Timer
-            t = 40
+            t = 0.4
         
         # Pvsftpd
         elif action == 1 :
-            agente = agenteMossaAsincrona(60,self.PvsftpdAzione,action,spazio,agent)
+            agente = agenteMossaAsincrona(0.6,self.PvsftpdAzione,action,spazio,agent)
             #self.PvsftpdAzione.postCondizione(spazio,agent)
             # Timer
             #t = 60
         
         # Psmbd
         elif action == 2 :
-            agente = agenteMossaAsincrona(40,self.PsmbdAzione,action,spazio,agent)
+            agente = agenteMossaAsincrona(0.4,self.PsmbdAzione,action,spazio,agent)
             #self.PsmbdAzione.postCondizione(spazio,agent)
             # Timer
             #t = 40
         
         # Pphpcgi
         elif action == 3 :
-            agente = agenteMossaAsincrona(70,self.PphpcgiAzione,action,spazio,agent)
+            agente = agenteMossaAsincrona(0.7,self.PphpcgiAzione,action,spazio,agent)
             #self.PphpcgiAzione.postCondizione(spazio,agent)
             # Timer
             #t = 70
         
         # Pircd
         elif action == 4 :
-            agente = agenteMossaAsincrona(30,self.PircdAzione,action,spazio,agent)
+            agente = agenteMossaAsincrona(0.3,self.PircdAzione,action,spazio,agent)
             #self.PircdAzione.postCondizione(spazio,agent)
             # Timer
             #t = 30
         
         # Pdistccd
         elif action == 5 :
-            agente = agenteMossaAsincrona(20,self.PdistccdAzione,action,spazio,agent)
+            agente = agenteMossaAsincrona(0.2,self.PdistccdAzione,action,spazio,agent)
             #self.PdistccdAzione.postCondizione(spazio,agent)
             # Timer
             #t = 20
         
         # Prmi
         elif action == 6 :
-            agente = agenteMossaAsincrona(45,self.PrmiAzione,action,spazio,agent)
+            agente = agenteMossaAsincrona(0.4,self.PrmiAzione,action,spazio,agent)
             #self.PrmiAzione.postCondizione(spazio,agent)
             # Timer
             #t = 45

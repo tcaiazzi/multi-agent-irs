@@ -162,55 +162,55 @@ class Difensore(Agente):
         if action == 0 :
             self.GenerateAlertAzione.postCondizione(spazio,agent)
             # Timer
-            t = 55
+            t = 0.5
         
         # FirewallActivation
         elif action == 1 :
             self.FirewallActivationAzione.postCondizione(spazio,agent)
             # Timer
-            t = 20
+            t = 0.2
         
         # BlockSourceIp
         elif action == 2 :
             self.BlockIpAzione.postCondizione(spazio,agent)
             # Timer
-            t = 35
+            t = 0.3
         
         # UnblockSourceIp
         elif action == 3 :
             self.UnBlockIpAzione.postCondizione(spazio,agent)
             # Timer
-            t = 35
+            t = 0.3
         
         # FlowRateLimit
         elif action == 4 :
             self.LimitFlowRateAzione.postCondizione(spazio,agent)
             # Timer
-            t = 25
+            t = 0.2
         
         # UnlimitFlowRate
         elif action == 5 :
             self.UnLimitFlowRateAzione.postCondizione(spazio,agent)
             # Timer
-            t = 25
+            t = 0.2
         
         # RedirectToHoneypot
         elif action == 6 :
             self.RedirectHoneypotAzione.postCondizione(spazio,agent)
             # Timer
-            t = 40
+            t = 0.4
         
         # UnHoneypot
         elif action == 7 :
             self.UnRedirectHoneypotAzione.postCondizione(spazio,agent)
             # Timer
-            t = 40
+            t = 0.4
         
         # IncreaseLog
         elif action == 8 :
             self.IncreaseLogAzione.postCondizione(spazio,agent)
             # Timer
-            t = 5
+            t = 0.1
         
         # DecreaseLog
         elif action == 9 :
@@ -220,58 +220,58 @@ class Difensore(Agente):
              """
             self.DecreaseLogAzione.postCondizione(spazio,agent)
             # Timer
-            t = 5
+            t = 0.1
         
         # QuarantineHost
         elif action == 10 :
             self.QuarantineAzione.postCondizione(spazio,agent)
             # Timer
-            t = 70
+            t = 0.7
         
         # UnQuarantineHost
         elif action == 11 :
             self.UnQuarantineAzione.postCondizione(spazio,agent)
             # Timer
-            t = 70
+            t = 0.7
         
         # ManualResolution
         elif action == 12 :
             self.ManualResolutionAzione.postCondizione(spazio,agent)
             # Timer
-            t = 45
+            t = 0.4
         
         # SystemReboot
         elif action == 13 :
             # Timer
-            t = 30
+            t = 0.7
             self.RebootAzione.postCondizione(spazio,agent)
         
         # SystemShutdown
         elif action == 14 :
             self.ShutDownAzione.postCondizione(spazio,agent)
             # Timer
-            t = 15
+            t = 0.5
         
         # SystemStart
         elif action == 15 :
             self.StartAzione.postCondizione(spazio,agent)
             # Timer
-            t = 15
+            t = 0.2
         
         # BackupHost
         elif action == 16 :
             #self.mosseAsincroneRunning.append(action)
             #Thread(target=self.BackupAzione.postCondizione,args=(spazio,agent,self.mosseAsincroneRunning,action)).start()
-            agente = agenteMossaAsincrona(50,self.BackupAzione,action,spazio,agent)
+            agente = agenteMossaAsincrona(0.5,self.BackupAzione,action,spazio,agent)
             print('AVVIO BACKUP')
             # Timer
-            #t = 1
+            #t = 0.1
 
         # SoftwareUpdate
         elif action == 17 :
             self.UpdateAzione.postCondizione(spazio,agent)
             # Timer
-            t = 50
+            t = 0.8
 
         # Noop solo per il timer
         elif action == 18 :

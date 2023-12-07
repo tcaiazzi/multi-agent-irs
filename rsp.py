@@ -154,14 +154,14 @@ class raw_env(AECEnv):
 
         self._observation_spaces[self.possible_agents[0]] = Dict(
                 {
-                    "observations": Box(low=-100, high=100, shape=(N,), dtype=int),
+                    "observations": Box(low=-1000, high=1000, shape=(N,), dtype=float),
                     "action_mask": Box(low=0, high=1, shape=(19,), dtype=np.int8),
                 }
             )
         # per entrambi usiamo solo quello del difensore
         self._observation_spaces[self.possible_agents[1]] = Dict(
                 {
-                    "observations": Box(low=-100, high=100, shape=(N,), dtype=int),
+                    "observations": Box(low=-1000, high=1000, shape=(N,), dtype=float),
                     "action_mask": Box(low=0, high=1, shape=(19,), dtype=np.int8),
                 }
             )
