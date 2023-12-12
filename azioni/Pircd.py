@@ -13,5 +13,9 @@ class Pircd(azioneAsincrona):
         else:
             legal_moves[4] = 0
 
-    def postCondizione(self,spazio,agent):
-        spazio[agent][18] = 1
+    def postCondizione(self,spazio,agent,T1,T2):
+        print('TEMPOATTESA Pircd:',self.tempoAttesa)
+        print('TEMPOATTUAZIONE Pircd:',self.tempoAttuazione)
+        print('TEMPOATTESA/TEMPOATTUAZIONE Pircd:',self.tempoAttesa/self.tempoAttuazione)
+        spazio[agent][18] = 1-(self.tempoAttesa/self.tempoAttuazione)
+        

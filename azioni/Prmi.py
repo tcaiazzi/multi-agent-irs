@@ -13,5 +13,8 @@ class Prmi(azioneAsincrona):
         else:
             legal_moves[6] = 0
 
-    def postCondizione(self,spazio,agent):
-        spazio[agent][20] = 1
+    def postCondizione(self,spazio,agent,T1,T2):
+        print('TEMPOATTESA Prmi:',self.tempoAttesa)
+        print('TEMPOATTUAZIONE Prmi:',self.tempoAttuazione)
+        print('TEMPOATTESA/TEMPOATTUAZIONE Prmi:',self.tempoAttesa/self.tempoAttuazione)
+        spazio[agent][20] = 1-(self.tempoAttesa/self.tempoAttuazione)

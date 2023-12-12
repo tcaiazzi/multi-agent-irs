@@ -41,6 +41,7 @@ class Attaccante(Agente):
 
     # Se l'attaccante trova il Timer <=0 non puo eseguire e per ora facciamo che ogni azione vale 1
     def preCondizioni(self,spazio,legal_moves):
+
         # Pscan
         self.PscanAzione.preCondizione(spazio,legal_moves,self.T1,self.T2,'difensore')
 
@@ -77,8 +78,7 @@ class Attaccante(Agente):
 
 
     def postCondizioni(self,action,spazio,agent):
-        print('Mosse Asincrone in Running prima della mossa:',self.mosseAsincroneRunning)
-
+       
         #-----------------------------------------------------
         # tempo appicazione della mossa sincrona
         t = 0
@@ -154,6 +154,5 @@ class Attaccante(Agente):
         self.lastTimer = spazio[agent][21]
         #----------------------------------------------------------------------------
 
-        print('Mosse Asincrone in Running dopo la mossa:',self.mosseAsincroneRunning)
         
         

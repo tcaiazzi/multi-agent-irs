@@ -145,8 +145,7 @@ class Difensore(Agente):
 
 
     def postCondizioni(self,action,spazio,agent):
-        print('Mosse Asincrone in Running prima della mossa:',self.mosseAsincroneRunning)
-
+      
         #-----------------------------------------------------
         # tempo appicazione della mossa sincrona
         t = 0
@@ -284,8 +283,6 @@ class Difensore(Agente):
 
         self.lastTimer = spazio[agent][21]
         #----------------------------------------------------------------------------
-
-        print('Mosse Asincrone in Running dopo la mossa:',self.mosseAsincroneRunning)
 
     
     

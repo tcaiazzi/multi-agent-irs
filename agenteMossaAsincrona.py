@@ -1,7 +1,9 @@
+from Agente import Agente
 
-class agenteMossaAsincrona():
+class agenteMossaAsincrona(Agente):
 
     def __init__(self, mossa,action,spazio,agent):
+        super().__init__()
         self.mossa = mossa
         self.action = action
         self.spazio = spazio
@@ -10,17 +12,16 @@ class agenteMossaAsincrona():
     # Se applica la postCondizione True e allora esce dalla coda
     # Se invece non l'applica torna false
     def stepSuccessivo(self,scalare,mosseAsincroneRunning,daRimuovere):
-        print('STEPSUCCESSIVO tempo di attesa rimasto:',self.mossa.tempoAttesa)
-        print('STEPSUCCESSIVO attesa-scalare:',self.mossa.tempoAttesa-scalare)
+        print('Scalare:',scalare)
         val = False
         if (self.mossa.tempoAttesa-scalare) > 0:
             self.mossa.tempoAttesa -= scalare
-        else:
-            val = self.postCondizione()
-            mosseAsincroneRunning.remove(daRimuovere)
-        return val
+            val = self.mossa.postCondizione(self.spazio,self.agent,self.T1,self.T2)
 
-    def postCondizione(self):
-        print('AGENTEASINCRONO applico postcondizione')
-        self.mossa.postCondizione(self.spazio,self.agent)
-        return True
+        else:
+            self.mossa.tempoAttesa = 0
+            val = self.mossa.postCondizione(self.spazio,self.agent,self.T1,self.T2)
+            mosseAsincroneRunning.remove(daRimuovere)
+    
+        round(self.mossa.tempoAttesa,1)
+        return val

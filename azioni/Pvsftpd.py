@@ -4,6 +4,7 @@ class Pvsftpd(azioneAsincrona):
     def __init__(self):
         self.tempoAttuazione = 0.6
         self.tempoAttesa = 0.6
+        
 
     def preCondizione(self,spazio,legal_moves,T1,T2,agent):
         if (spazio[agent][15] < T1 and spazio[agent][14] > T2 and spazio[agent][6] == 1 and spazio[agent][10] == 0 and 
@@ -12,6 +13,10 @@ class Pvsftpd(azioneAsincrona):
             legal_moves[1] = 1
         else:
             legal_moves[1] = 0
+        
 
-    def postCondizione(self,spazio,agent):
-        spazio[agent][15] = 1
+    def postCondizione(self,spazio,agent,T1,T2):
+        print('TEMPOATTESA Pvsftpd:',self.tempoAttesa)
+        print('TEMPOATTUAZIONE Pvsftpd:',self.tempoAttuazione)
+        print('TEMPOATTESA/TEMPOATTUAZIONE Pvsftpd:',self.tempoAttesa/self.tempoAttuazione)
+        spazio[agent][15] = 1-(self.tempoAttesa/self.tempoAttuazione)

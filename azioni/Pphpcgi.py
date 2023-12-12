@@ -13,5 +13,8 @@ class Pphpcgi(azioneAsincrona):
         else:
             legal_moves[3] = 0
 
-    def postCondizione(self,spazio,agent):
-        spazio[agent][17] = 1
+    def postCondizione(self,spazio,agent,T1,T2):
+        print('TEMPOATTESA Pphpcgi:',self.tempoAttesa)
+        print('TEMPOATTUAZIONE Pphpcgi:',self.tempoAttuazione)
+        print('TEMPOATTESA/TEMPOATTUAZIONE Pphpcgi:',self.tempoAttesa/self.tempoAttuazione)
+        spazio[agent][17] = 1-(self.tempoAttesa/self.tempoAttuazione)
