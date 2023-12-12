@@ -16,7 +16,4 @@ class Pvsftpd(azioneAsincrona):
         
 
     def postCondizione(self,spazio,agent,T1,T2):
-        print('TEMPOATTESA Pvsftpd:',self.tempoAttesa)
-        print('TEMPOATTUAZIONE Pvsftpd:',self.tempoAttuazione)
-        print('TEMPOATTESA/TEMPOATTUAZIONE Pvsftpd:',self.tempoAttesa/self.tempoAttuazione)
-        spazio[agent][15] = 1-(self.tempoAttesa/self.tempoAttuazione)
+        spazio[agent][15] = 1

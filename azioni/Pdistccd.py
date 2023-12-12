@@ -14,10 +14,7 @@ class Pdistccd(azioneAsincrona):
             legal_moves[5] = 0
 
     def postCondizione(self,spazio,agent,T1,T2):
-        print('TEMPOATTESA Pdistccd:',self.tempoAttesa)
-        print('TEMPOATTUAZIONE Pdistccd:',self.tempoAttuazione)
-        print('TEMPOATTESA/TEMPOATTUAZIONE Pdistccd:',self.tempoAttesa/self.tempoAttuazione)
-        spazio[agent][19] = 1-(self.tempoAttesa/self.tempoAttuazione)
+        spazio[agent][19] = 1
         
 
             

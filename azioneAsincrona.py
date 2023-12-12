@@ -13,3 +13,6 @@ class azioneAsincrona():
     @abstractmethod
     def postCondizione(self,spazio,agent):
         pass
+
+    def reset(self):
+        self.tempoAttesa = self.tempoAttuazione

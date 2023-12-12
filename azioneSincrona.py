@@ -9,3 +9,6 @@ class azioneSincrona():
     @abstractmethod
     def postCondizione(self,spazio,agent):
         pass
+
+    def reset(self):
+        pass

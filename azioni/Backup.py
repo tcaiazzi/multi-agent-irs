@@ -23,3 +23,6 @@ class Backup(azioneAsincrona):
         if (self.tempoAttesa/self.tempoAttuazione) <= 0:
             spazio[agent][9] = 1
             print('BACKUP TERMINATO ORA')
+        
+
+

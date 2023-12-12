@@ -14,7 +14,4 @@ class Psmbd(azioneAsincrona):
             legal_moves[2] = 0
 
     def postCondizione(self,spazio,agent,T1,T2):
-        print('TEMPOATTESA Psmbd:',self.tempoAttesa)
-        print('TEMPOATTUAZIONE Psmbd:',self.tempoAttuazione)
-        print('TEMPOATTESA/TEMPOATTUAZIONE Psmbd:',self.tempoAttesa/self.tempoAttuazione)
-        spazio[agent][16] = 1-(self.tempoAttesa/self.tempoAttuazione)
+        spazio[agent][16] = 1

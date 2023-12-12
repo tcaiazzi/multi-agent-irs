@@ -286,4 +286,25 @@ class Difensore(Agente):
 
     
     
-        
+    def reset(self):
+        super().reset()
+        self.GenerateAlertAzione.reset()
+        self.FirewallActivationAzione.reset()
+        self.BlockIpAzione.reset()
+        self.UnBlockIpAzione.reset()
+        self.LimitFlowRateAzione
+        self.UnLimitFlowRateAzione.reset()
+        self.RedirectHoneypotAzione.reset()
+        self.UnRedirectHoneypotAzione.reset()
+        self.IncreaseLogAzione.reset()
+        self.DecreaseLogAzione.reset()
+        self.QuarantineAzione.reset()
+        self.UnQuarantineAzione.reset()
+        self.ManualResolutionAzione.reset()
+        self.RebootAzione.reset()
+        self.ShutDownAzione.reset()
+        self.StartAzione.reset()
+        self.BackupAzione.reset()
+        self.UpdateAzione.reset()
+
+        self.mosseAsincroneRunning = []

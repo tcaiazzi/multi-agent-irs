@@ -155,4 +155,13 @@ class Attaccante(Agente):
         #----------------------------------------------------------------------------
 
         
+    def reset(self):
+        super().reset()
+        self.PscanAzione.reset()
+        self.PvsftpdAzione.reset()
+        self.PsmbdAzione.reset()
+        self.PphpcgiAzione.reset()
+        self.PircdAzione.reset()
+        self.PdistccdAzione.reset()
+        self.PrmiAzione.reset()
         
