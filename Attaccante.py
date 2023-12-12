@@ -146,12 +146,12 @@ class Attaccante(Agente):
         elif action == 7 :
             self.noOp.postCondizione(spazio,self.__class__.__name__)
         
-        spazio[agent][21] -= t
+        spazio[agent][21] -= round(t,2)
         
         #----------------------------------------------------------------------------
-        self.aggiornaMosseAsincrone(delta+t,agente,action)
+        self.aggiornaMosseAsincrone(round(delta+t,2),agente,action)
 
-        self.lastTimer = spazio[agent][21]
+        self.lastTimer = round(spazio[agent][21],2)
         #----------------------------------------------------------------------------
 
         

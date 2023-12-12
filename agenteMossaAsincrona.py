@@ -11,18 +11,20 @@ class agenteMossaAsincrona():
         self.spazio = spazio
         self.agent = agent
     
-    # Se applica la postCondizione True e allora esce dalla coda
-    # Se invece non l'applica torna false
+    # Se applica la postCondizione se è finito il tempo di attesa della mossa
+    # ovvero è passato il tempo necessario all'esecuzione
+    # torna true se ho eseguito la mossa così la rimuovo altrimenti false
     def stepSuccessivo(self,scalare):
         print('SCALARE:',scalare)
+        print('Tempo Attesa:',self.mossa.tempoAttesa)
+        print('Tempo Attuazione:',self.mossa.tempoAttuazione)
         val = False
         if (self.mossa.tempoAttesa-scalare) > 0:
-            self.mossa.tempoAttesa -= scalare
+            self.mossa.tempoAttesa = round((self.mossa.tempoAttesa-scalare),2)
 
         else:
             val = True
             self.mossa.tempoAttesa = 0
-            val = self.mossa.postCondizione(self.spazio,self.agent,self.T1,self.T2)
-    
-        round(self.mossa.tempoAttesa,1)
+            self.mossa.postCondizione(self.spazio,self.agent,self.T1,self.T2)
+
         return val

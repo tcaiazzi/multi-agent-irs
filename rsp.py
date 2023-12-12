@@ -327,6 +327,7 @@ class raw_env(AECEnv):
 
         #print('Prima della mossa:',self.spazio)
         postCondizioni(action,self.spazio,self.agent_selection)
+        self.spazio['difensore'][21] = round(self.spazio['difensore'][21],3)
         print('Dopo la mossa:',self.spazio['difensore'])
 
         ############################################## REWARD ###########################################

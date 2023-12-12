@@ -29,11 +29,21 @@ class Agente():
         print('Mosse Asincrone in Running PRIMA della mossa:',self.mosseAsincroneRunning)
         print('len:',len(self.mosseAsincroneRunning))
 
+        # lA LISTA RIMOZIONI la utilizzo per rimuovere tutte quelle azioni asincrone che vengono eseguite
+        # non le elimino direttmente perche togliendo elementi dalla lista mentre la eseguo smonto 
+        # l'ordine degli elementi rispetto l'indice
+        listaRimozioni = []
         for i in self.mosseAsincroneRunning:
             print(i)
+            # richiama il metodo dell'agente asincrono per aggiornare il tempo sulla mossa ed eventualmente applicarla
             val = i[0].stepSuccessivo(tot)
             if val :
-                self.mosseAsincroneRunning.remove((self.mossa,self.action))
+                listaRimozioni.append(i)
+
+        # rimuovo azoni asincrone eseguite
+        for i in listaRimozioni:
+            self.mosseAsincroneRunning.remove(i)
+        listaRimozioni = []
 
 
         #La metto qui perche altrimenti anche quelle appena create mi subiscono il delta del difensore
