@@ -15,5 +15,5 @@ class Pvsftpd(azioneAsincrona):
             legal_moves[1] = 0
         
 
-    def postCondizione(self,spazio,agent,T1,T2):
+    def postCondizione(self,spazio,agent):
         spazio[agent][15] = 1

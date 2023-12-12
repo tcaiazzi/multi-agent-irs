@@ -2,8 +2,8 @@ from azioneAsincrona import azioneAsincrona
 
 class Pdistccd(azioneAsincrona):
     def __init__(self):
-        self.tempoAttuazione = 0.2
-        self.tempoAttesa = 0.2
+        self.tempoAttuazione = 0.7
+        self.tempoAttesa = 0.7
 
     def preCondizione(self,spazio,legal_moves,T1,T2,agent):
         if (spazio[agent][19] < T1 and spazio[agent][14] > T2 and spazio[agent][6] == 1 and spazio[agent][10] == 0 and 
@@ -13,7 +13,7 @@ class Pdistccd(azioneAsincrona):
         else:
             legal_moves[5] = 0
 
-    def postCondizione(self,spazio,agent,T1,T2):
+    def postCondizione(self,spazio,agent):
         spazio[agent][19] = 1
         
 

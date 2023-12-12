@@ -13,6 +13,6 @@ class Pircd(azioneAsincrona):
         else:
             legal_moves[4] = 0
 
-    def postCondizione(self,spazio,agent,T1,T2):
+    def postCondizione(self,spazio,agent):
         spazio[agent][18] = 1
         
