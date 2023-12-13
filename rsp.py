@@ -129,7 +129,6 @@ class raw_env(AECEnv):
         #self.spazio[self.possible_agents[0]] = [False]
         # Mi serve solo per rimuovere un wrap per usare il dizionario per l'action mask MA NON LO STO USANDO
 
-        print()
         print('Spazii:',self.spazio)
 
         # optional: a mapping between agent name and ID
@@ -141,6 +140,10 @@ class raw_env(AECEnv):
         # SOLITAMENTE ALGORITMI ACCETTANO TUTTI DISCRETE, 1 VAL 1 MOSSA
         self._action_spaces = {}
         
+
+        """ self._action_spaces = {
+                Discrete(n_azioni_) for i in self.possible_agents
+            } """
         # ATTACCANTE: attacchi=[Pscan(0), Pvsftpd(1), Psmbd(2), Pphpcgi(3), Pircd(4), Pdistccd(5), Prmi(6), noOp(7)]
         self._action_spaces[self.possible_agents[0]] = Discrete(n_azioni_attaccante)
 
@@ -165,19 +168,15 @@ class raw_env(AECEnv):
 
         #N = len(self.spazio['difensore'])
 
-        self._observation_spaces[self.possible_agents[0]] = Dict(
+        self._observation_spaces = {
+            i : Dict(
                 {
                     "observations": Box(low=-1000, high=1000, shape=(dim_obs,), dtype=float),
                     "action_mask": Box(low=0, high=1, shape=(n_azioni_difensore,), dtype=np.int8),
                 }
-            )
-        # per entrambi usiamo solo quello del difensore
-        self._observation_spaces[self.possible_agents[1]] = Dict(
-                {
-                    "observations": Box(low=-1000, high=1000, shape=(dim_obs,), dtype=float),
-                    "action_mask": Box(low=0, high=1, shape=(n_azioni_difensore,), dtype=np.int8),
-                }
-            )
+            ) for i in self.possible_agents
+        }
+        
                     
         self.render_mode = render_mode
 
