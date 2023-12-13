@@ -45,7 +45,20 @@ import os
 # SCEGLIE UNA MOSSA BUONA CHE GLI CAMBIA UNA VARIABILE, 
 # CREDO CHE PERDA SEMPRE PER QUESTO MOTIVO, OTTIENE PIU REWARD SE RESISTE PIUTTOSTO CHE VINCERE)
 
-
+#------------------------------------- Lettura conf ---------------------------------#
+conf = open("conf.txt", "r")
+lines = conf.readlines()
+for i in range(len(lines)):
+    lines[i] = int(lines[i].strip().split('= ')[1])
+n_agenti = int(lines[0])
+print(f'Numero agenti : {n_agenti}')
+dim_obs = int(lines[1])
+print(f'Dimensione OBS : {dim_obs}')
+n_azioni_attaccante = int(lines[2])
+print(f'Numero azioni attaccante : {n_azioni_attaccante}')
+n_azioni_difensore = int(lines[3])
+print(f'Numero azioni difensore : {n_azioni_difensore}')
+#-------------------------------------- Lettura conf ----------------------------------#
 
 def env(render_mode=None):
     """
@@ -85,20 +98,22 @@ class raw_env(AECEnv):
         # nmosse è il numero di mossa della partita in cui hanno solo noop
         # in mosse salvo l'actionmask per la verifica
         # nmosse lo uso per la sequenzialità dei noop-noop
+
+        #self.possible_agents = [f'agente{i}' for i in range(n_agenti)]
+        self.possible_agents = ['attaccante','difensore']
+
         self.lm = {
-            'attaccante':{
+            i:{
                 'nmosse':-1,
                 'mosse':[]
-            },
-            'difensore':{
-                'nmosse':-1,
-                'mosse':[]
-            }
+            } for i in self.possible_agents
         }
 
-        self.possible_agents = ["attaccante","difensore"]
-
-        self.spazio = {}
+        # spazio del difensore monitorato anche dall'attaccante per l'observation dopo un'action
+        self.spazio = {
+            i: generazioneSpazioRandom(dim_obs)
+            for i in self.possible_agents
+        }
         
         # STATO
         # [ firewall([True/False])(0), blockedip([])(1), flowlimit_ips([])(2), alert([True/False])(3), honeypot_ips([])(4),
@@ -114,9 +129,6 @@ class raw_env(AECEnv):
         #self.spazio[self.possible_agents[0]] = [False]
         # Mi serve solo per rimuovere un wrap per usare il dizionario per l'action mask MA NON LO STO USANDO
 
-        self.spazio[self.possible_agents[0]] = generazioneSpazioRandom()
-        # spazio del difensore monitorato anche dall'attaccante per l'observation dopo un'action
-        self.spazio[self.possible_agents[1]] = generazioneSpazioRandom()
         print('Spazii:',self.spazio)
 
         # optional: a mapping between agent name and ID
@@ -128,14 +140,18 @@ class raw_env(AECEnv):
         # SOLITAMENTE ALGORITMI ACCETTANO TUTTI DISCRETE, 1 VAL 1 MOSSA
         self._action_spaces = {}
         
+
+        """ self._action_spaces = {
+                Discrete(n_azioni_) for i in self.possible_agents
+            } """
         # ATTACCANTE: attacchi=[Pscan(0), Pvsftpd(1), Psmbd(2), Pphpcgi(3), Pircd(4), Pdistccd(5), Prmi(6), noOp(7)]
-        self._action_spaces[self.possible_agents[0]] = Discrete(8)
+        self._action_spaces[self.possible_agents[0]] = Discrete(n_azioni_attaccante)
 
         # DIFENSORE: 18 azioni= [GenerateAlert(0), FirewallActivation(1), BlockSourceIp(2), UnblockSourceIp(3),
         # FlowRateLimit(4), UnlimitFlowRate(5), RedirectToHoneypot(6), UnHoneypot(7), IncreaseLog(8),
         # DecreaseLog(9), QuarantineHost(10), UnQuarantineHost(11), ManualResolution(12), SystemReboot(13),
         # SystemShutdown(14), SystemStart(15), BackupHost(16), SoftwareUpdate(17), noOp(18)]
-        self._action_spaces[self.possible_agents[1]] = Discrete(19)
+        self._action_spaces[self.possible_agents[1]] = Discrete(n_azioni_difensore)
 
         # DEVE ESSERE DELLA STESSA STRUTTURA DEL RITORNO DI observe() 
         self._observation_spaces = {}
@@ -150,21 +166,17 @@ class raw_env(AECEnv):
 	    # +
 	    # pscan([0-1])(14), pvsftpd([0-1])(15), psmbd([0-1])(16), pphpcgi([0-1])(17), pircd([0-1])(18), pdistccd([0-1])(19), prmi([0-1])(20),]
 
-        N = len(self.spazio['difensore'])
+        #N = len(self.spazio['difensore'])
 
-        self._observation_spaces[self.possible_agents[0]] = Dict(
+        self._observation_spaces = {
+            i : Dict(
                 {
-                    "observations": Box(low=-1000, high=1000, shape=(N,), dtype=float),
-                    "action_mask": Box(low=0, high=1, shape=(19,), dtype=np.int8),
+                    "observations": Box(low=-1000, high=1000, shape=(dim_obs,), dtype=float),
+                    "action_mask": Box(low=0, high=1, shape=(n_azioni_difensore,), dtype=np.int8),
                 }
-            )
-        # per entrambi usiamo solo quello del difensore
-        self._observation_spaces[self.possible_agents[1]] = Dict(
-                {
-                    "observations": Box(low=-1000, high=1000, shape=(N,), dtype=float),
-                    "action_mask": Box(low=0, high=1, shape=(19,), dtype=np.int8),
-                }
-            )
+            ) for i in self.possible_agents
+        }
+        
                     
         self.render_mode = render_mode
 
@@ -249,19 +261,17 @@ class raw_env(AECEnv):
         # prePost Reset per attaccante e difensore
         reset()
 
-        # PER LA LOGICA
-        self.spazio = {}
-        self.spazio[self.possible_agents[0]] = generazioneSpazioRandom()
-        self.spazio[self.possible_agents[1]] = generazioneSpazioRandom()
         self.lm = {
-            'attaccante':{
+            i:{
                 'nmosse':-1,
                 'mosse':[]
-            },
-            'difensore':{
-                'nmosse':-1,
-                'mosse':[]
-            }
+            } for i in self.possible_agents
+        }
+
+        # spazio del difensore monitorato anche dall'attaccante per l'observation dopo un'action
+        self.spazio = {
+            i: generazioneSpazioRandom(dim_obs)
+            for i in self.possible_agents
         }
     
         self.agents = self.possible_agents[:]
