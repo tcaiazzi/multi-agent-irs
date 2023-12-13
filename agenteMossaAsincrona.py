@@ -25,6 +25,6 @@ class agenteMossaAsincrona():
         else:
             val = True
             self.mossa.tempoAttesa = 0
-            self.mossa.postCondizione(self.spazio,self.agent,self.T1,self.T2)
+            self.mossa.postCondizione(self.spazio,self.agent)
 
         return val
