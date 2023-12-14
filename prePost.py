@@ -91,12 +91,11 @@ def postCondizioni(action,spazio,agent):
 
     if agent == 'difensore':
         print(mosseDifensore[action])
-        Timer = difensore.postCondizioni(action,spazio,agent)
+        difensore.postCondizioni(action,spazio,agent)
         
     elif agent == 'attaccante':
-        Timer = attaccante.postCondizioni(action,spazio,'difensore')
+        attaccante.postCondizioni(action,spazio,'difensore')
         
-    return Timer
 
 
 
