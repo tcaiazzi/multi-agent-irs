@@ -42,6 +42,7 @@ class Agente():
 
         # rimuovo azoni asincrone eseguite
         for i in listaRimozioni:
+            i[0].mossa.tempoAttesa = i[0].mossa.tempoAttuazione
             self.mosseAsincroneRunning.remove(i)
         listaRimozioni = []
 
