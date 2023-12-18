@@ -37,7 +37,6 @@ class Attaccante(Agente):
             7 : (0,0,0)
         }
 
-    
 
     # Se l'attaccante trova il Timer <=0 non puo eseguire e per ora facciamo che ogni azione vale 1
     def preCondizioni(self,spazio,legal_moves):

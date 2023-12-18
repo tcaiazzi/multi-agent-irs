@@ -8,11 +8,11 @@ class Agente():
         # Per le mosse asincrone, per il calcolo del tempo del difensore
         self.lastTimer = 0
 
-        self.wt = 0.16
-        self.wc = 0.34
-        self.wi = 0.50
-        self.tMax = 100
-        self.cMax = 100
+        self.wt = 0.20
+        self.wc = 0.20
+        self.wi = 0.60
+        self.tMax = 400
+        self.cMax = 500
 
     def reward(self,azione):
         calcolo = -(-self.wt*(azione[0]/self.tMax)-self.wc*(azione[1]/self.cMax)-self.wi*azione[2])

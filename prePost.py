@@ -160,11 +160,12 @@ def generazioneSpazioRandom(dim_obs):
         spazio.append(0)
     spazio[5] = 1
     spazio[6] = 1
-    """ for i in range(21):
+    """ for i in range(dim_obs):
         if i == 5:
-            spazio[i] = random.randint(0,5)
+            spazio.append(random.randint(0,5))
         else:
-            spazio[i] = random.randint(0,1) """
+            spazio.append(random.randint(0,1)) """
+
     return spazio
 
 def reset():
