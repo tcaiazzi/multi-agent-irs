@@ -15,8 +15,12 @@ class Agente():
         self.cMax = 500
 
     def reward(self,azione):
-        calcolo = -(-self.wt*(azione[0]/self.tMax)-self.wc*(azione[1]/self.cMax)-self.wi*azione[2])
-        #calcolo = REWARD_MAP[agent][action][0]+REWARD_MAP[agent][action][1]+REWARD_MAP[agent][action][2]
+        #  CONSIDERA SOLO IL TEMPO NELLA REWARD
+        # CONSIDERARE COME CONTEGGIARE IL TEMPO E L'ASINCRONICITA
+        # MINIMIZZARE IL TEMPO
+        # VEDERE ALTRE IDEE MA CONSIDERARE ANCHE L'INTRODUZIONE DELL NMOSSE O DEL TEMPO
+        # calcolo = -(-self.wt*(azione[0]/self.tMax)-self.wc*(azione[1]/self.cMax)-self.wi*azione[2])
+        calcolo = -(-self.wt*(azione[0]/self.tMax))
         print('Reward:',calcolo)
         return calcolo
     
