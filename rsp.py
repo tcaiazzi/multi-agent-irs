@@ -46,17 +46,17 @@ import os
 # CREDO CHE PERDA SEMPRE PER QUESTO MOTIVO, OTTIENE PIU REWARD SE RESISTE PIUTTOSTO CHE VINCERE)
 
 #------------------------------------- Lettura conf ---------------------------------#
-conf = open("conf.txt", "r")
+""" conf = open("conf.txt", "r")
 lines = conf.readlines()
 for i in range(len(lines)):
-    lines[i] = int(lines[i].strip().split('= ')[1])
-n_agenti = int(lines[0])
+    lines[i] = int(lines[i].strip().split('= ')[1]) """
+n_agenti = 2
 print(f'Numero agenti : {n_agenti}')
-dim_obs = int(lines[1])
+dim_obs = 23
 print(f'Dimensione OBS : {dim_obs}')
-n_azioni_attaccante = int(lines[2])
+n_azioni_attaccante = 8
 print(f'Numero azioni attaccante : {n_azioni_attaccante}')
-n_azioni_difensore = int(lines[3])
+n_azioni_difensore = 19
 print(f'Numero azioni difensore : {n_azioni_difensore}')
 #-------------------------------------- Lettura conf ----------------------------------#
 
