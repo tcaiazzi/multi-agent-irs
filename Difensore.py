@@ -161,55 +161,55 @@ class Difensore(Agente):
         if action == 0 :
             self.GenerateAlertAzione.postCondizione(spazio,agent)
             # Timer
-            t = 0.5
+            t = self.GenerateAlertAzione.reward[0]
         
         # FirewallActivation
         elif action == 1 :
             self.FirewallActivationAzione.postCondizione(spazio,agent)
             # Timer
-            t = 0.2
+            t = self.FirewallActivationAzione.reward[0]
         
         # BlockSourceIp
         elif action == 2 :
             self.BlockIpAzione.postCondizione(spazio,agent)
             # Timer
-            t = 0.3
+            t = self.BlockIpAzione.reward[0]
         
         # UnblockSourceIp
         elif action == 3 :
             self.UnBlockIpAzione.postCondizione(spazio,agent)
             # Timer
-            t = 0.3
+            t = self.UnBlockIpAzione.reward[0]
         
         # FlowRateLimit
         elif action == 4 :
             self.LimitFlowRateAzione.postCondizione(spazio,agent)
             # Timer
-            t = 0.2
+            t = self.LimitFlowRateAzione.reward[0]
         
         # UnlimitFlowRate
         elif action == 5 :
             self.UnLimitFlowRateAzione.postCondizione(spazio,agent)
             # Timer
-            t = 0.2
+            t = self.UnLimitFlowRateAzione.reward[0]
         
         # RedirectToHoneypot
         elif action == 6 :
             self.RedirectHoneypotAzione.postCondizione(spazio,agent)
             # Timer
-            t = 0.4
+            t = self.RedirectHoneypotAzione.reward[0]
         
         # UnHoneypot
         elif action == 7 :
             self.UnRedirectHoneypotAzione.postCondizione(spazio,agent)
             # Timer
-            t = 0.4
+            t = self.UnRedirectHoneypotAzione.reward[0]
         
         # IncreaseLog
         elif action == 8 :
             self.IncreaseLogAzione.postCondizione(spazio,agent)
             # Timer
-            t = 0.1
+            t = self.IncreaseLogAzione.reward[0]
         
         # DecreaseLog
         elif action == 9 :
@@ -219,43 +219,43 @@ class Difensore(Agente):
              """
             self.DecreaseLogAzione.postCondizione(spazio,agent)
             # Timer
-            t = 0.1
+            t = self.DecreaseLogAzione.reward[0]
         
         # QuarantineHost
         elif action == 10 :
             self.QuarantineAzione.postCondizione(spazio,agent)
             # Timer
-            t = 0.7
+            t = self.QuarantineAzione.reward[0]
         
         # UnQuarantineHost
         elif action == 11 :
             self.UnQuarantineAzione.postCondizione(spazio,agent)
             # Timer
-            t = 0.7
+            t = self.UnQuarantineAzione.reward[0]
         
         # ManualResolution
         elif action == 12 :
             self.ManualResolutionAzione.postCondizione(spazio,agent)
             # Timer
-            t = 0.4
+            t = self.ManualResolutionAzione.reward[0]
         
         # SystemReboot
         elif action == 13 :
-            # Timer
-            t = 0.7
             self.RebootAzione.postCondizione(spazio,agent)
+            # Timer
+            t = self.RebootAzione.reward[0]
         
         # SystemShutdown
         elif action == 14 :
             self.ShutDownAzione.postCondizione(spazio,agent)
             # Timer
-            t = 0.5
+            t = self.ShutDownAzione.reward[0]
         
         # SystemStart
         elif action == 15 :
             self.StartAzione.postCondizione(spazio,agent)
             # Timer
-            t = 0.2
+            t = self.StartAzione.reward[0]
         
         # BackupHost
         elif action == 16 :
@@ -270,7 +270,7 @@ class Difensore(Agente):
         elif action == 17 :
             self.UpdateAzione.postCondizione(spazio,agent)
             # Timer
-            t = 0.8
+            t = self.UpdateAzione.reward[0]
 
         # Noop solo per il timer
         elif action == 18 :
@@ -284,7 +284,86 @@ class Difensore(Agente):
         self.lastTimer = round(spazio[agent][21],2)
         #----------------------------------------------------------------------------
 
-    
+    def reward(self, action):
+        azione = 0
+
+        # GenerateAlert
+        if action == 0 :
+            azione = self.GenerateAlertAzione.reward
+        
+        # FirewallActivation
+        elif action == 1 :
+            azione = self.FirewallActivationAzione.reward
+        
+        # BlockSourceIp
+        elif action == 2 :
+            azione = self.BlockIpAzione.reward
+        
+        # UnblockSourceIp
+        elif action == 3 :
+            azione = self.UnBlockIpAzione.reward
+        
+        # FlowRateLimit
+        elif action == 4 :
+            azione = self.LimitFlowRateAzione.reward
+        
+        # UnlimitFlowRate
+        elif action == 5 :
+            azione = self.UnLimitFlowRateAzione.reward
+        
+        # RedirectToHoneypot
+        elif action == 6 :
+            azione = self.RedirectHoneypotAzione.reward
+        
+        # UnHoneypot
+        elif action == 7 :
+            azione = self.UnRedirectHoneypotAzione.reward
+        
+        # IncreaseLog
+        elif action == 8 :
+            azione = self.IncreaseLogAzione.reward
+        
+        # DecreaseLog
+        elif action == 9 :
+            azione = self.DecreaseLogAzione.reward
+        
+        # QuarantineHost
+        elif action == 10 :
+            azione = self.QuarantineAzione.reward
+        
+        # UnQuarantineHost
+        elif action == 11 :
+            azione = self.UnQuarantineAzione.reward
+        
+        # ManualResolution
+        elif action == 12 :
+            azione = self.ManualResolutionAzione.reward
+        
+        # SystemReboot
+        elif action == 13 :
+            azione = self.RebootAzione.reward
+        
+        # SystemShutdown
+        elif action == 14 :
+            azione = self.ShutDownAzione.reward
+        
+        # SystemStart
+        elif action == 15 :
+            azione = self.StartAzione.reward
+        
+        # BackupHost
+        elif action == 16 :
+            azione = self.BackupAzione.reward
+        
+        # SoftwareUpdate
+        elif action == 17 :
+            azione = self.UpdateAzione.reward
+
+        # Noop solo per il timer
+        elif action == 18 :
+            azione = self.noOp.rewardDiff
+
+        return super().reward(azione)
     
     def reset(self):
         super().reset()

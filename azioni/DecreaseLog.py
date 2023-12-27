@@ -3,6 +3,8 @@ from azioneAsincrona import azioneAsincrona
 import time
 
 class DecreaseLog(azioneSincrona):
+    def __init__(self):
+        self.reward = (1,1,0)
 
     def preCondizione(self,spazio,legal_moves,T1,T2,agent):
         if (spazio[agent][5] > 0 and 

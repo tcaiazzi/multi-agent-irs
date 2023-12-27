@@ -26,16 +26,6 @@ class Attaccante(Agente):
         self.PrmiAzione = Prmi()
         self.noOp = noOp()
 
-        self.REWARD_MAP = {
-            0 : (1,1,1),
-            1 : (1,1,1),
-            2 : (1,1,1),
-            3 : (1,1,1),
-            4 : (1,1,1),
-            5 : (1,1,1),
-            6 : (1,1,1),
-            7 : (0,0,0)
-        }
 
 
     # Se l'attaccante trova il Timer <=0 non puo eseguire e per ora facciamo che ogni azione vale 1
@@ -97,7 +87,7 @@ class Attaccante(Agente):
              """
             self.PscanAzione.postCondizione(spazio,agent)
             # Timer
-            t = 0.4
+            t = self.PscanAzione.reward[0]
         
         # Pvsftpd
         elif action == 1 :
@@ -153,6 +143,41 @@ class Attaccante(Agente):
         self.lastTimer = round(spazio[agent][21],2)
         #----------------------------------------------------------------------------
 
+    def reward(self, action):
+        azione = 0
+        # Pscan
+        if action == 0 :
+            azione = self.PscanAzione.reward
+        
+        # Pvsftpd
+        elif action == 1 :
+            azione =  self.PvsftpdAzione.reward
+            
+        # Psmbd
+        elif action == 2 :
+            azione = self.PsmbdAzione.reward
+         
+        # Pphpcgi
+        elif action == 3 :
+            azione = self.PphpcgiAzione.reward
+          
+        # Pircd
+        elif action == 4 :
+            azione = self.PircdAzione.reward
+            
+        # Pdistccd
+        elif action == 5 :
+            azione = self.PdistccdAzione.reward
+          
+        # Prmi
+        elif action == 6 :
+            azione = self.PrmiAzione.reward
+        
+        # Noop solo per il timer
+        elif action == 7 :
+            azione = self.noOp.rewardAtt
+
+        return super().reward(azione)
         
     def reset(self):
         super().reset()

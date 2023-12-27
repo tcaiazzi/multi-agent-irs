@@ -22,8 +22,8 @@ mosseAttaccante = ['Pscan','Pvsftpd','Psmbd','Pphpcgi','Pircd','Pdistccd','Prmi'
 
 # qui per ogni partita mette numero di mosse fatte e le cumulative reward finali di quella partita
 reward_mosse = {
-    "attaccante":[],
-    "difensore":[]
+    "attaccante":[[0,0]],
+    "difensore":[[0,0]]
 }
 
 # qui mette tutte le reward di ogni partita, le cumulative reward, ovvero i contatori
@@ -105,9 +105,9 @@ def reward(agent,action):
     # per la funzione di reward
     calcolo = 0
     if agent == 'attaccante':
-        calcolo = attaccante.reward(attaccante.REWARD_MAP[action])
+        calcolo = attaccante.reward(action)
     else:
-        calcolo = -difensore.reward(difensore.REWARD_MAP[action])
+        calcolo = -difensore.reward(action)
     return calcolo
 
 
@@ -123,6 +123,7 @@ def terminationPartita(spazio,lm,num_moves,NUM_ITERS):
     if ((spazio['difensore'][14] < T1 and spazio['difensore'][15] < T1 and spazio['difensore'][16] < T1 and spazio['difensore'][17] < T1 and spazio['difensore'][18] < T1 and spazio['difensore'][19] < T1 and spazio['difensore'] [20] < T1 
         and spazio['difensore'] [1] == 0 and spazio['difensore'][2] == 0 and spazio['difensore'][4] == 0 and spazio['difensore'][5] == 0 and spazio['difensore'][6] == 1 and spazio['difensore'][7] == 0) or 
         (spazio['difensore'][14] == 1 and spazio['difensore'][15] == 1 and spazio['difensore'][16] == 1 and spazio['difensore'][17] == 1 and spazio['difensore'][18] == 1 and spazio['difensore'][19] == 1 and spazio['difensore'] [20] == 1)):
+        print('ESCO')
         val = True
     else:
             # prova a fermarlo il fatto che le ultime due mosse se sono nop e nop (att e diff) allora basta 

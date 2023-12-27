@@ -91,7 +91,7 @@ class raw_env(AECEnv):
     def __init__(self, render_mode=None):
 
         # Questa è la truncation cosi esce per non girare all'infinito
-        self.NUM_ITERS = 1000
+        self.NUM_ITERS = 5000
 
         # Lo utilizzo affinche termini quando entrambi i due agenti, in maniera conseutiva hanno a disposizione
         # solo mosse noop selezionabili:
@@ -171,7 +171,7 @@ class raw_env(AECEnv):
         self._observation_spaces = {
             i : Dict(
                 {
-                    "observations": Box(low=-1000, high=1000, shape=(dim_obs,), dtype=float),
+                    "observations": Box(low=-5000, high=5000, shape=(dim_obs,), dtype=float),
                     "action_mask": Box(low=0, high=1, shape=(n_azioni_difensore,), dtype=np.int8),
                 }
             ) for i in self.possible_agents

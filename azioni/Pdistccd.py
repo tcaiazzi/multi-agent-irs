@@ -2,8 +2,9 @@ from azioneAsincrona import azioneAsincrona
 
 class Pdistccd(azioneAsincrona):
     def __init__(self):
-        self.tempoAttuazione = 0.7
-        self.tempoAttesa = 0.7
+        self.reward = (17,1,1)
+        self.tempoAttuazione = self.reward[0]
+        self.tempoAttesa = self.reward[0]
 
     def preCondizione(self,spazio,legal_moves,T1,T2,agent):
         if (spazio[agent][19] < T1 and spazio[agent][14] > T2 and spazio[agent][6] == 1 and spazio[agent][10] == 0 and 

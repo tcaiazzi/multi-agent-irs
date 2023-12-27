@@ -4,6 +4,9 @@ import numpy as np
 
 
 class noOp(azioneSincrona):
+    def __init__(self):
+        self.rewardAtt = (0,0,0)
+        self.rewardDiff = (4000,400,0.2)
 
     def preCondizione(self,spazio,legal_moves,T1,T2,agent):
         # li notto tutti così che nel caso nessuna piu sia la mossa selezionabile (tutti 0)

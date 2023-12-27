@@ -3,6 +3,8 @@ from azioneAsincrona import azioneAsincrona
 import time
 
 class Start(azioneSincrona):
+    def __init__(self):
+        self.reward = (30,6,0)
 
     def preCondizione(self,spazio,legal_moves,T1,T2,agent):
         
