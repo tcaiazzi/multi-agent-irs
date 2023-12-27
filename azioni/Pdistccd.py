@@ -2,7 +2,7 @@ from azioneAsincrona import azioneAsincrona
 
 class Pdistccd(azioneAsincrona):
     def __init__(self):
-        self.reward = (17,1,1)
+        self.reward = (60,1,1)
         self.tempoAttuazione = self.reward[0]
         self.tempoAttesa = self.reward[0]
 
