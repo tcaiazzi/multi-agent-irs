@@ -10,7 +10,7 @@ class UnLimitFlowRate(azioneSincrona):
         if (spazio[agent][14] < T1 and spazio[agent][0] == 1 and
             spazio[agent][6] == 1 and spazio[agent][2] == 1 and spazio[agent][5] >= 0 and 
             # Timer or noop attaccante
-            (spazio[agent][21] <= 0 or spazio[agent][22] == 1) or spazio[agent][10]== 1):
+            (spazio[agent][21] <= 0 or spazio[agent][22] == 1) ):
             legal_moves[5] = 1
         else:
             legal_moves[5] = 0

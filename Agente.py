@@ -8,9 +8,9 @@ class Agente():
         # Per le mosse asincrone, per il calcolo del tempo del difensore
         self.lastTimer = 0
 
-        self.wt = 0.20
-        self.wc = 0.20
-        self.wi = 0.60
+        self.wt = 0.60
+        self.wc = 0
+        self.wi = 0.40
         self.tMax = 400
         self.cMax = 500
 
@@ -18,9 +18,8 @@ class Agente():
         #  CONSIDERA SOLO IL TEMPO NELLA REWARD
         # CONSIDERARE COME CONTEGGIARE IL TEMPO E L'ASINCRONICITA
         # MINIMIZZARE IL TEMPO
-        # VEDERE ALTRE IDEE MA CONSIDERARE ANCHE L'INTRODUZIONE DELL NMOSSE O DEL TEMPO
-        # calcolo = -(-self.wt*(azione[0]/self.tMax)-self.wc*(azione[1]/self.cMax)-self.wi*azione[2])
-        calcolo = -(-self.wt*(azione[0]/self.tMax))
+        calcolo = -(-self.wt*(azione[0]/self.tMax)-self.wc*(azione[1]/self.cMax)-self.wi*azione[2])
+        #calcolo = -(-self.wt*(azione[0]/self.tMax))
         print('Reward:',calcolo)
         return calcolo
     
