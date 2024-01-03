@@ -13,7 +13,7 @@ class IncreaseLog(azioneSincrona):
              spazio[agent][20] >= T1) and spazio[agent][6] == 1 and 
              spazio[agent][10] == 0 and
              # Timer or noop attaccante
-             (spazio[agent][21] <= 0 or spazio[agent][22] == 1) or spazio[agent][1] == 1 or spazio[agent][2] == 1 or spazio[agent][4] == 1) : 
+             (spazio[agent][21] <= 0 or spazio[agent][22] == 1) or  (spazio[agent][1] == 1 and spazio[agent][2] == 1 and spazio[agent][4] == 1) ) : 
             
             legal_moves[8] = 1
         else:

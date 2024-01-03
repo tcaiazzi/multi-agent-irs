@@ -8,7 +8,7 @@ class ShutDown(azioneSincrona):
         self.reward = (30,6,1)
 
     def preCondizione(self,spazio,legal_moves,T1,T2,agent):
-        if (spazio[agent][11] == 0 and spazio[agent][6] == 1 and 
+        if (spazio[agent][11] == 0 and spazio[agent][6] == 1 and spazio[agent][13] == 0 and
             (spazio[agent][14] == 1 or spazio[agent][15] == 1 or spazio[agent][16] == 1 or spazio[agent][17] == 1 or 
              spazio[agent][18] == 1 or spazio[agent][19] == 1 or spazio[agent][20] == 1) 
             and spazio[agent][0] == 1 and spazio[agent][7] == 1 
