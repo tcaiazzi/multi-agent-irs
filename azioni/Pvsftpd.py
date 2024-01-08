@@ -2,7 +2,7 @@ from azioneAsincrona import azioneAsincrona
 
 class Pvsftpd(azioneAsincrona):
     def __init__(self):
-        self.reward = (60,1,1)
+        self.reward = (200,1,1)
         self.tempoAttuazione = self.reward[0]
         self.tempoAttesa = self.reward[0]
         
