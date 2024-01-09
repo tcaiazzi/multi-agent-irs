@@ -56,7 +56,7 @@ dim_obs = 23
 print(f'Dimensione OBS : {dim_obs}')
 n_azioni_attaccante = 8
 print(f'Numero azioni attaccante : {n_azioni_attaccante}')
-n_azioni_difensore = 19
+n_azioni_difensore = 20
 print(f'Numero azioni difensore : {n_azioni_difensore}')
 #-------------------------------------- Lettura conf ----------------------------------#
 
@@ -150,7 +150,7 @@ class raw_env(AECEnv):
         # DIFENSORE: 18 azioni= [GenerateAlert(0), FirewallActivation(1), BlockSourceIp(2), UnblockSourceIp(3),
         # FlowRateLimit(4), UnlimitFlowRate(5), RedirectToHoneypot(6), UnHoneypot(7), IncreaseLog(8),
         # DecreaseLog(9), QuarantineHost(10), UnQuarantineHost(11), ManualResolution(12), SystemReboot(13),
-        # SystemShutdown(14), SystemStart(15), BackupHost(16), SoftwareUpdate(17), noOp(18)]
+        # SystemShutdown(14), SystemStart(15), BackupHost(16), SoftwareUpdate(17), noOp(18), wait(19)]
         self._action_spaces[self.possible_agents[1]] = Discrete(n_azioni_difensore)
 
         # DEVE ESSERE DELLA STESSA STRUTTURA DEL RITORNO DI observe() 
@@ -222,11 +222,11 @@ class raw_env(AECEnv):
         # [GenerateAlert(0), FirewallActivation(1), BlockSourceIp(2), UnblockSourceIp(3), FlowRateLimit(4), UnlimitFlowRate(5), 
 		# RedirectToHoneypot(6), UnHoneypot(7), IncreaseLog(8), DecreaseLog(9), QuarantineHost(10), UnQuarantineHost(11),
 		# ManualResolution(12), SystemReboot(13), SystemShutdown(14), SystemStart(15), BackupHost(16), SoftwareUpdate(17),
-        # noOp(18)]
+        # noOp(18),wait(19)]
         
         # ATTACCANTE AZIONI
         #[Pscan(0), Pvsftpd(1), Psmbd(2), Pphpcgi(3), Pircd(4), Pdistccd(5), Prmi(6), noOp(7)]
-        legal_moves = np.zeros(19,'int8')
+        legal_moves = np.zeros(n_azioni_difensore,'int8')
 
         preCondizioni(agent,self.spazio,legal_moves)
         self.lm[agent]['mosse'] = np.copy(legal_moves)

@@ -18,6 +18,7 @@ from azioni.Start import Start
 from azioni.Backup import Backup
 from azioni.Update import Update
 from azioni.noOp import noOp
+from azioni.Wait import Wait
 
 from threading import Thread
 from agenteMossaAsincrona import agenteMossaAsincrona
@@ -47,6 +48,7 @@ class Difensore(Agente):
         self.BackupAzione = Backup()
         self.UpdateAzione = Update()
         self.noOp = noOp()
+        self.wait = Wait()
 
         self.REWARD_MAP = {
             0 : (1,1,0),
@@ -67,11 +69,12 @@ class Difensore(Agente):
             15 : (30,6,0),
             16 : (3600,10,0.1),
             17 : (600,300,0.1),
-            18 : (3600,300,0.1)
+            18 : (3600,300,0.1),
             # voglio scoraggiare il difensore a non fare nulla così che faccia qualcosa per salvaguardare
             # Con il professore abbiamo detto che deve essere in modulo la piu grande reward tra i due 
             # ed io ho aggiunto un delta per evitare il calcolo preciso prendendo i coefficenti maggiori (x,y,z)
             # sarebbe come a dire -inf
+            19 : (0,0,0)
         }
 
     # Il difensore invece può eseguire una mossa solo nel caso incui il Timer è <=0 ed ogni mossa vale 1
@@ -131,16 +134,23 @@ class Difensore(Agente):
         # BackupHost
         if not(any(tupla[1] == 16 for tupla in self.mosseAsincroneRunning)):
             self.BackupAzione.preCondizione(spazio,legal_moves,self.T1,self.T2,'difensore',self.mosseAsincroneRunning)
+        else:
+            legal_moves[16] = 0
         
         # SoftwareUpdate
         # detto dal prof: deve aver fatto backup
         self.UpdateAzione.preCondizione(spazio,legal_moves,self.T1,self.T2,'difensore')
         
+        # WAIT mi serve per le mosse asincrone per aspettare il tempo di completamento senza fare altro
+        if len(self.mosseAsincroneRunning) >= 1:
+            self.wait.preCondizione(spazio,legal_moves,self.T1,self.T2,'difensore')
+        else:
+            legal_moves[19] = 0
+
         # noOp (altrimenti se nulla è selezionbile sceglie a caso)
         # Ora abbiamo deciso di renderla ammissibile ad ogni stato così che possa terminare anche 
         # quando non ho piu mosse che mi portano sullo stato target (finale)
         self.noOp.preCondizione(spazio,legal_moves,self.T1,self.T2,self.__class__.__name__)
-
 
 
 
@@ -276,6 +286,11 @@ class Difensore(Agente):
         elif action == 18 :
             self.noOp.postCondizione(spazio,agent)
         
+        # Wait
+        elif action == 19 :
+            self.wait.postCondizione(spazio,agent)
+            t = self.mosseAsincroneRunning[0][0].mossa.tempoAttesa
+
         spazio[agent][21] += round(t,2)
 
         #----------------------------------------------------------------------------
@@ -362,6 +377,9 @@ class Difensore(Agente):
         # Noop solo per il timer
         elif action == 18 :
             azione = self.noOp.rewardDiff
+
+        elif action == 19 : 
+            azione = self.wait.reward
 
         return super().reward(azione)
     

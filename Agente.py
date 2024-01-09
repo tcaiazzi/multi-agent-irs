@@ -8,9 +8,9 @@ class Agente():
         # Per le mosse asincrone, per il calcolo del tempo del difensore
         self.lastTimer = 0
 
-        self.wt = 1
+        self.wt = 0.5
         self.wc = 0
-        self.wi = 0
+        self.wi = 0.5
         self.tMax = 4000
         self.cMax = 500
 

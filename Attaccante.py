@@ -62,7 +62,7 @@ class Attaccante(Agente):
         self.noOp.preCondizione(spazio,legal_moves,self.T1,self.T2,self.__class__.__name__)
 
         # Non ci sono mosse per l'attaccante
-        for i in range(8,19,1):
+        for i in range(8,len(legal_moves),1):
             legal_moves[i] = 0
 
 

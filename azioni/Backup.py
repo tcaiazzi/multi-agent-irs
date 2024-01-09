@@ -16,7 +16,7 @@ class Backup(azioneAsincrona):
             (spazio[agent][21] <= 0 or spazio[agent][22] == 1) and
             (spazio[agent][15] > T1 or spazio[agent][16] > T1 or spazio[agent][17] > T1 or 
              spazio[agent][18] > T1 or spazio[agent][19] > T1 or spazio[agent][20] > T1)
-             and 16 not in mosseAsincroneRunning):
+             and 16 not in mosseAsincroneRunning ):
             legal_moves[16] = 1
         else:
             legal_moves[16] = 0
