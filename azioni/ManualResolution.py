@@ -24,7 +24,7 @@ class ManualResolution(azioneSincrona):
         spazio[agent][6] = 1
         spazio[agent][7] = 0
         spazio[agent][11] = 1
-        spazio[agent][14] = 0
+        #spazio[agent][14] = 0
         spazio[agent][15] = 0
         spazio[agent][16] = 0
         spazio[agent][17] = 0
