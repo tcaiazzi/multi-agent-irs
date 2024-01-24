@@ -6,7 +6,8 @@ class Backup(azioneAsincrona):
     def __init__(self):
         self.tempoAttuazione = 20
         self.tempoAttesa = 20
-        self.reward = (1800,10,0.1)
+        self.reward = (1000,10,0.1)
+
 
     def preCondizione(self,spazio,legal_moves,T1,T2,agent,mosseAsincroneRunning):
         if (spazio[agent][6] == 1 and spazio[agent][9] == 0 and spazio[agent][7] == 0 and
