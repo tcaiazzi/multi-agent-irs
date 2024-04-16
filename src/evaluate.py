@@ -20,8 +20,39 @@ if __name__ == '__main__':
         required=True
     )
 
+    parser.add_argument(
+        "--agents",
+        type=int,
+        required=True
+    )
+
+    parser.add_argument(
+        "--att-actions",
+        type=int,
+        required=True
+    )
+
+    parser.add_argument(
+        "--k-att",
+        type=float,
+        required=True
+    )
+
+    parser.add_argument(
+        "--def-actions",
+        type=int,
+        required=True
+    )
+
+    parser.add_argument(
+        "--k-def",
+        type=float,
+        required=True
+    )
+
     args = parser.parse_args(sys.argv[1:])
 
     os.makedirs(os.path.join(os.path.dirname(__file__), "..", "results", "evaluation"), exist_ok = True)
 
-    evaluate(args.algorithm, args.checkpoint)
+    evaluate(args.algorithm, args.checkpoint, args.agents, args.att_actions, args.k_att,
+                     args.def_actions, args.k_def)

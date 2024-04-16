@@ -18,9 +18,11 @@ env_name = "rsp"
 
 
 # Definisco il mio ambiente
-def env_creator(algorithm, type_of_test):
+def env_creator(algorithm: str, type_of_test: str, num_agents: int, num_att_actions: int, k_att: float,
+                num_def_actions: int, k_def: float):
     # Nome ambiente
-    env = rsp.env(algorithm, type_of_test, render_mode="human")
+    env = rsp.env(algorithm, type_of_test, num_agents, num_att_actions, k_att, num_def_actions, k_def,
+                  render_mode="human")
     # Registro il mio ambiente
     register_env(env_name, lambda config: PettingZooEnv(pad_action_space_v0(env)))
     # register_env(env_name, lambda config: PettingZooEnv(pad_observations_v0(pad_action_space_v0(env_creator()))))
@@ -38,15 +40,18 @@ def env_creator(algorithm, type_of_test):
     check_env(test_env)
 
     return obs_space, act_space
+
+
 # ROLLOUT = PARTITE PER EPOCA ( IMPOSTATE PERCHE ALCUNI ALG COME IMPALA E PG NON ERANO DI DEFAULT 10)
 # NUM_CPUS_FOR_LOCAL_WORKER = CPU PER IL TRINER
 # NUM_ROLLOUT_WORKER = OGNUGNO UNA CPU PER ADDESTRAMENTO PARALLELO
 
 
-
 class DQN:
-    def __init__(self, type_of_test: str):
-        obs_space, act_space = env_creator(self.__class__.__name__, type_of_test)
+    def __init__(self, type_of_test: str, num_agents: int, num_att_actions: int, k_att: float, num_def_actions: int,
+                 k_def: float):
+        obs_space, act_space = env_creator(self.__class__.__name__, type_of_test,
+                                           num_agents, num_att_actions, k_att, num_def_actions, k_def)
         self.config = (
             DQNConfig()
             .environment(
@@ -83,8 +88,10 @@ class DQN:
 
 
 class ApexDQN:
-    def __init__(self, type_of_test):
-        obs_space, act_space = env_creator(self.__class__.__name__, type_of_test)
+    def __init__(self, type_of_test, num_agents: int, num_att_actions: int, k_att: float, num_def_actions: int,
+                 k_def: float):
+        obs_space, act_space = env_creator(self.__class__.__name__, type_of_test, num_agents, num_att_actions, k_att,
+                                           num_def_actions, k_def)
         self.config = (
             ApexDQNConfig()
             .environment(
@@ -123,8 +130,10 @@ class ApexDQN:
 # Strano l'attaccante si addestra a scegliere nop e poi difensore -log e finisce, non vorrei che minimizzasse 
 # Però se così fosse il difensore non terminerebbe subito
 class Impala:
-    def __init__(self, type_of_test):
-        obs_space, act_space = env_creator(self.__class__.__name__, type_of_test)
+    def __init__(self, type_of_test, num_agents: int, num_att_actions: int, k_att: float, num_def_actions: int,
+                 k_def: float):
+        obs_space, act_space = env_creator(self.__class__.__name__, type_of_test, num_agents, num_att_actions, k_att,
+                                           num_def_actions, k_def)
         self.config = (
             ImpalaConfig()
             .environment(env_name, disable_env_checking=True)
@@ -154,8 +163,10 @@ class Impala:
 # se non quantop meno accettabile da attendere, perciò sono stati scelti questi valori di training non per 
 # performance uguali)
 class PG:
-    def __init__(self, type_of_test):
-        obs_space, act_space = env_creator(self.__class__.__name__, type_of_test)
+    def __init__(self, type_of_test, num_agents: int, num_att_actions: int, k_att: float, num_def_actions: int,
+                 k_def: float):
+        obs_space, act_space = env_creator(self.__class__.__name__, type_of_test, num_agents, num_att_actions, k_att,
+                                           num_def_actions, k_def)
         self.config = (
             PGConfig()
             .environment(env_name, disable_env_checking=True)
@@ -182,8 +193,10 @@ class PG:
 
 
 class PPO:
-    def __init__(self, type_of_test):
-        obs_space, act_space = env_creator(self.__class__.__name__, type_of_test)
+    def __init__(self, type_of_test, num_agents: int, num_att_actions: int, k_att: float, num_def_actions: int,
+                 k_def: float):
+        obs_space, act_space = env_creator(self.__class__.__name__, type_of_test, num_agents, num_att_actions, k_att,
+                                           num_def_actions, k_def)
         self.config = (
             PPOConfig()
             .environment(env_name, disable_env_checking=True)

@@ -14,38 +14,21 @@ from prePost import (generazioneSpazioRandom, postCondizioni,
                      terminationPartita)
 
 
-# ------------------------------------- Lettura conf ---------------------------------#
-def parse_configruartion():
-    conf = open("conf.txt", "r")
-    lines = conf.readlines()
-    conf.close()
-
-    print(lines)
-    for i in range(len(lines)):
-        p = lines[i].strip().split('= ')
-        print(int(p[1]))
-        lines[i] = int(p[1])
-
+def compute_configuration(num_agents: int, num_att_actions: int, k_att: float, num_def_actions: int,
+                          k_def: float) -> dict:
     configuration = {
-        'num_agents': int(lines[0]),
-        'num_att_actions': int(lines[1]),
-        'k_att': int(lines[2]) / 10,
-        'num_def_actions': int(lines[3]),
-        'k_def': int(lines[4]) / 10
+        'num_agents': num_agents,
+        'num_att_actions': num_att_actions,
+        'k_att': k_att,
+        'num_def_actions': num_def_actions,
+        'k_def': k_def
     }
-
     configuration['num_sync_att_actions'] = int((configuration['num_att_actions'] * configuration['k_att']))
     configuration['num_async_att_actions'] = configuration['num_att_actions'] - configuration['num_sync_att_actions']
 
     configuration['num_sync_def_actions'] = int((configuration['num_def_actions'] * configuration['k_def']))
     configuration['num_async_def_actions'] = configuration['num_def_actions'] - configuration['num_sync_def_actions']
 
-    # # dimensione dello stato, tutte variabili booleane + timer
-    # dim_obs = 0
-    # # azioni attaccante e dfensore uguali, + noop (ma in numero sincrone ed asincrone puo variare)
-    # n_azioni = 0
-    # # posizione del timer nello spazio
-    # timer = 0
     if ((configuration['num_att_actions']) == (configuration['num_def_actions']) and (10 >= configuration['k_att'] >= 0)
             and (10 >= configuration['k_def'] >= 0)):
         # ogni azione una var dello stato + timer
@@ -70,20 +53,20 @@ def parse_configruartion():
         }
     }
     configuration['legal_moves'] = np.zeros(configuration['n_actions'], 'int8')
-    start = 0
 
     return configuration
 
 
 # -------------------------------------- Lettura conf ----------------------------------#
 
-def env(algorithm, type_of_test, render_mode=None):
+def env(algorithm, type_of_test, num_agents: int, num_att_actions: int, k_att: float, num_def_actions: int,
+        k_def: float, render_mode=None):
     """
     The env function often wraps the environment in wrappers by default.
     You can find full documentation for these methods
     elsewhere in the developer documentation.
     """
-    configuration = parse_configruartion()
+    configuration = compute_configuration(num_agents, num_att_actions, k_att, num_def_actions, k_def)
     internal_render_mode = render_mode if render_mode != "ansi" else "human"
     env = raw_env(algorithm, configuration, type_of_test, render_mode=internal_render_mode)
     # This wrapper is only for environments which print results to the terminal

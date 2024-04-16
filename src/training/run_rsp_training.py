@@ -27,7 +27,9 @@ algorithm_to_trainable = {
 }
 
 
-def run_rsp_training(algorithm: str, training_iteration: int, gamma: float):
+def run_rsp_training(algorithm: str, training_iteration: int, gamma: float,
+                     num_agents: int, num_att_actions: int, k_att: float, num_def_actions: int, k_def: float):
+
     torch, nn = try_import_torch()
     torch.cuda.empty_cache()
 
@@ -53,7 +55,7 @@ def run_rsp_training(algorithm: str, training_iteration: int, gamma: float):
 
     algorithm_class = getattr(training_algorithm, algorithm)
 
-    config = algorithm_class("training").config
+    config = algorithm_class("training", num_agents, num_att_actions, k_att, num_def_actions, k_def).config
 
     # Mi risolve i problemi di mismatch con la rete, non so perche, ma per l'action mask
     config['hiddens'] = []
@@ -72,9 +74,6 @@ def run_rsp_training(algorithm: str, training_iteration: int, gamma: float):
         run_config=train.RunConfig(stop=stop, verbose=1, storage_path=result_path),
         param_space=config,
     ).fit()
-
-    visualizza_reward_mosse()
-
 
 if __name__ == '__main__':
     run_rsp_training(sys.argv[1], int(sys.argv[2]), float(sys.argv[3]))
