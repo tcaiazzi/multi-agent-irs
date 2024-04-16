@@ -1,0 +1,11 @@
+numpy>=1.21.6
+gymnasium~=0.28.1
+pettingzoo~=1.24.1
+ray~=2.7.0
+SuperSuit~=3.9.0
+matplotlib~=3.5.1
+dm_tree
+scikit-image
+pandas
+torch
+lz4
