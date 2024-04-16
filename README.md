@@ -1,28 +1,25 @@
-# IRS: Intrusion Response System
-# Replica Taas con nuove implementazioni
+# Multi Agent IRS
 
-INSTALLARE
-requirements.txt
+## Pre-Requisites
+```bash
+python3 -m pip install -r requirements.txt
+python3 -m pip install ray[train]
+```
 
-CONF.TXT NON UTILIZZATO
+## Training
 
-COMANDI:
- ./start ALGORITMO TrainingIteration
- ./start ALGORITMO -e CheckPoint > log.txt 
+To train a model using a specific algorithm, go inside the `src` directory, then:
+```bash
+python3 train.py --algorithm DQN --epoch 10 --gamma 0.9 
+```
 
-LEGENDA:
- - ALGORITMI: DQN, ApexDQN, Impala, PG, PPO
- - TrainingIteration: int
+Possible algorithms include: 
+- `DQN`
+- `ApexDQN`
+- `PPO`
+- `PG`
+- `Impala`
 
+The resultant models, will be put inside the `models` directory in the project root. 
 
-
-OUTPUT
-/fileGrafici/reward_mosse.txt
-
-
-./visualizzazione.py (UTILIZZATO PER TEST SUL PC PERSONALE PER RISCONTRO GRAFICO)
-/fileGrafici/visualizzaAll.py (NON UTILIZZATO)
-
-
-./evaluate/*
-file per l'evaluation dei checkpoint
+## Evaluate

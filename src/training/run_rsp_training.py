@@ -1,4 +1,5 @@
 # se lancio dalla cartella principale
+import os.path
 import sys
 
 sys.path.append('./')
@@ -63,9 +64,12 @@ def run_rsp_training(algorithm: str, training_iteration: int, gamma: float):
 
     algo = config.training(gamma=gamma).build()
 
+    result_path = os.path.join(os.path.dirname(__file__), '..', '..', 'models')
+    os.makedirs(result_path, exist_ok=True)
+
     results = tune.Tuner(
         algorithm_to_trainable[algorithm],
-        run_config=train.RunConfig(stop=stop, verbose=1),
+        run_config=train.RunConfig(stop=stop, verbose=1, storage_path=result_path),
         param_space=config,
     ).fit()
 

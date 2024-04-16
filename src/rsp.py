@@ -112,7 +112,9 @@ class raw_env(AECEnv):
         self.start = time.time()
         self.algorithm = algorithm
         self.type_of_test = type_of_test
-
+        self.num_moves = None
+        self._agent_selector = None
+        self.end = None
         # Questa è la truncation cosi esce per non girare all'infinito
         self.NUM_ITERS = 2000
         self.lastTimer = 0
