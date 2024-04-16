@@ -1,5 +1,7 @@
+import argparse
 import json
 import os.path
+import sys
 
 import numpy as np
 from matplotlib import pyplot as plt
@@ -69,10 +71,25 @@ def plot_reward_on_epoch_figure(algorithm: str):
 
 
 if __name__ == '__main__':
-    results_directory = os.path.join("results/training")
-    figures_directory = "figures"
+    parser = argparse.ArgumentParser(
+        description='Run IRS training!',
+    )
+
+    group = parser.add_mutually_exclusive_group(required=True)
+    group.add_argument('--training', action='store_true')
+    group.add_argument('--evaluation', action='store_true')
+
+    args = parser.parse_args(sys.argv[1:])
+
+    if args.training:
+        results_directory = os.path.join("results", "training")
+        figures_directory = os.path.join("figures", "training")
+    elif args.evaluation:
+        results_directory = os.path.join("results", "evaluation")
+        figures_directory = os.path.join("figures", "evaluation")
+
     os.makedirs(figures_directory, exist_ok=True)
 
     plot_reward_on_epoch_figure("DQN")
-    plot_reward_on_epoch_figure("PPO")
-    plot_reward_on_epoch_figure("PG")
+    # plot_reward_on_epoch_figure("PPO")
+    # plot_reward_on_epoch_figure("PG")
