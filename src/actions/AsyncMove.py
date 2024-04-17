@@ -1,15 +1,12 @@
-import random
-
-
 # qui ho implementato la stessa idea delle mosse sincrone
 
 class AsyncMove:
 
-    def __init__(self):
-        self.tempoAttuazione = 1.0
-        self.tempoAttesa = 1.0
+    def __init__(self, execution_time: float = 1.0, waiting_time: float = 1.0):
+        self.execution_time = execution_time
+        self.waiting_time = waiting_time
 
-    def preCondizione(self, spazio, legal_moves, pos, agent, mAttS, mosseEseguite, running):
+    def verify_preconditions(self, spazio, legal_moves, pos, agent, mAttS, mosseEseguite, running):
 
         # mossa asincrona non in esecuzione...
         if not (running):
@@ -52,7 +49,7 @@ class AsyncMove:
         else:
             legal_moves[pos] = 0
 
-    def postCondizione(self, spazio, agent, action, mAttS):
+    def verify_postconditions(self, spazio, agent, action, mAttS):
         # soglia = round(random.random(),2)
 
         if agent == 'attacker':
@@ -67,4 +64,4 @@ class AsyncMove:
                 spazio['defender'][i] = 0
 
     def reset(self):
-        self.tempoAttesa = self.tempoAttuazione
+        self.waiting_time = self.execution_time

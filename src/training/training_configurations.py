@@ -10,44 +10,30 @@ from ray.rllib.examples.models.action_mask_model import TorchActionMaskModel
 from ray.rllib.models import ModelCatalog
 from ray.rllib.utils import check_env
 from ray.tune.registry import register_env
-# SERVE PER AVERE LO SPAZIO DELLE AZIONI DI DIMENSIONI DIVERSE
-# e VOLENDO ANCHE LE OBSERVATIONs
 from supersuit.multiagent_wrappers import (pad_action_space_v0)
 
 env_name = "rsp"
 
 
-# Definisco il mio ambiente
 def env_creator(algorithm: str, type_of_test: str, num_agents: int, num_att_actions: int, k_att: float,
                 num_def_actions: int, k_def: float):
-    # Nome ambiente
     env = rsp.env(algorithm, type_of_test, num_agents, num_att_actions, k_att, num_def_actions, k_def,
                   render_mode="human")
-    # Registro il mio ambiente
     register_env(env_name, lambda config: PettingZooEnv(pad_action_space_v0(env)))
-    # register_env(env_name, lambda config: PettingZooEnv(pad_observations_v0(pad_action_space_v0(env_creator()))))
 
-    # Mi serve per usare l'action mask in odo da avere ad ogni step solo specifiche mosse
-    # senza dover gestire io mosse non selezionabili
+    # Use an action mask to get selectable moves at every step
     ModelCatalog.register_custom_model("am_model", TorchActionMaskModel)
 
-    # Mi servono per il check e l'inizializzazione degli algoritmi
     test_env = PettingZooEnv(pad_action_space_v0(env))
     obs_space = test_env.observation_space
     act_space = test_env.action_space
 
-    # Verifico l'ambiente così ch se faccio modifiche me lo dice senza fare il running e l'inizializzazione degli algoritmi
     check_env(test_env)
 
     return obs_space, act_space
 
 
-# ROLLOUT = PARTITE PER EPOCA ( IMPOSTATE PERCHE ALCUNI ALG COME IMPALA E PG NON ERANO DI DEFAULT 10)
-# NUM_CPUS_FOR_LOCAL_WORKER = CPU PER IL TRINER
-# NUM_ROLLOUT_WORKER = OGNUGNO UNA CPU PER ADDESTRAMENTO PARALLELO
-
-
-class DQN:
+class DQNConfiguration:
     def __init__(self, type_of_test: str, num_agents: int, num_att_actions: int, k_att: float, num_def_actions: int,
                  k_def: float):
         obs_space, act_space = env_creator(self.__class__.__name__, type_of_test,
@@ -87,7 +73,7 @@ class DQN:
         )
 
 
-class ApexDQN:
+class ApexDQNConfiguration:
     def __init__(self, type_of_test, num_agents: int, num_att_actions: int, k_att: float, num_def_actions: int,
                  k_def: float):
         obs_space, act_space = env_creator(self.__class__.__name__, type_of_test, num_agents, num_att_actions, k_att,
@@ -129,7 +115,7 @@ class ApexDQN:
 
 # Strano l'attaccante si addestra a scegliere nop e poi difensore -log e finisce, non vorrei che minimizzasse 
 # Però se così fosse il difensore non terminerebbe subito
-class Impala:
+class ImpalaConfiguration:
     def __init__(self, type_of_test, num_agents: int, num_att_actions: int, k_att: float, num_def_actions: int,
                  k_def: float):
         obs_space, act_space = env_creator(self.__class__.__name__, type_of_test, num_agents, num_att_actions, k_att,
@@ -162,7 +148,7 @@ class Impala:
 # PER ora tra PPO con 50 e Impala con 40 lui con 100 è il migliore (piu o meno il tempo di addstramento è stato lo stesso,
 # se non quantop meno accettabile da attendere, perciò sono stati scelti questi valori di training non per 
 # performance uguali)
-class PG:
+class PGConfiguration:
     def __init__(self, type_of_test, num_agents: int, num_att_actions: int, k_att: float, num_def_actions: int,
                  k_def: float):
         obs_space, act_space = env_creator(self.__class__.__name__, type_of_test, num_agents, num_att_actions, k_att,
@@ -192,7 +178,7 @@ class PG:
     # Con 50 epoche alcune le vince altre le perde, PG mi sembrava vincesse sempre (potrei sbagliare) pero partite piu brevi
 
 
-class PPO:
+class PPOConfiguration:
     def __init__(self, type_of_test, num_agents: int, num_att_actions: int, k_att: float, num_def_actions: int,
                  k_def: float):
         obs_space, act_space = env_creator(self.__class__.__name__, type_of_test, num_agents, num_att_actions, k_att,

@@ -6,11 +6,9 @@ from actions.SyncMove import SyncMove
 class Agent:
 
     def __init__(self):
-        self.T1 = 0.33
-        self.T2 = 0.66
 
         self.sincronaAzione = SyncMove()
-        self.asincronaAzione = AsyncMove()
+        self.asincronaAzione = AsyncMove(1.0, 1.0)
 
         self.mosseAsincroneRunning = []
         # Per le mosse asincrone, per il calcolo del tempo del difensore
@@ -30,7 +28,7 @@ class Agent:
 
     def lenMosseEseguite(self):
         return len(self.mosseEseguite)
-    
+
 
     def preCondizioni(self,spazio,legal_moves,mAgentSinc,mAgentAsinc,agent,timer):
         mAgentTot = (mAgentSinc+mAgentAsinc)
@@ -46,7 +44,7 @@ class Agent:
                 running = 0
                 if any(tupla[1] == mossa for tupla in self.mosseAsincroneRunning):
                     running = 1
-                self.asincronaAzione.preCondizione(spazio,legal_moves,mossa,agent,mAgentSinc,self.mosseEseguite,running)
+                self.asincronaAzione.verify_preconditions(spazio, legal_moves, mossa, agent, mAgentSinc, self.mosseEseguite, running)
             
 
 
@@ -62,7 +60,7 @@ class Agent:
                 running = 0
                 if any(tupla[1] == mossa for tupla in self.mosseAsincroneRunning):
                     running = 1
-                self.asincronaAzione.preCondizione(spazio,legal_moves,mossa,agent,mAgentSinc,self.mosseEseguite,running)
+                self.asincronaAzione.verify_preconditions(spazio, legal_moves, mossa, agent, mAgentSinc, self.mosseEseguite, running)
 
         # Fare check mossa wait
         # vale solo quando ci sono mosse asinc in running e non ha più mosse sinc
@@ -123,7 +121,7 @@ class Agent:
         else:
             if action < timer:
                 agente = AsyncAgent(AsyncMove(),action,spazio,agent)
-                agente.mossa.tempoAttesa = agente.mossa.tempoAttuazione
+                agente.mossa.waiting_time = agente.mossa.execution_time
             else:
                 # se invece la mossa è noop...
                 # ed è i suo turno MA QUESTO IF FUNZIONA SOLO SE HANNO LO STESSO NUMERO DI AZIONI SINCRONE
@@ -194,8 +192,8 @@ class Agent:
         listaRimozioni = []
         for i in self.mosseAsincroneRunning:
             print(i)
-            print('Tempo Attesa:',i[0].mossa.tempoAttesa)
-            print('Tempo Attuazione:',i[0].mossa.tempoAttuazione)
+            print('Tempo Attesa:', i[0].mossa.waiting_time)
+            print('Tempo Attuazione:', i[0].mossa.execution_time)
             # richiama il metodo dell'agente asincrono per aggiornare il tempo sulla mossa ed eventualmente applicarla
             val = i[0].stepSuccessivo(tot,i[1],mAgentSinc)
             if val :
@@ -203,7 +201,7 @@ class Agent:
 
         # rimuovo azoni asincrone eseguite
         for i in listaRimozioni:
-            i[0].mossa.tempoAttesa = i[0].mossa.tempoAttuazione
+            i[0].mossa.waiting_time = i[0].mossa.execution_time
             self.mosseAsincroneRunning.remove(i)
             self.mosseEseguite.append(i[1])
         listaRimozioni = []
@@ -216,5 +214,5 @@ class Agent:
 
         print('Mosse Asincrone in Running DOPO la mossa:',self.mosseAsincroneRunning)
         for i in self.mosseAsincroneRunning:
-            print('Tempo Attesa:',i[0].mossa.tempoAttesa)
-            print('Tempo Attuazione:',i[0].mossa.tempoAttuazione)
+            print('Tempo Attesa:', i[0].mossa.waiting_time)
+            print('Tempo Attuazione:', i[0].mossa.execution_time)

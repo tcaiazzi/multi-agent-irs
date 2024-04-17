@@ -17,11 +17,11 @@ class AsyncAgent:
         print('Tempo Attesa:',self.mossa.tempoAttesa)
         print('Tempo Attuazione:',self.mossa.tempoAttuazione) """
         val = False
-        if (self.mossa.tempoAttesa-scalare) > 0:
-            self.mossa.tempoAttesa = round((self.mossa.tempoAttesa-scalare),2)
+        if (self.mossa.waiting_time - scalare) > 0:
+            self.mossa.waiting_time = round((self.mossa.waiting_time - scalare), 2)
         else:
             val = True
-            self.mossa.tempoAttesa = 0
-            self.mossa.postCondizione(self.spazio,self.agent,action,mAttS)
+            self.mossa.waiting_time = 0
+            self.mossa.verify_postconditions(self.spazio, self.agent, action, mAttS)
 
         return val

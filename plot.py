@@ -81,6 +81,7 @@ if __name__ == '__main__':
 
     args = parser.parse_args(sys.argv[1:])
 
+    figures_directory = ""
     if args.training:
         results_directory = os.path.join("results", "training")
         figures_directory = os.path.join("figures", "training")

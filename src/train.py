@@ -2,7 +2,7 @@ import argparse
 import os
 import sys
 
-from training.run_rsp_training import run_rsp_training
+from training.run_training import run_training
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(
@@ -60,5 +60,5 @@ if __name__ == '__main__':
 
     os.makedirs(os.path.join(os.path.dirname(__file__), "..", "results"), exist_ok=True)
 
-    run_rsp_training(args.algorithm, args.epoch, args.gamma, args.agents, args.att_actions, args.k_att,
-                     args.def_actions, args.k_def)
+    run_training(args.algorithm, args.epoch, args.gamma, args.agents, args.att_actions, args.k_att,
+                 args.def_actions, args.k_def)
